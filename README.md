@@ -1,1 +1,1 @@
-# Solo
+# Full
