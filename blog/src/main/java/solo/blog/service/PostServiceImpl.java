@@ -8,8 +8,11 @@ import solo.blog.repository.MemoryMemberRepository;
 import java.time.LocalDateTime;
 
 public class PostServiceImpl implements PostService{
-    private final MemberRepository memberRepository = new MemoryMemberRepository();
+    private final MemberRepository memberRepository;
 
+    public PostServiceImpl(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
     @Override
     public Post writePost(Long id, String title, String content, Long memberId) {
         Member member = memberRepository.findById(memberId);

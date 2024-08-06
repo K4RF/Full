@@ -1,7 +1,10 @@
 package solo.blog.entity;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import solo.blog.config.AppConfig;
 import solo.blog.priory.Priory;
 import solo.blog.service.MemberService;
 import solo.blog.service.MemberServiceImpl;
@@ -14,9 +17,15 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PostTest {
-    MemberService memberService = new MemberServiceImpl();
-    PostService postService = new PostServiceImpl();
+    MemberService memberService;
+    PostService postService;
 
+    @BeforeEach
+    public void beforeEach(){
+        AppConfig appConfig = new AppConfig();
+        memberService = appConfig.memberService();
+        postService = appConfig.postService();
+    }
     @Test
     void writePost(){
         Long id = 1L;
