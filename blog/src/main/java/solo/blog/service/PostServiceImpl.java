@@ -11,9 +11,9 @@ public class PostServiceImpl implements PostService{
     private final MemberRepository memberRepository = new MemoryMemberRepository();
 
     @Override
-    public Post writePost(Long id, String title, String content, LocalDateTime createdDate, Long memberId) {
+    public Post writePost(Long id, String title, String content, Long memberId) {
         Member member = memberRepository.findById(memberId);
 
-        return new Post(id, title, content, createdDate, memberId);
+        return new Post(id, title, content, memberId);
     }
 }

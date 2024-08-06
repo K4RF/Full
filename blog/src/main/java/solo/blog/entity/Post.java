@@ -7,15 +7,13 @@ public class Post {
     private Long id;
     private String title;
     private String content;
-    private LocalDateTime createdDate;
     private Long memberId;
 
 
-    public Post(Long id, String title, String content, LocalDateTime createdDate, Long memberId) {
+    public Post(Long id, String title, String content, Long memberId) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.createdDate = createdDate;
         this.memberId = memberId;
     }
 
@@ -43,13 +41,6 @@ public class Post {
         this.content = content;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
     public Long getMemberId() {
         return memberId;
     }
@@ -64,7 +55,6 @@ public class Post {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", content =" + content +
-                ", createdDate =" + createdDate +
                 ", memberId =" + memberId +
                 '}';
     }
