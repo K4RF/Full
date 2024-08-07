@@ -3,7 +3,7 @@ package solo.blog.repository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import solo.blog.entity.v1.Member;
-import solo.blog.repository.v1.MemoryMemberRepository;
+import solo.blog.repository.v1.MemoryMemberRepositoryV1;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static solo.blog.priory.Priory.ADMIN;
 import static solo.blog.priory.Priory.USUAL;
 
-public class MemoryMemberRepositoryTest {
-    MemoryMemberRepository memberRepository = MemoryMemberRepository.getInstance();
+public class MemoryMemberRepositoryV1Test {
+    MemoryMemberRepositoryV1 memberRepository = MemoryMemberRepositoryV1.getInstance();
     @AfterEach
     void afterEach(){
         memberRepository.clearStore();

@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MemoryMemberRepository implements MemberRepository {
+public class MemoryMemberRepositoryV1 implements MemberRepositoryV1 {
     private static Map<Long, Member> store = new HashMap<>();
     private static long sequence = 0L;
 
-    private static final MemoryMemberRepository instance = new MemoryMemberRepository();
-    public static MemoryMemberRepository getInstance(){
+    private static final MemoryMemberRepositoryV1 instance = new MemoryMemberRepositoryV1();
+    public static MemoryMemberRepositoryV1 getInstance(){
         return instance;
     }
     @Override

@@ -6,17 +6,17 @@ import org.junit.jupiter.api.Test;
 import solo.blog.config.AppConfig;
 import solo.blog.entity.v1.Member;
 import solo.blog.priory.Priory;
-import solo.blog.service.v1.MemberService;
+import solo.blog.service.v1.MemberServiceV1;
 
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
-public class MemberServiceTest {
-    MemberService memberService;
+public class MemberServiceV1Test {
+    MemberServiceV1 memberServiceV1;
     @BeforeEach
     public void beforeEach(){
         AppConfig appConfig = new AppConfig();
-        memberService = appConfig.memberService();
+        memberServiceV1 = appConfig.memberService();
     }
 
     @Test
@@ -25,8 +25,8 @@ public class MemberServiceTest {
         Member member = new Member("memberA", Priory.USUAL);
 
         // when
-        memberService.join(member);
-        Member findMember = memberService.findMember(1L);
+        memberServiceV1.join(member);
+        Member findMember = memberServiceV1.findMember(1L);
 
         // log
         log.info("findMember={}", findMember.getName());

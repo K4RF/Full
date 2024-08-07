@@ -4,7 +4,7 @@ import solo.blog.entity.v1.Member;
 
 import java.util.List;
 
-public interface MemberRepository {
+public interface MemberRepositoryV1 {
     Member save(Member member);
 
     Member findById(Long memberId);

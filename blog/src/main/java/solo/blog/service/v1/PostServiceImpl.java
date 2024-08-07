@@ -2,18 +2,17 @@ package solo.blog.service.v1;
 
 import solo.blog.entity.v1.Member;
 import solo.blog.entity.Post;
-import solo.blog.repository.v1.MemberRepository;
-import solo.blog.service.v1.PostService;
+import solo.blog.repository.v1.MemberRepositoryV1;
 
 public class PostServiceImpl implements PostService {
-    private final MemberRepository memberRepository;
+    private final MemberRepositoryV1 memberRepositoryV1;
 
-    public PostServiceImpl(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
+    public PostServiceImpl(MemberRepositoryV1 memberRepositoryV1) {
+        this.memberRepositoryV1 = memberRepositoryV1;
     }
     @Override
     public Post writePost(Long id, String title, String content, Long memberId) {
-        Member member = memberRepository.findById(memberId);
+        Member member = memberRepositoryV1.findById(memberId);
 
         return new Post(id, title, content, memberId);
     }
