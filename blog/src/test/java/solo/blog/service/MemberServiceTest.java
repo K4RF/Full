@@ -22,7 +22,7 @@ public class MemberServiceTest {
     @Test
     void join() {
         // given
-        Member member = new Member(1L, "memberA", Priory.USUAL);
+        Member member = new Member("memberA", Priory.USUAL);
 
         // when
         memberService.join(member);

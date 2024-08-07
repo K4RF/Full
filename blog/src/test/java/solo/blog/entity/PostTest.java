@@ -32,7 +32,7 @@ public class PostTest {
         String title = "테스트 제목";
         String content = "테스트 내용";
         Long memberId = 1L;
-        Member member = new Member(memberId, "memberA", Priory.USUAL);
+        Member member = new Member("memberA", Priory.USUAL);
         memberService.join(member);
 
         Post post = postService.writePost(id, title, content, memberId);
