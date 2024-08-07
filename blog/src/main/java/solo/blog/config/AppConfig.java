@@ -2,12 +2,11 @@ package solo.blog.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import solo.blog.repository.MemberRepository;
-import solo.blog.repository.MemoryMemberRepository;
-import solo.blog.service.MemberService;
-import solo.blog.service.MemberServiceImpl;
-import solo.blog.service.PostService;
-import solo.blog.service.PostServiceImpl;
+import solo.blog.repository.v1.MemoryMemberRepository;
+import solo.blog.service.v1.MemberService;
+import solo.blog.service.v1.MemberServiceImpl;
+import solo.blog.service.v1.PostService;
+import solo.blog.service.v1.PostServiceImpl;
 
 @Configuration
 public class AppConfig {

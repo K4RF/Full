@@ -1,13 +1,13 @@
-package solo.blog.repository;
+package solo.blog.repository.v1;
 
-import solo.blog.entity.Member;
+import solo.blog.entity.v1.Member;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MemoryMemberRepository implements MemberRepository{
+public class MemoryMemberRepository implements MemberRepository {
     private static Map<Long, Member> store = new HashMap<>();
     private static long sequence = 0L;
 

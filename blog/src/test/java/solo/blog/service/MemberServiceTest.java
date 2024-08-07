@@ -3,10 +3,10 @@ package solo.blog.service;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import solo.blog.config.AppConfig;
-import solo.blog.entity.Member;
+import solo.blog.entity.v1.Member;
 import solo.blog.priory.Priory;
+import solo.blog.service.v1.MemberService;
 
 import static org.assertj.core.api.Assertions.*;
 

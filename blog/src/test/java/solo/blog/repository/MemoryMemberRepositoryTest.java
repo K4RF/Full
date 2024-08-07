@@ -2,8 +2,8 @@ package solo.blog.repository;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import solo.blog.entity.Member;
-import solo.blog.priory.Priory;
+import solo.blog.entity.v1.Member;
+import solo.blog.repository.v1.MemoryMemberRepository;
 
 import java.util.List;
 

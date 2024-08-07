@@ -1,6 +1,6 @@
-package solo.blog.repository;
+package solo.blog.repository.v1;
 
-import solo.blog.entity.Member;
+import solo.blog.entity.v1.Member;
 
 import java.util.List;
 

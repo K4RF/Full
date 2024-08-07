@@ -1,8 +1,8 @@
-package solo.blog.service;
+package solo.blog.service.v1;
 
-import solo.blog.entity.Member;
-import solo.blog.repository.MemberRepository;
-import solo.blog.repository.MemoryMemberRepository;
+import solo.blog.entity.v1.Member;
+import solo.blog.repository.v1.MemberRepository;
+import solo.blog.service.v1.MemberService;
 
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;

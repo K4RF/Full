@@ -1,6 +1,6 @@
-package solo.blog.service;
+package solo.blog.service.v1;
 
-import solo.blog.entity.Member;
+import solo.blog.entity.v1.Member;
 
 public interface MemberService {
     void join(Member member);

@@ -1,20 +1,14 @@
 package solo.blog.entity;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import solo.blog.config.AppConfig;
+import solo.blog.entity.v1.Member;
 import solo.blog.priory.Priory;
-import solo.blog.service.MemberService;
-import solo.blog.service.MemberServiceImpl;
-import solo.blog.service.PostService;
-import solo.blog.service.PostServiceImpl;
-
-import java.time.LocalDateTime;
+import solo.blog.service.v1.MemberService;
+import solo.blog.service.v1.PostService;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class PostTest {
     MemberService memberService;

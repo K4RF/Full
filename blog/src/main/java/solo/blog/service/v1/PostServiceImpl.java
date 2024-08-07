@@ -1,13 +1,11 @@
-package solo.blog.service;
+package solo.blog.service.v1;
 
-import solo.blog.entity.Member;
+import solo.blog.entity.v1.Member;
 import solo.blog.entity.Post;
-import solo.blog.repository.MemberRepository;
-import solo.blog.repository.MemoryMemberRepository;
+import solo.blog.repository.v1.MemberRepository;
+import solo.blog.service.v1.PostService;
 
-import java.time.LocalDateTime;
-
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
 
     public PostServiceImpl(MemberRepository memberRepository) {
