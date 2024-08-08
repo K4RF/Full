@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <link th:href="@{/css/bootstrap.min.css}"
-          href="css/bootstrap.min.css" rel="stylesheet">
+          href="../css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container" style="max-width: 600px">
@@ -13,7 +13,9 @@
     <div class="row">
         <div class="col">
             <button class="btn btn-primary float-end"
-                    onclick="location.href='addPost.html'" type="button">포스트 등록
+                    onclick="location.href='addPost.html'"
+                    th:onclick="|location.href='@{/basic/posts/add}'|"
+                    type="button">포스트 등록
             </button>
         </div>
     </div>
@@ -28,15 +30,10 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td><a href="post.html">1</a></td>
-                <td><a href="post.html">테스트 제목1</a></td>
-                <td>qwer</td>
-            </tr>
-            <tr>
-                <td><a href="post.html">1</a></td>
-                <td><a href="post.html">테스트 제목2</a></td>
-                <td>asdf</td>
+            <tr th:each="post : ${posts}">
+                <td><a href="post.html" th:href="@{/basic/posts/{postId}(postId=${post.id})}" th:text="${post.id}">포스트 id</a></td>
+                <td><a href="post.html" th:href="@{|/basic/posts/${post.id}|}"` th:text="${post.title}">제목</a></td>
+                <td th:text="${post.loginId}">qwer</td>
             </tr>
             </tbody>
         </table>

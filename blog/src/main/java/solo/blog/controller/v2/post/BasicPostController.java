@@ -21,7 +21,7 @@ public class BasicPostController {
     public String post(Model model) {
         List<Post> posts = postRepository.findAll();
         model.addAttribute("posts", posts);
-        return "/post/basic/postList";
+        return "/post/basic/posts";
     }
 
     @PostConstruct
