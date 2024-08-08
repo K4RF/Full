@@ -14,7 +14,7 @@
         <div class="col">
             <button class="btn btn-primary float-end"
                     onclick="location.href='addPost.html'"
-                    th:onclick="|location.href='@{/basic/posts/add}'|"
+                    th:onclick="|location.href='@{/post/basic/postList/add}'|"
                     type="button">포스트 등록
             </button>
         </div>
@@ -31,8 +31,8 @@
             </thead>
             <tbody>
             <tr th:each="post : ${posts}">
-                <td><a href="post.html" th:href="@{/basic/posts/{postId}(postId=${post.id})}" th:text="${post.id}">포스트 id</a></td>
-                <td><a href="post.html" th:href="@{|/basic/posts/${post.id}|}"` th:text="${post.title}">제목</a></td>
+                <td><a href="post.html" th:href="@{/post/basic/postList/{postId}(postId=${post.id})}" th:text="${post.id}">포스트 id</a></td>
+                <td><a href="post.html" th:href="@{|/post/basic/postList/${post.id}|}"` th:text="${post.title}">제목</a></td>
                 <td th:text="${post.loginId}">qwer</td>
             </tr>
             </tbody>
