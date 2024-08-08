@@ -3,7 +3,7 @@ package solo.blog.entity.v1;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import solo.blog.priory.Priory;
+import solo.blog.entity.priory.Priory;
 
 @Getter
 @Setter

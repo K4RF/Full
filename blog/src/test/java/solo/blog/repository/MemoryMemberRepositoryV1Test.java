@@ -8,8 +8,8 @@ import solo.blog.repository.v1.MemoryMemberRepositoryV1;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static solo.blog.priory.Priory.ADMIN;
-import static solo.blog.priory.Priory.USUAL;
+import static solo.blog.entity.priory.Priory.ADMIN;
+import static solo.blog.entity.priory.Priory.USUAL;
 
 public class MemoryMemberRepositoryV1Test {
     MemoryMemberRepositoryV1 memberRepository = MemoryMemberRepositoryV1.getInstance();

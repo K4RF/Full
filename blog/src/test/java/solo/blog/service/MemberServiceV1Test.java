@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import solo.blog.config.AppConfig;
 import solo.blog.entity.v1.Member;
-import solo.blog.priory.Priory;
+import solo.blog.entity.priory.Priory;
 import solo.blog.service.v1.MemberServiceV1;
 
 import static org.assertj.core.api.Assertions.*;
