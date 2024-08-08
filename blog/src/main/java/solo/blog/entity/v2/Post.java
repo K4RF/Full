@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class Post {
     private Long id;
+    private String loginId;
     private String title;
     private String content;
 
@@ -15,8 +16,8 @@ public class Post {
 
     }
 
-    public Post(Long id, String title, String content){
-        this.id = id;
+    public Post(String loginId,String title, String content){
+        this.loginId = loginId;
         this.title = title;
         this.content = content;
     }

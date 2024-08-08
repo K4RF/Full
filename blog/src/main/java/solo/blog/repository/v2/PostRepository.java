@@ -30,6 +30,7 @@ public class PostRepository {
 
     public void update(Long postId, Post updateParam) {
         Post findPost = findById(postId);
+        findPost.setLoginId(updateParam.getLoginId()); // 추가
         findPost.setTitle(updateParam.getTitle());
         findPost.setContent(updateParam.getContent());
     }

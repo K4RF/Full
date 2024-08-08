@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import solo.blog.config.AppConfig;
 import solo.blog.entity.v1.Member;
 import solo.blog.entity.priory.Priory;
-import solo.blog.entity.v1.Post;
+import solo.blog.entity.v1.PostV1;
 import solo.blog.service.v1.MemberServiceV1;
 import solo.blog.service.v1.PostService;
 
@@ -30,7 +30,7 @@ public class PostTest {
         Member member = new Member("memberA", Priory.USUAL);
         memberServiceV1.join(member);
 
-        Post post = postService.writePost(id, title, content, memberId);
+        PostV1 post = postService.writePost(id, title, content, memberId);
         assertThat(post.getId()).isEqualTo(1L);
     }
 }
