@@ -1,7 +1,7 @@
 package solo.blog.service.v1;
 
 import solo.blog.entity.v1.Member;
-import solo.blog.entity.Post;
+import solo.blog.entity.v1.Post;
 import solo.blog.repository.v1.MemberRepositoryV1;
 
 public class PostServiceImpl implements PostService {

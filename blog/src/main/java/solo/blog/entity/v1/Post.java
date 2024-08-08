@@ -1,4 +1,4 @@
-package solo.blog.entity;
+package solo.blog.entity.v1;
 
 import java.time.LocalDateTime;
 
