@@ -26,6 +26,11 @@
                value="테스트 제목1" th:value="${post.title}" readonly>
     </div>
     <div>
+        <label for="content">내용</label>
+        <input type="text" id="content" name="content" class="form-control"
+               value="내용" th:value="${post.content}" readonly>
+    </div>
+    <div>
         <label for="loginId">작성자</label>
         <input type="text" id="loginId" name="loginId" class="form-control"
                value="qwer" th:value="${post.loginId}" readonly>

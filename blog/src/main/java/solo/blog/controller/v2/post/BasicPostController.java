@@ -49,6 +49,19 @@ public class BasicPostController {
         return "post/basic/post";
     }
 
+    @GetMapping("/{postId}/edit")
+    public String editPost(@PathVariable Long postId, Model model) {
+        Post post = postRepository.findById(postId);
+        model.addAttribute("post", post);
+        return "post/basic/editPost";
+    }
+
+    @PostMapping("/{postId}/edit")
+    public String edit(@PathVariable Long postId, @ModelAttribute Post post) {
+        postRepository.update(postId, post);
+        return "redirect:/post/basic/postList/{postId}";
+    }
+
     @PostConstruct
     public void init() {
         postRepository.save(new Post("qwer", "test title1", "test content1"));
