@@ -1,4 +1,4 @@
-package solo.blog.priory;
+package solo.blog.entity.priory;
 
 public enum Priory {
     ADMIN,

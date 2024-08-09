@@ -1,8 +1,6 @@
-package solo.blog.entity;
+package solo.blog.entity.v1;
 
-import java.time.LocalDateTime;
-
-public class Post {
+public class PostV1 {
 
     private Long id;
     private String title;
@@ -10,7 +8,7 @@ public class Post {
     private Long memberId;
 
 
-    public Post(Long id, String title, String content, Long memberId) {
+    public PostV1(Long id, String title, String content, Long memberId) {
         this.id = id;
         this.title = title;
         this.content = content;
