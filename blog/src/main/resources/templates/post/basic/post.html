@@ -15,6 +15,8 @@
     <div class="py-5 text-center">
         <h2>상품 상세</h2>
     </div>
+    <!-- 추가 -->
+    <h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
     <div>
         <label for="postId">ID</label>
         <input type="text" id="postId" name="postId" class="form-control"
@@ -24,6 +26,11 @@
         <label for="title">제목</label>
         <input type="text" id="title" name="title" class="form-control"
                value="테스트 제목1" th:value="${post.title}" readonly>
+    </div>
+    <div>
+        <label for="content">내용</label>
+        <input type="text" id="content" name="content" class="form-control"
+               value="내용" th:value="${post.content}" readonly>
     </div>
     <div>
         <label for="loginId">작성자</label>

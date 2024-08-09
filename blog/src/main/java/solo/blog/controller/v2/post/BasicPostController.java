@@ -4,9 +4,8 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import solo.blog.entity.v2.Post;
 import solo.blog.repository.v2.PostRepository;
 
@@ -30,6 +29,48 @@ public class BasicPostController {
         Post post = postRepository.findById(postId);
         model.addAttribute("post", post);
         return "post/basic/post";
+    }
+
+    @GetMapping("/add")
+    public String addPost() {
+        return "post/basic/addPost";
+    }
+
+//    @PostMapping("/add")
+    public String addPostV1(@RequestParam String title, @RequestParam String content, @RequestParam String loginId, Model model) {
+        Post post = new Post();
+        post.setTitle(title);
+        post.setContent(content);
+        post.setLoginId(loginId);
+
+        postRepository.save(post);
+
+        model.addAttribute("post", post);
+
+        return "post/basic/post";
+    }
+
+    @PostMapping("/add")
+    public String addPostRedirect(Post post, RedirectAttributes redirectAttributes) {
+
+        Post savedPost = postRepository.save(post);
+        redirectAttributes.addAttribute("postId", savedPost.getId());
+        redirectAttributes.addAttribute("status", true);
+
+        return "redirect:/post/basic/postList/{postId}";
+    }
+
+    @GetMapping("/{postId}/edit")
+    public String editPost(@PathVariable Long postId, Model model) {
+        Post post = postRepository.findById(postId);
+        model.addAttribute("post", post);
+        return "post/basic/editPost";
+    }
+
+    @PostMapping("/{postId}/edit")
+    public String edit(@PathVariable Long postId, @ModelAttribute Post post) {
+        postRepository.update(postId, post);
+        return "redirect:/post/basic/postList/{postId}";
     }
 
     @PostConstruct

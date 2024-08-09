@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <link th:href="@{/css/bootstrap.min.css}"
-          href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <style>
         .container {
             max-width: 560px;
@@ -15,21 +15,23 @@
     <div class="py-5 text-center">
         <h2>포스트 수정 폼</h2>
     </div>
-    <form action="post.html" method="post">
+    <form action="post.html" th:action method="post">
         <div>
-            <label for="postId">포스트 ID</label>
-            <input type="text" id="postId" name="postId" class="form-control"
-                   value="1" readonly>
+            <label for="id">포스트 ID</label>
+            <input type="text" id="id" name="id" class="form-control" value="1" th:value="${post.id}" readonly>
         </div>
         <div>
             <label for="title">제목</label>
-            <input type="text" id="title" name="title" class="form-control"
-                   value="테스트 제목1">
+            <input type="text" id="title" name="title" class="form-control" th:value="${post.title}" value="제목">
+        </div>
+        <div>
+            <label for="content">내용</label>
+            <input type="text" id="content" name="content" class="form-control" th:value="${post.content}" value="내용">
         </div>
         <div>
             <label for="loginId">작성자</label>
-            <input type="text" id="loginId" name="loginId" class="form-control"
-                   value="qwer">
+            <input type="text" id="loginId" name="loginId" class="form-control" th:value="${post.loginId}" value="작성자" readonly>
+        </div>
         <hr class="my-4">
         <div class="row">
             <div class="col">
@@ -37,7 +39,7 @@
             </div>
             <div class="col">
                 <button class="w-100 btn btn-secondary btn-lg"
-                        onclick="location.href='post.html'" type="button">취소</button>
+                        onclick="location.href='post.html'" th:onclick="|location.href='@{/post/basic/postList/{postId}(postId=${post.id})}'|" type="button">취소</button>
             </div>
         </div>
     </form>
