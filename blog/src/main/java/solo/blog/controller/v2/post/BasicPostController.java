@@ -4,9 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import solo.blog.entity.v2.Post;
 import solo.blog.repository.v2.PostRepository;
 
@@ -29,6 +27,25 @@ public class BasicPostController {
     public String post(@PathVariable long postId, Model model) {
         Post post = postRepository.findById(postId);
         model.addAttribute("post", post);
+        return "post/basic/post";
+    }
+
+    @GetMapping("/add")
+    public String addPost() {
+        return "post/basic/addPost";
+    }
+
+    @PostMapping("/add")
+    public String addPostV1(@RequestParam String title, @RequestParam String content, @RequestParam String loginId, Model model) {
+        Post post = new Post();
+        post.setTitle(title);
+        post.setContent(content);
+        post.setLoginId(loginId);
+
+        postRepository.save(post);
+
+        model.addAttribute("post", post);
+
         return "post/basic/post";
     }
 
