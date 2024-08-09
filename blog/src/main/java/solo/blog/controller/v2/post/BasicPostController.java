@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import solo.blog.entity.v2.Post;
 import solo.blog.repository.v2.PostRepository;
 
@@ -35,7 +36,7 @@ public class BasicPostController {
         return "post/basic/addPost";
     }
 
-    @PostMapping("/add")
+//    @PostMapping("/add")
     public String addPostV1(@RequestParam String title, @RequestParam String content, @RequestParam String loginId, Model model) {
         Post post = new Post();
         post.setTitle(title);
@@ -47,6 +48,16 @@ public class BasicPostController {
         model.addAttribute("post", post);
 
         return "post/basic/post";
+    }
+
+    @PostMapping("/add")
+    public String addPostRedirect(Post post, RedirectAttributes redirectAttributes) {
+
+        Post savedPost = postRepository.save(post);
+        redirectAttributes.addAttribute("postId", savedPost.getId());
+        redirectAttributes.addAttribute("status", true);
+
+        return "redirect:/post/basic/postList/{postId}";
     }
 
     @GetMapping("/{postId}/edit")
