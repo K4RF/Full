@@ -29,8 +29,7 @@
         </div>
         <div>
             <label for="loginId">작성자</label>
-            <input type="text" id="loginId" name="loginId" class="form-control"
-                   placeholder="작성자를 입력하세요">
+            <input type="text" id="loginId" name="loginId" class="form-control" th:value="${member.name}" readonly>
         </div>
         <hr class="my-4">
         <div class="row">
