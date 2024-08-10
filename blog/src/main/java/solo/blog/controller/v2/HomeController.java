@@ -1,5 +1,6 @@
 package solo.blog.controller.v2;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,7 @@ public class HomeController {
         return "home";
     }
 
-    @GetMapping("/")
+    //    @GetMapping("/")
     public String homeLogin(
             @CookieValue(name = "loginId", required = false) Long loginId, Model model) {
         if (loginId == null) {
@@ -34,6 +35,20 @@ public class HomeController {
             return "home";
         }
         model.addAttribute("member", loginMember);
+        return "loginHome";
+    }
+
+    @GetMapping("/")
+    public String homeLoginSession(HttpServletRequest request, Model model) {
+        // 세션 관리자에 저장된 회원 정보 조회
+        Object member = (Member) sessionManager.getSession(request);
+
+        // 로그인
+        if (member == null) {
+            return "home";
+        }
+
+        model.addAttribute("member", member);
         return "loginHome";
     }
 }

@@ -1,6 +1,7 @@
 package solo.blog.controller.v2;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class LoginController {
         return "login/loginForm";
     }
 
-    @PostMapping("/login")
+   // @PostMapping("/login")
     public String login(@Validated @ModelAttribute LoginForm form, BindingResult bindingResult, HttpServletResponse response) {
         if (bindingResult.hasErrors()) {
             return "login/loginForm";
@@ -42,10 +43,33 @@ public class LoginController {
         response.addCookie(idCookie);
         return "redirect:/";
     }
+    @PostMapping("/login")
+    public String loginSession(@Validated @ModelAttribute LoginForm form, BindingResult bindingResult, HttpServletResponse response) {
+        if (bindingResult.hasErrors()) {
+            return "login/loginForm";
+        }
+        Member loginMember = loginService.login(form.getLoginId(), form.getPassword());
+        log.info("login? {}", loginMember);
+        if (loginMember == null) {
+            bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
+            return "login/loginForm";
+        }
+        // 로그인 성공 처리
+        // 세션 관리자를 통해 세션을 생성하고, 회원 데이터 보관
+        sessionManager.createSession(loginMember, response);
+        return "redirect:/";
+    }
 
-    @PostMapping("/logout")
+
+    //@PostMapping("/logout")
     public String logout(HttpServletResponse response){
         expireCookie(response, "loginId");
+        return "redirect:/";
+    }
+
+    @PostMapping("/logout")
+    public String logoutSession(HttpServletRequest request) {
+        sessionManager.expire(request);
         return "redirect:/";
     }
 
