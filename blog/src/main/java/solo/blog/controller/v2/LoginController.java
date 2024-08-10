@@ -38,14 +38,14 @@ public class LoginController {
             return "login/loginForm";
         }
         // 로그인 성공 처리
-        Cookie idCookie = new Cookie("memberId", String.valueOf(loginMember.getId()));
+        Cookie idCookie = new Cookie("loginId", String.valueOf(loginMember.getId()));
         response.addCookie(idCookie);
         return "redirect:/";
     }
 
     @PostMapping("/logout")
     public String logout(HttpServletResponse response){
-        expireCookie(response, "memberId");
+        expireCookie(response, "loginId");
         return "redirect:/";
     }
 
