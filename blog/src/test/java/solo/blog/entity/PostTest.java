@@ -1,29 +1,24 @@
 package solo.blog.entity;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import solo.blog.config.AppConfig;
-import solo.blog.priory.Priory;
-import solo.blog.service.MemberService;
-import solo.blog.service.MemberServiceImpl;
-import solo.blog.service.PostService;
-import solo.blog.service.PostServiceImpl;
-
-import java.time.LocalDateTime;
+import solo.blog.entity.v1.Member;
+import solo.blog.entity.priory.Priory;
+import solo.blog.entity.v1.PostV1;
+import solo.blog.service.v1.MemberServiceV1;
+import solo.blog.service.v1.PostService;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class PostTest {
-    MemberService memberService;
+    MemberServiceV1 memberServiceV1;
     PostService postService;
 
     @BeforeEach
     public void beforeEach(){
         AppConfig appConfig = new AppConfig();
-        memberService = appConfig.memberService();
+        memberServiceV1 = appConfig.memberService();
         postService = appConfig.postService();
     }
     @Test
@@ -32,10 +27,10 @@ public class PostTest {
         String title = "테스트 제목";
         String content = "테스트 내용";
         Long memberId = 1L;
-        Member member = new Member(memberId, "memberA", Priory.USUAL);
-        memberService.join(member);
+        Member member = new Member("memberA", Priory.USUAL);
+        memberServiceV1.join(member);
 
-        Post post = postService.writePost(id, title, content, memberId);
+        PostV1 post = postService.writePost(id, title, content, memberId);
         assertThat(post.getId()).isEqualTo(1L);
     }
 }

@@ -35,6 +35,12 @@ dependencies {
 	// Lombok for test scope
 	testCompileOnly 'org.projectlombok:lombok:1.18.24'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+	//JSP 추가 시작
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+	implementation 'jakarta.servlet:jakarta.servlet-api' //스프링부트 3.0 이상
+	implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api' //스프링부트3.0 이상
+	implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl' //스프링부트 3.0 이상
+//JSP 추가 끝
 }
 
 tasks.named('test') {
