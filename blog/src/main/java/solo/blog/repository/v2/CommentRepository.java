@@ -1,6 +1,7 @@
 package solo.blog.repository.v2;
 
 
+import org.springframework.stereotype.Repository;
 import solo.blog.entity.v2.Comment;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Repository
 public class CommentRepository {
 
     private List<Comment> comments = new ArrayList<>();
