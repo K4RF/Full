@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+    </style>
+</head>
+<body>
+<h1 th:text="${post.title}">Post Title</h1>
+<p th:text="${post.content}">Post Content</p>
+
+<h2>Comments</h2>
+<ul>
+    <li th:each="comment : ${comments}">
+        <p><strong th:text="${comment.name}">Name</strong>: <span th:text="${comment.content}">Comment content</span></p>
+    </li>
+</ul>
+
+<h3>Add a Comment</h3>
+<form th:action="@{/comments}" method="post">
+    <input type="hidden" name="postId" th:value="${post.id}"/>
+    <div>
+        <label for="author">Name:</label>
+        <input type="text" id="author" name="author" required/>
+    </div>
+    <div>
+        <label for="content">Comment:</label>
+        <textarea id="content" name="content" required></textarea>
+    </div>
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

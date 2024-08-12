@@ -27,11 +27,11 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public Comment updateComment(Long id, String author, String content) {
+    public Comment updateComment(Long id, String name, String content) {
         Optional<Comment> existingComment = commentRepository.findById(id);
         if (existingComment.isPresent()) {
             Comment comment = existingComment.get();
-            comment.setAuthor(author);
+            comment.setName(name);
             comment.setContent(content);
             return commentRepository.save(comment);
         } else {

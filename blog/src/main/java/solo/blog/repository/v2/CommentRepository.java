@@ -33,7 +33,7 @@ public class CommentRepository {
             comments.add(comment);
         } else {
             findById(comment.getId()).ifPresent(existingComment -> {
-                existingComment.setAuthor(comment.getAuthor());
+                existingComment.setName(comment.getName());
                 existingComment.setContent(comment.getContent());
                 existingComment.setCreatedDate(LocalDateTime.now());
             });
