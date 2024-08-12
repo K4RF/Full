@@ -1,4 +1,4 @@
-package solo.blog.controller.v2;
+package solo.blog.controller.login;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
