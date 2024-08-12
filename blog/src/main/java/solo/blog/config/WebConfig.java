@@ -5,12 +5,16 @@ import org.aopalliance.intercept.Interceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import solo.blog.controller.login.LoginArgumentResolver;
 import solo.blog.controller.login.LoginCheckInterceptor;
 import solo.blog.controller.login.LoginInterceptor;
 import solo.blog.filter.LoginCheckFilter;
 import solo.blog.filter.LoginFilter;
+
+import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -46,5 +50,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error"
                 );
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new LoginArgumentResolver());
     }
 }
