@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import solo.blog.controller.login.LoginCheckInterceptor;
 import solo.blog.controller.login.LoginInterceptor;
 import solo.blog.filter.LoginCheckFilter;
 import solo.blog.filter.LoginFilter;
@@ -39,5 +40,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(1)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/css/**", "/*.ico", "/error");
+        registry.addInterceptor(new LoginCheckInterceptor())
+                .order(2)
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error"
+                );
     }
 }
