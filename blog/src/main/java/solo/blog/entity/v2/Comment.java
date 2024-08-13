@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 public class Comment {
     private Long id;
-    private String author;
+    private String name;
     private String content;
     private LocalDateTime createdDate;
     private Long postId;  // 포스트와의 연관을 ID로 처리
@@ -17,9 +17,9 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(Long id, String author, String content, LocalDateTime createdDate, Long postId) {
+    public Comment(Long id, String name, String content, LocalDateTime createdDate, Long postId) {
         this.id = id;
-        this.author = author;
+        this.name = name;
         this.content = content;
         this.createdDate = createdDate;
         this.postId = postId;
