@@ -24,7 +24,7 @@ public class CommentController {
         return "post/basic/post";
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public String addComment(@PathVariable Long postId, @RequestParam String content, Model model) {
         Long memberId = 1L; // 여기에서 세션 또는 토큰에서 실제 로그인된 사용자 ID를 가져와야 합니다.
         String author = memberService.findMember(memberId).getName();

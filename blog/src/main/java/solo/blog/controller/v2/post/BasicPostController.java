@@ -69,18 +69,25 @@ public class BasicPostController {
         return "redirect:/post/basic/postList/{postId}";
     }
 
-    @PostMapping("/{postId}/addComment")
+    @PostMapping("/{postId}/comments")
     public String addComment(@PathVariable Long postId,
+                             @RequestParam String author,
                              @RequestParam String content) {
-        Long memberId = 1L; // 세션 또는 토큰에서 실제 로그인된 사용자 ID를 가져와야 합니다.
-        String author = memberService.findMember(memberId).getName();
         commentService.addComment(postId, author, content);
         return "redirect:/post/basic/postList/" + postId;
     }
 
     @PostConstruct
     public void init() {
-        postRepository.save(new Post("qwer", "test title1", "test content1"));
-        postRepository.save(new Post("asdf", "test title2", "test content2"));
+        // Initialize posts
+        Post post1 = postRepository.save(new Post("qwer", "Test Title 1", "Test Content 1"));
+        Post post2 = postRepository.save(new Post("asdf", "Test Title 2", "Test Content 2"));
+
+        // Initialize comments for the first post
+        commentService.addComment(post1.getId(), "Alice", "Great post, thanks for sharing!");
+        commentService.addComment(post1.getId(), "Bob", "Interesting read, looking forward to more!");
+
+        // Initialize comments for the second post
+        commentService.addComment(post2.getId(), "Charlie", "Helpful information!");
     }
 }
