@@ -68,18 +68,4 @@ public class BasicPostController {
         postRepository.update(postId, post);
         return "redirect:/post/basic/postList/{postId}";
     }
-
-    @PostConstruct
-    public void init() {
-        // Initialize posts
-        Post post1 = postRepository.save(new Post("qwer", "Test Title 1", "Test Content 1"));
-        Post post2 = postRepository.save(new Post("asdf", "Test Title 2", "Test Content 2"));
-
-        // Initialize comments for the first post
-        commentService.addComment(post1.getId(), "Alice", "Great post, thanks for sharing!");
-        commentService.addComment(post1.getId(), "Bob", "Interesting read, looking forward to more!");
-
-        // Initialize comments for the second post
-        commentService.addComment(post2.getId(), "Charlie", "Helpful information!");
-    }
 }
