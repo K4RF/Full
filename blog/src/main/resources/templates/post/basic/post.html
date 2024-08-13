@@ -55,14 +55,19 @@
     </form>
 
     <hr class="my-4">
+
     <div class="row">
         <div class="col">
             <button class="w-100 btn btn-primary btn-lg"
-                    onclick="location.href='editPost.html'" type="button">포스트 수정</button>
+                    onclick="location.href='editPost.html'"
+                    th:onclick="|location.href='@{/post/basic/postList/{postId}/edit(postId=${post.id})}'|"
+                    type="button">포스트 수정</button>
         </div>
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
-                    onclick="location.href='postList.html'" type="button">목록으로</button>
+                    onclick="location.href='postList.html'"
+                    th:onclick="|location.href='@{/post/basic/postList}'|"
+                    type="button">목록으로</button>
         </div>
     </div>
 </div> <!-- /container -->
