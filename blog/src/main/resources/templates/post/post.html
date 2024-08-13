@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <link th:href="@{/css/bootstrap.min.css}"
@@ -18,18 +18,43 @@
     <div>
         <label for="postId">포스트 ID</label>
         <input type="text" id="postId" name="postId" class="form-control"
-               value="1" readonly>
+               th:value="${post.id}" readonly>
     </div>
     <div>
         <label for="title">제목</label>
         <input type="text" id="title" name="title" class="form-control"
-               value="테스트 제목1" readonly>
+               th:value="${post.title}" readonly>
     </div>
     <div>
         <label for="loginId">작성자</label>
         <input type="text" id="loginId" name="loginId" class="form-control"
-               value="qwer" readonly>
+               th:value="${post.loginId}" readonly>
     </div>
+    <hr class="my-4">
+
+    <!-- 댓글 목록 -->
+    <h3>댓글</h3>
+    <ul>
+        <li th:each="comment : ${comments}">
+            <p><strong th:text="${comment.name}">작성자</strong>: <span th:text="${comment.content}">댓글 내용</span></p>
+        </li>
+    </ul>
+
+    <!-- 댓글 작성 폼 -->
+    <h3>댓글 작성</h3>
+    <form th:action="@{/post/basic/postList/{postId}/comments}" method="post">
+        <input type="hidden" name="postId" th:value="${post.id}"/>
+        <div>
+            <label for="author">이름</label>
+            <input type="text" id="author" name="author" class="form-control" required/>
+        </div>
+        <div>
+            <label for="content">댓글 내용</label>
+            <textarea id="content" name="content" class="form-control" required></textarea>
+        </div>
+        <button class="w-100 btn btn-primary btn-lg mt-3" type="submit">댓글 작성</button>
+    </form>
+
     <hr class="my-4">
     <div class="row">
         <div class="col">
