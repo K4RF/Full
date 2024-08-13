@@ -9,10 +9,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import solo.blog.entity.v2.Member;
 import solo.blog.entity.v2.Post;
-import solo.blog.entity.v2.Comment; // Comment 엔티티 추가
+import solo.blog.entity.v2.Comment;
 import solo.blog.repository.v2.PostRepository;
 import solo.blog.service.v2.MemberService;
-import solo.blog.service.v2.CommentService; // CommentService 추가
+import solo.blog.service.v2.CommentService;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import java.util.List;
 public class BasicPostController {
     private final PostRepository postRepository;
     private final MemberService memberService;
-    private final CommentService commentService; // CommentService 주입
+    private final CommentService commentService;
 
     @GetMapping
     public String post(Model model) {
@@ -34,19 +34,17 @@ public class BasicPostController {
     @GetMapping("/{postId}")
     public String post(@PathVariable long postId, Model model) {
         Post post = postRepository.findById(postId);
-        List<Comment> comments = commentService.getCommentsByPostId(postId); // 댓글 리스트 가져오기
+        List<Comment> comments = commentService.getCommentsByPostId(postId);
         model.addAttribute("post", post);
-        model.addAttribute("comments", comments); // 댓글 리스트 모델에 추가
+        model.addAttribute("comments", comments);
         return "post/basic/post";
     }
 
     @GetMapping("/add")
     public String addPostName(Model model) {
-        Long memberId = 1L; // 실제 구현에서는 세션이나 토큰에서 가져와야 합니다.
-
+        Long memberId = 1L;
         Member member = memberService.findMember(memberId);
         model.addAttribute("member", member);
-
         return "post/basic/addPost";
     }
 
@@ -71,11 +69,12 @@ public class BasicPostController {
         return "redirect:/post/basic/postList/{postId}";
     }
 
-    @PostMapping("/{postId}/comments")
+    @PostMapping("/{postId}/addComment")
     public String addComment(@PathVariable Long postId,
-                             @RequestParam String name,
                              @RequestParam String content) {
-        commentService.createComment(name, content, postId); // 댓글 생성
+        Long memberId = 1L; // 세션 또는 토큰에서 실제 로그인된 사용자 ID를 가져와야 합니다.
+        String author = memberService.findMember(memberId).getName();
+        commentService.addComment(postId, author, content);
         return "redirect:/post/basic/postList/" + postId;
     }
 

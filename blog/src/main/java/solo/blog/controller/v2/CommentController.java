@@ -1,37 +1,34 @@
-package solo.blog.controller.v2;
+package solo.blog.controller.v2.comment;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import solo.blog.entity.v2.Comment;
 import solo.blog.service.v2.CommentService;
+import solo.blog.service.v2.MemberService;
+
+import java.util.List;
 
 @Controller
-@RequestMapping("/comment")
+@RequestMapping("/post/basic/postList/{postId}/comments")
+@RequiredArgsConstructor
 public class CommentController {
-
     private final CommentService commentService;
+    private final MemberService memberService;
 
-    public CommentController(CommentService commentService) {
-        this.commentService = commentService;
+    @GetMapping
+    public String getComments(@PathVariable Long postId, Model model) {
+        List<Comment> comments = commentService.getCommentsByPostId(postId);
+        model.addAttribute("comments", comments);
+        return "post/basic/post";
     }
 
     @PostMapping
-    public String addComment(@RequestParam Long postId,
-                             @RequestParam String author,
-                             @RequestParam String content) {
-        commentService.createComment(author, content, postId);
-        return "redirect:/post/basic/postList/" + postId;
-    }
-
-    @GetMapping("/{id}")
-    public String getComment(@PathVariable Long id, Model model) {
-        model.addAttribute("comment", commentService.getCommentById(id).orElseThrow(() -> new IllegalArgumentException("Invalid comment Id:" + id)));
-        return "/comment/commentForm";
-    }
-
-    @DeleteMapping("/{id}")
-    public String deleteComment(@PathVariable Long id, @RequestParam Long postId) {
-        commentService.deleteComment(id);
-        return "redirect:/post/basic/postList/" + postId;
+    public String addComment(@PathVariable Long postId, @RequestParam String content, Model model) {
+        Long memberId = 1L; // 여기에서 세션 또는 토큰에서 실제 로그인된 사용자 ID를 가져와야 합니다.
+        String author = memberService.findMember(memberId).getName();
+        commentService.addComment(postId, author, content);
+        return "redirect:/post/basic/postList/{postId}";
     }
 }
