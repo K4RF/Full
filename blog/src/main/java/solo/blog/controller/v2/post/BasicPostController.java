@@ -72,8 +72,8 @@ public class BasicPostController {
     @PostMapping("/{postId}/comments")
     public String addComment(@PathVariable Long postId,
                              @RequestParam String author,
-                             @RequestParam String content) {
-        commentService.addComment(postId, author, content);
+                             @RequestParam String comet) {
+        commentService.addComment(postId, author, comet);
         return "redirect:/post/basic/postList/" + postId;
     }
 

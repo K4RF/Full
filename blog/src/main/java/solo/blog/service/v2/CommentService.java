@@ -16,8 +16,8 @@ public class CommentService {
         return commentRepository.findByPostId(postId);
     }
 
-    public void addComment(Long postId, String author, String content) {
-        Comment comment = new Comment(postId, author, content);
+    public void addComment(Long postId, String author, String comet) {
+        Comment comment = new Comment(postId, author, comet);
         commentRepository.save(comment);
     }
 }
