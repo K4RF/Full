@@ -83,9 +83,19 @@ public class BasicPostController {
         return "post/basic/editPost";
     }
 
-    @PostMapping("/{postId}/edit")
+    //@PostMapping("/{postId}/edit")
     public String edit(@PathVariable Long postId, @ModelAttribute Post post) {
         postRepository.update(postId, post);
+        return "redirect:/post/basic/postList/{postId}";
+    }
+    @PostMapping("/{postId}/edit")
+    public String editTag(@ModelAttribute Post post, @RequestParam String tags, RedirectAttributes redirectAttributes) {
+        // 태그 갱신 로직 추가
+        Set<Tag> updatedTags = tagService.createTagsFromInput(tags);
+        post.setTags(updatedTags);
+        postRepository.save(post);
+
+        redirectAttributes.addAttribute("postId", post.getId());
         return "redirect:/post/basic/postList/{postId}";
     }
 }

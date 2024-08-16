@@ -39,11 +39,11 @@
                th:value="${post.loginId}" readonly>
     </div>
 
-    <!-- 태그 목록 -->
+    <!-- 태그 -->
     <div>
         <label for="tags">태그</label>
         <input type="text" id="tags" name="tags" class="form-control"
-               th:value="${#strings.arrayJoin(post.tags.toArray(), ', ')}" readonly>
+               th:value="${post.tagsFormatted}" readonly>
     </div>
 
     <hr class="my-4">

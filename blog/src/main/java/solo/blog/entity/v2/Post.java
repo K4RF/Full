@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -13,6 +14,7 @@ public class Post {
     private String loginId;
     private String title;
     private String content;
+
 
 
     public Post(){
@@ -37,5 +39,11 @@ public class Post {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+    // 태그를 포맷팅하는 메서드 추가
+    public String getTagsFormatted() {
+        return tags.stream()
+                .map(Tag::getName)
+                .collect(Collectors.joining(", "));
     }
 }
