@@ -10,11 +10,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import solo.blog.entity.v2.Member;
 import solo.blog.entity.v2.Post;
 import solo.blog.entity.v2.Comment;
+import solo.blog.entity.v2.Tag;
 import solo.blog.repository.v2.PostRepository;
 import solo.blog.service.v2.MemberService;
 import solo.blog.service.v2.CommentService;
+import solo.blog.service.v2.TagService;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/post/basic/postList")
@@ -23,6 +28,7 @@ public class BasicPostController {
     private final PostRepository postRepository;
     private final MemberService memberService;
     private final CommentService commentService;
+    private final TagService tagService;
 
     @GetMapping
     public String post(Model model) {
@@ -48,8 +54,22 @@ public class BasicPostController {
         return "post/basic/addPost";
     }
 
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addPostRedirect(Post post, RedirectAttributes redirectAttributes) {
+        Post savedPost = postRepository.save(post);
+        redirectAttributes.addAttribute("postId", savedPost.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/post/basic/postList/{postId}";
+    }
+    @PostMapping("/add")
+    public String addPostTag(Post post, @RequestParam String tags, RedirectAttributes redirectAttributes) {
+        Set<String> tagNames = Arrays.stream(tags.split(","))
+                .map(String::trim)
+                .collect(Collectors.toSet());
+
+        Set<Tag> tagSet = tagService.createTags(tagNames);  // 태그 생성 또는 검색
+        post.setTags(tagSet);  // 포스트에 태그 추가
+
         Post savedPost = postRepository.save(post);
         redirectAttributes.addAttribute("postId", savedPost.getId());
         redirectAttributes.addAttribute("status", true);
