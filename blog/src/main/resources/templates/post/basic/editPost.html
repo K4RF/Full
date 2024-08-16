@@ -32,6 +32,12 @@
             <label for="loginId">작성자</label>
             <input type="text" id="loginId" name="loginId" class="form-control" th:value="${post.loginId}" value="작성자" readonly>
         </div>
+        <!-- 태그 -->
+        <div>
+            <label for="tags">태그</label>
+            <input type="text" id="tags" name="tags" class="form-control"
+                   th:value="${post.tagsFormatted}">
+        </div>
         <hr class="my-4">
         <div class="row">
             <div class="col">

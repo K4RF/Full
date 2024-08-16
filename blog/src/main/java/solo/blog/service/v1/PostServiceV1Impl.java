@@ -4,10 +4,10 @@ import solo.blog.entity.v1.Member;
 import solo.blog.entity.v1.PostV1;
 import solo.blog.repository.v1.MemberRepositoryV1;
 
-public class PostServiceImpl implements PostService {
+public class PostServiceV1Impl implements PostServiceV1 {
     private final MemberRepositoryV1 memberRepositoryV1;
 
-    public PostServiceImpl(MemberRepositoryV1 memberRepositoryV1) {
+    public PostServiceV1Impl(MemberRepositoryV1 memberRepositoryV1) {
         this.memberRepositoryV1 = memberRepositoryV1;
     }
     @Override

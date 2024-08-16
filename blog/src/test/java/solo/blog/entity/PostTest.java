@@ -7,19 +7,19 @@ import solo.blog.entity.v1.Member;
 import solo.blog.entity.priory.Priory;
 import solo.blog.entity.v1.PostV1;
 import solo.blog.service.v1.MemberServiceV1;
-import solo.blog.service.v1.PostService;
+import solo.blog.service.v1.PostServiceV1;
 
 import static org.assertj.core.api.Assertions.*;
 
 public class PostTest {
     MemberServiceV1 memberServiceV1;
-    PostService postService;
+    PostServiceV1 postServiceV1;
 
     @BeforeEach
     public void beforeEach(){
         AppConfig appConfig = new AppConfig();
         memberServiceV1 = appConfig.memberService();
-        postService = appConfig.postService();
+        postServiceV1 = appConfig.postServiceV1();
     }
     @Test
     void writePost(){
@@ -30,7 +30,7 @@ public class PostTest {
         Member member = new Member("memberA", Priory.USUAL);
         memberServiceV1.join(member);
 
-        PostV1 post = postService.writePost(id, title, content, memberId);
+        PostV1 post = postServiceV1.writePost(id, title, content, memberId);
         assertThat(post.getId()).isEqualTo(1L);
     }
 }
