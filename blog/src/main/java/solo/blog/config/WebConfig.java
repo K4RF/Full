@@ -14,6 +14,7 @@ import solo.blog.controller.login.LoginArgumentResolver;
 import solo.blog.controller.login.LoginCheckInterceptor;
 import solo.blog.controller.login.LoginInterceptor;
 import solo.blog.exception.resolver.MyHandlerExceptionResolver;
+import solo.blog.exception.resolver.UserHandlerExceptionResolver;
 import solo.blog.filter.LoginCheckFilter;
 import solo.blog.filter.LoginFilter;
 
@@ -59,6 +60,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
         resolvers.add(new MyHandlerExceptionResolver());
+        resolvers.add(new UserHandlerExceptionResolver());
     }
 
     @Override
