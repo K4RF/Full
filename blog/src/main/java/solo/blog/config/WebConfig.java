@@ -54,8 +54,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error"
-                );
+                        "/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error", "/error-page/**");
     }
     @Override
     public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
