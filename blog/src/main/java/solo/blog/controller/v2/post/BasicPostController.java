@@ -107,5 +107,4 @@ public class BasicPostController {
 
         return "redirect:/post/basic/postList/{postId}";
     }
-
 }
