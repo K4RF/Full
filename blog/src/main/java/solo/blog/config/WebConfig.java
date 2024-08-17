@@ -1,16 +1,19 @@
 package solo.blog.config;
 
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.Filter;
 import org.aopalliance.intercept.Interceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import solo.blog.controller.login.LoginArgumentResolver;
 import solo.blog.controller.login.LoginCheckInterceptor;
 import solo.blog.controller.login.LoginInterceptor;
+import solo.blog.exception.resolver.MyHandlerExceptionResolver;
 import solo.blog.filter.LoginCheckFilter;
 import solo.blog.filter.LoginFilter;
 
@@ -35,6 +38,8 @@ public class WebConfig implements WebMvcConfigurer {
         filterRegistrationBean.setFilter(new LoginCheckFilter());
         filterRegistrationBean.setOrder(2);
         filterRegistrationBean.addUrlPatterns("/*");
+        filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ERROR);
+
         return filterRegistrationBean;
     }
 
@@ -43,13 +48,17 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginInterceptor())
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/*.ico", "/error");
+                .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**");
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error"
                 );
+    }
+    @Override
+    public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
+        resolvers.add(new MyHandlerExceptionResolver());
     }
 
     @Override
