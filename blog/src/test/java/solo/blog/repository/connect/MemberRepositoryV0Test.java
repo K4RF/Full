@@ -6,6 +6,7 @@ import solo.blog.entity.database.Member;
 
 import java.sql.SQLException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
@@ -16,5 +17,9 @@ class MemberRepositoryV0Test {
 //        save
         Member member = new Member("memberV0", "tester", "이름", "1234");
         repository.save(member);
+//        findById
+        Member findMember = repository.findById(member.getMemberId());
+        log.info("findMember={}", findMember);
+        assertThat(findMember).isEqualTo(member);
     }
 }

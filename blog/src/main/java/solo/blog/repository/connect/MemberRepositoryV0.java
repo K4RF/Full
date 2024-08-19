@@ -5,6 +5,7 @@ import solo.blog.entity.database.Member;
 import solo.blog.h2.DBConnectionUtil;
 
 import java.sql.*;
+import java.util.NoSuchElementException;
 
 @Slf4j
 public class MemberRepositoryV0 {
@@ -50,6 +51,34 @@ public class MemberRepositoryV0 {
             } catch (SQLException e) {
                 log.info("error", e);
             }
+        }
+    }
+
+    public Member findById(String memberId) throws SQLException {
+        String sql = "Select * from member where member_id = ?";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs=null;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                Member member = new Member();
+                member.setMemberId(rs.getString("member_Id"));
+                member.setLoginId(rs.getString("login_Id"));
+                member.setName(rs.getString("name"));
+                member.setPassword(rs.getString("password"));
+                return member;
+            } else {
+                throw new NoSuchElementException("member not found memberId=" + memberId);
+            }
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        }finally{
+            close(con, pstmt, rs);
         }
     }
 
