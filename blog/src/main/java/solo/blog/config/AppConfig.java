@@ -31,4 +31,14 @@ public class AppConfig {
         return new PostServiceV1Impl(memberRepository());
     }
 
+    /* 데이터 소스와 트랜잭션 매니저 직접 등록
+    @Bean
+    DataSource dataSource() {
+	    return new DriverManagerDataSource(URL, USERNAME, PASSWORD);
+    }
+    @Bean
+    PlatformTransactionManager transactionManager() {
+	    return new DataSourceTransactionManager(dataSource());
+    }
+     */
 }
