@@ -1,0 +1,20 @@
+package solo.blog.repository.connect;
+
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import solo.blog.entity.database.Member;
+
+import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@Slf4j
+class MemberRepositoryV0Test {
+    MemberRepositoryV0 repository = new MemberRepositoryV0();
+    @Test
+    void crud() throws SQLException {
+//        save
+        Member member = new Member("memberV0", "tester", "이름", "1234");
+        repository.save(member);
+    }
+}
