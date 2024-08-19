@@ -1,14 +1,22 @@
 package solo.blog.repository.jdbc;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.support.JdbcUtils;
 import solo.blog.entity.database.Member;
 import solo.blog.h2.DBConnectionUtil;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.NoSuchElementException;
 
 @Slf4j
-public class MemberRepositoryV0 {
+public class MemberRepositoryV1 {
+    private final DataSource dataSource;
+
+    public MemberRepositoryV1(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     public Member save(Member member) throws SQLException {
         String sql = "insert into member(member_id, login_id, name, password) values(?, ? ,? ,?)";
         Connection con = null;
@@ -29,8 +37,6 @@ public class MemberRepositoryV0 {
             close(con, pstmt, null);
         }
     }
-
-
 
     public Member findById(String memberId) throws SQLException {
         String sql = "Select * from member where member_id = ?";
@@ -104,30 +110,13 @@ public class MemberRepositoryV0 {
     }
 
     private void close(Connection con, Statement stmt, ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
+        JdbcUtils.closeResultSet(rs);
+        JdbcUtils.closeStatement(stmt);
+        JdbcUtils.closeConnection(con);
     }
 
-    private Connection getConnection() {
-        return DBConnectionUtil.getConnection();
-    }
-}
+    private Connection getConnection() throws SQLException {
+        Connection con = dataSource.getConnection();
+        log.info("getConnection={}, class={}");
+        return con;
+    }}
