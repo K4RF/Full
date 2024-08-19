@@ -24,9 +24,10 @@ class MemberRepositoryV0Test {
         assertThat(findMember).isEqualTo(member);
 
         //update: money: 10000 -> 20000
-        repository.update(member.getMemberId(), "tester", "이름변경", "1234");
+        repository.update(member.getMemberId(), "tester", "변경됨", "1234");
         Member updatedMember = repository.findById(member.getMemberId());
-        assertThat(updatedMember.getName()).isEqualTo("이름변경");
+        log.info("updatedMember={}", updatedMember);
+        assertThat(updatedMember.getName()).isEqualTo("변경됨");
 
         //delete
         repository.delete(member.getMemberId());
