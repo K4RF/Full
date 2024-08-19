@@ -1,4 +1,4 @@
-package solo.blog.repository.connect;
+package solo.blog.repository.jdbc;
 
 import lombok.extern.slf4j.Slf4j;
 import solo.blog.entity.database.Member;
@@ -79,6 +79,49 @@ public class MemberRepositoryV0 {
             throw e;
         }finally{
             close(con, pstmt, rs);
+        }
+    }
+
+    public void update(String memberId, String loginId, String name, String password) throws SQLException {
+        String sql = "update member set password=?, name=?, login_id=? where member_id=?";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, password);
+            pstmt.setString(2, name);
+            pstmt.setString(3, loginId);
+            pstmt.setString(4, memberId);
+            pstmt.executeUpdate();
+            int resultSize = pstmt.executeUpdate();
+            log.info("resultSize={}", resultSize);
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        }finally {
+            close(con, pstmt, null);
+        }
+    }
+
+    public void delete(String memberId) throws SQLException{
+        String sql = "delete from member where member_id=?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try{
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+            pstmt.executeUpdate();
+        }catch (SQLException e){
+            log.error("db error", e);
+            throw e;
+        }
+        finally {
+            close(con, pstmt, null);
+
         }
     }
 

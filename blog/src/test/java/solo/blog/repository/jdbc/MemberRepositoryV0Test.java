@@ -1,13 +1,14 @@
-package solo.blog.repository.connect;
+package solo.blog.repository.jdbc;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import solo.blog.entity.database.Member;
 
 import java.sql.SQLException;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 class MemberRepositoryV0Test {
@@ -21,5 +22,15 @@ class MemberRepositoryV0Test {
         Member findMember = repository.findById(member.getMemberId());
         log.info("findMember={}", findMember);
         assertThat(findMember).isEqualTo(member);
+
+        //update: money: 10000 -> 20000
+        repository.update(member.getMemberId(), "tester", "이름변경", "1234");
+        Member updatedMember = repository.findById(member.getMemberId());
+        assertThat(updatedMember.getName()).isEqualTo("이름변경");
+
+        //delete
+        repository.delete(member.getMemberId());
+        assertThatThrownBy(() -> repository.findById(member.getMemberId()))
+                .isInstanceOf(NoSuchElementException.class);
     }
 }
