@@ -17,8 +17,7 @@ public class PostUpdateDto {
 
     }
 
-    public PostUpdateDto(String loginId,String title, String content){
-        this.loginId = loginId;
+    public PostUpdateDto(String title, String content){
         this.title = title;
         this.content = content;
     }
