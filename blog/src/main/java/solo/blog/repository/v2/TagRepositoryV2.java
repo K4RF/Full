@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Repository
-public class TagRepository {
+public class TagRepositoryV2 {
     private Map<Long, Tag> tagStore = new HashMap<>();
     private Long currentId = 0L;
 

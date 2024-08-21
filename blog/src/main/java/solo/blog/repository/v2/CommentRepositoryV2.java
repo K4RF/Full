@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public class CommentRepository {
+public class CommentRepositoryV2 {
     private List<Comment> comments = new ArrayList<>();
 
     public List<Comment> findByPostId(Long postId) {

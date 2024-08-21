@@ -1,4 +1,4 @@
-package solo.blog.service.v3;
+package solo.blog.service.v2;
 
 import org.springframework.stereotype.Service;
 import solo.blog.entity.v2.Post;
@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class TagSearch {
+public class TagSearchV2 {
     private final PostRepositoryV2 postRepositoryV2;
-    private final TagService tagService;
+    private final TagServiceV2 tagServiceV2;
 
-    public TagSearch(PostRepositoryV2 postRepositoryV2, TagService tagService) {
+    public TagSearchV2(PostRepositoryV2 postRepositoryV2, TagServiceV2 tagServiceV2) {
         this.postRepositoryV2 = postRepositoryV2;
-        this.tagService = tagService;
+        this.tagServiceV2 = tagServiceV2;
     }
 
     public List<Post> getPostsByTag(String tagName) {
-        Tag tag = tagService.createOrGetTag(tagName);
+        Tag tag = tagServiceV2.createOrGetTag(tagName);
         return postRepositoryV2.findAll().stream()
                 .filter(post -> post.getTags().contains(tag))
                 .collect(Collectors.toList());

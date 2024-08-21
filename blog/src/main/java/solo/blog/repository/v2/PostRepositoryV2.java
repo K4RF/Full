@@ -1,7 +1,6 @@
 package solo.blog.repository.v2;
 
 import org.springframework.stereotype.Repository;
-import solo.blog.entity.v2.Member;
 import solo.blog.entity.v2.Post;
 
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class PostRepository {
+public class PostRepositoryV2 {
     private static final Map<Long, Post> store = new HashMap<>();
     private static long sequence = 0L;
 

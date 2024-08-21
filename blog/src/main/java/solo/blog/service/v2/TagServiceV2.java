@@ -2,7 +2,7 @@ package solo.blog.service.v2;
 
 import org.springframework.stereotype.Service;
 import solo.blog.entity.v2.Tag;
-import solo.blog.repository.v2.TagRepository;
+import solo.blog.repository.v2.TagRepositoryV2;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -10,18 +10,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class TagService {
-    private final TagRepository tagRepository;
+public class TagServiceV2 {
+    private final TagRepositoryV2 tagRepositoryV2;
 
-    public TagService(TagRepository tagRepository) {
-        this.tagRepository = tagRepository;
+    public TagServiceV2(TagRepositoryV2 tagRepositoryV2) {
+        this.tagRepositoryV2 = tagRepositoryV2;
     }
 
     public Tag createOrGetTag(String name) {
-        Tag tag = tagRepository.findByName(name);
+        Tag tag = tagRepositoryV2.findByName(name);
         if (tag == null) {
             tag = new Tag(name);
-            tagRepository.save(tag);
+            tagRepositoryV2.save(tag);
         }
         return tag;
     }

@@ -3,12 +3,12 @@ package solo.blog.service.v3;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import solo.blog.entity.v2.Member;
-import solo.blog.repository.v2.MemberRepository;
+import solo.blog.repository.v2.MemberRepositoryV2;
 
 @Service
 @RequiredArgsConstructor
 public class LoginService {
-    private final MemberRepository memberRepository;
+    private final MemberRepositoryV2 memberRepositoryV2;
 
     /*
         @return null 로그인 실패
@@ -26,7 +26,7 @@ public class LoginService {
         }
          */
 
-        return memberRepository.findByLoginId(loginId)
+        return memberRepositoryV2.findByLoginId(loginId)
                 .filter(m -> m.getPassword().equals(password))
                 .orElse(null);
     }

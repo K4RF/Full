@@ -2,7 +2,6 @@ package solo.blog.controller.v2;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,13 +9,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import solo.blog.entity.v2.Member;
-import solo.blog.repository.v2.MemberRepository;
+import solo.blog.repository.v2.MemberRepositoryV2;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/members")
-public class MemberController {
-    private final MemberRepository memberRepository;
+public class MemberControllerV2 {
+    private final MemberRepositoryV2 memberRepositoryV2;
 
     @GetMapping("/add")
     public String addForm(@ModelAttribute("member") Member member){
@@ -29,7 +28,7 @@ public class MemberController {
             return "members/addMemberForm";
         }
 
-        memberRepository.save(member);
+        memberRepositoryV2.save(member);
         return "redirect:/";
     }
 }

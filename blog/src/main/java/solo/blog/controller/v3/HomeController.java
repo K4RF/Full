@@ -13,13 +13,13 @@ import solo.blog.annotation.Login;
 import solo.blog.controller.session.SessionConst;
 import solo.blog.controller.session.SessionManager;
 import solo.blog.entity.v2.Member;
-import solo.blog.repository.v2.MemberRepository;
+import solo.blog.repository.v2.MemberRepositoryV2;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
-    private final MemberRepository memberRepository;
+    private final MemberRepositoryV2 memberRepositoryV2;
     private final SessionManager sessionManager;
 
     //@GetMapping("/")
@@ -34,7 +34,7 @@ public class HomeController {
             return "home";
         }
         //로그인
-        Member loginMember = memberRepository.findById(loginId);
+        Member loginMember = memberRepositoryV2.findById(loginId);
         if (loginMember == null) {
             return "home";
         }

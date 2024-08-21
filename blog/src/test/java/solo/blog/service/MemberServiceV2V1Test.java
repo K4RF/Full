@@ -11,7 +11,7 @@ import solo.blog.service.v1.MemberServiceV1;
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
-public class MemberServiceV1Test {
+public class MemberServiceV2V1Test {
     MemberServiceV1 memberServiceV1;
     @BeforeEach
     public void beforeEach(){

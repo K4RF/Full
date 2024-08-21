@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
-class MemberRepositoryV0Test {
+class MemberRepositoryV2V1Test {
     MemberRepositoryV0 repository = new MemberRepositoryV0();
     @Test
     void crud() throws SQLException {

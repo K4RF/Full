@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static solo.blog.entity.priory.Priory.ADMIN;
 import static solo.blog.entity.priory.Priory.USUAL;
 
-public class MemoryMemberRepositoryV1Test {
+public class MemoryMemberRepositoryV2V1Test {
     MemoryMemberRepositoryV1 memberRepository = MemoryMemberRepositoryV1.getInstance();
     @AfterEach
     void afterEach(){

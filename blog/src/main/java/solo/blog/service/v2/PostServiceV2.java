@@ -3,19 +3,19 @@ package solo.blog.service.v2;
 import org.springframework.stereotype.Service;
 import solo.blog.entity.v2.Post;
 import solo.blog.entity.v2.Tag;
-import solo.blog.repository.v2.PostRepository;
+import solo.blog.repository.v2.PostRepositoryV2;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class PostService {
-    private final PostRepository postRepository;
-    private final TagService tagService;
+public class PostServiceV2 {
+    private final PostRepositoryV2 postRepositoryV2;
+    private final TagServiceV2 tagServiceV2;
 
-    public PostService(PostRepository postRepository, TagService tagService) {
-        this.postRepository = postRepository;
-        this.tagService = tagService;
+    public PostServiceV2(PostRepositoryV2 postRepositoryV2, TagServiceV2 tagServiceV2) {
+        this.postRepositoryV2 = postRepositoryV2;
+        this.tagServiceV2 = tagServiceV2;
     }
 
     public Post createPost(String title, String content, String loginId, Set<String> tagNames) {
@@ -26,11 +26,11 @@ public class PostService {
 
         Set<Tag> tags = new HashSet<>();
         for (String tagName : tagNames) {
-            Tag tag = tagService.createOrGetTag(tagName);
+            Tag tag = tagServiceV2.createOrGetTag(tagName);
             tags.add(tag);
         }
         post.setTags(tags);
 
-        return postRepository.save(post);
+        return postRepositoryV2.save(post);
     }
 }
