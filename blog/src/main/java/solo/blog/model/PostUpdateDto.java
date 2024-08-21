@@ -1,6 +1,5 @@
 package solo.blog.model;
 
-<<<<<<< HEAD
 import lombok.Data;
 import solo.blog.entity.v2.Tag;
 
