@@ -1,5 +1,6 @@
 package solo.blog.model;
 
+<<<<<<< HEAD
 import lombok.Data;
 import solo.blog.entity.v2.Tag;
 
@@ -13,11 +14,11 @@ public class PostUpdateDto {
     private String content;
 
 
-    public PostUpdateDto(){
+    public PostUpdateDto() {
 
     }
 
-    public PostUpdateDto(String title, String content){
+    public PostUpdateDto(String title, String content) {
         this.title = title;
         this.content = content;
     }
@@ -35,6 +36,7 @@ public class PostUpdateDto {
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
+
     // 태그를 포맷팅하는 메서드 추가
     public String getTagsFormatted() {
         return tags.stream()
