@@ -10,9 +10,11 @@ import solo.blog.entity.v2.Member;
 import solo.blog.entity.v2.Post;
 import solo.blog.entity.v2.Tag;
 import solo.blog.repository.v2.PostRepositoryV2;
+import solo.blog.repository.v3.PostRepository;
 import solo.blog.service.v2.CommentServiceV2;
 import solo.blog.service.v2.MemberServiceV2;
 import solo.blog.service.v2.TagServiceV2;
+import solo.blog.service.v3.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,22 +25,29 @@ import java.util.stream.Collectors;
 @RequestMapping("/post/basic/postList")
 @RequiredArgsConstructor
 public class BasicPostController {
-    private final PostRepositoryV2 postRepositoryV2;
-    private final MemberServiceV2 memberServiceV2;
-    private final CommentServiceV2 commentServiceV2;
-    private final TagServiceV2 tagServiceV2;
+    private final PostRepository postRepository;
+    private final PostService postService;
+    private final MemberService memberService;
+    private final CommentService commentService;
+    private final TagService tagService;
 
     @GetMapping
+    public String postList(@ModelAttribute("postSearch") PostSearchCond postSearch, Model model) {
+        List<Post> postList = postService.findPosts(postSearch);
+        model.addAttribute("posts", posts);
+        return "post/basic/postList";
+    }
+    @GetMapping
     public String post(Model model) {
-        List<Post> posts = postRepositoryV2.findAll();
+        List<Post> posts = postRepository.findAll();
         model.addAttribute("posts", posts);
         return "post/basic/postList";
     }
 
     @GetMapping("/{postId}")
     public String post(@PathVariable long postId, Model model) {
-        Post post = postRepositoryV2.findById(postId);
-        List<Comment> comments = commentServiceV2.getCommentsByPostId(postId);
+        Post post = postRepository.findById(postId);
+        List<Comment> comments = commentService.getCommentsByPostId(postId);
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
         return "post/basic/post";
@@ -47,14 +56,14 @@ public class BasicPostController {
     @GetMapping("/add")
     public String addPostName(Model model) {
         Long memberId = 1L;
-        Member member = memberServiceV2.findMember(memberId);
+        Member member = memberService.findMember(memberId);
         model.addAttribute("member", member);
         return "post/basic/addPost";
     }
 
     //@PostMapping("/add")
     public String addPostRedirect(Post post, RedirectAttributes redirectAttributes) {
-        Post savedPost = postRepositoryV2.save(post);
+        Post savedPost = postRepository.save(post);
         redirectAttributes.addAttribute("postId", savedPost.getId());
         redirectAttributes.addAttribute("status", true);
         return "redirect:/post/basic/postList/{postId}";
@@ -65,10 +74,10 @@ public class BasicPostController {
                 .map(String::trim)
                 .collect(Collectors.toSet());
 
-        Set<Tag> tagSet = tagServiceV2.createTags(tagNames);  // 태그 생성 또는 검색
+        Set<Tag> tagSet = tagService.createTags(tagNames);  // 태그 생성 또는 검색
         post.setTags(tagSet);  // 포스트에 태그 추가
 
-        Post savedPost = postRepositoryV2.save(post);
+        Post savedPost = postRepository.save(post);
         redirectAttributes.addAttribute("postId", savedPost.getId());
         redirectAttributes.addAttribute("status", true);
         return "redirect:/post/basic/postList/{postId}";
@@ -76,29 +85,29 @@ public class BasicPostController {
 
     @GetMapping("/{postId}/edit")
     public String editPost(@PathVariable Long postId, Model model) {
-        Post post = postRepositoryV2.findById(postId);
+        Post post = postRepository.findById(postId);
         model.addAttribute("post", post);
         return "post/basic/editPost";
     }
 
     //@PostMapping("/{postId}/edit")
     public String edit(@PathVariable Long postId, @ModelAttribute Post post) {
-        postRepositoryV2.update(postId, post);
+        postRepository.update(postId, post);
         return "redirect:/post/basic/postList/{postId}";
     }
     @PostMapping("/{postId}/edit")
     public String editTag(@PathVariable Long postId, @ModelAttribute Post post, @RequestParam String tags, RedirectAttributes redirectAttributes) {
-        Post existingPost = postRepositoryV2.findById(postId);
+        Post existingPost = postRepository.findById(postId);
 
         if (existingPost != null) {
             existingPost.setTitle(post.getTitle());
             existingPost.setContent(post.getContent());
 
-            Set<Tag> updatedTags = tagServiceV2.createTagsFromInput(tags);
+            Set<Tag> updatedTags = tagService.createTagsFromInput(tags);
             existingPost.setTags(updatedTags);
 
             // 기존 포스트를 수정만 하도록 변경
-            postRepositoryV2.update(postId, existingPost);
+            postRepository.update(postId, existingPost);
 
             redirectAttributes.addAttribute("postId", existingPost.getId());
         }
