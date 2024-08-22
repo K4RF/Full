@@ -1,12 +1,13 @@
 package solo.blog.repository.v2;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ObjectUtils;
 import solo.blog.entity.v2.Post;
+import solo.blog.model.PostSearchCond;
+import solo.blog.model.PostUpdateDto;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class PostSearchRepository {
@@ -19,17 +20,31 @@ public class PostSearchRepository {
         return post;
     }
 
-    public Post findById(Long id) {
-        return store.get(id);
+    public Optional<Post> findById(Long id) {
+        return Optional.ofNullable(store.get(id));
     }
 
-    public List<Post> findAll() {
-        return new ArrayList<>(store.values());
+    public List<Post> findAll(PostSearchCond cond) {
+        String title = cond.getTitle();
+        String loginId = cond.getLoginId();
+        return store.values().stream()
+                .filter(post -> {
+                    if (ObjectUtils.isEmpty(title)) {
+                        return true;
+                    }
+                    return post.getTitle().contains(title);
+                }).filter(post -> {
+                    if (ObjectUtils.isEmpty(loginId)) {
+                        return true;
+                    }
+                    return post.getLoginId().contains(loginId);
+                })
+                .collect(Collectors.toList());
     }
 
-    public void update(Long postId, Post updateParam) {
-        Post findPost = findById(postId);
-        findPost.setLoginId(updateParam.getLoginId()); // 추가
+    public void update(Long postId, PostUpdateDto updateParam) {
+        Post findPost = findById(postId).orElseThrow();
+        findPost.setTags(updateParam.getTags()); // 추가
         findPost.setTitle(updateParam.getTitle());
         findPost.setContent(updateParam.getContent());
     }

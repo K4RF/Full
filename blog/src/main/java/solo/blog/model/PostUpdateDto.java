@@ -11,13 +11,15 @@ import java.util.stream.Collectors;
 public class PostUpdateDto {
     private String title;
     private String content;
+    private String loginId;
 
 
     public PostUpdateDto() {
 
     }
 
-    public PostUpdateDto(String title, String content) {
+    public PostUpdateDto(String loginId, String title, String content) {
+        this.loginId = loginId;
         this.title = title;
         this.content = content;
     }
