@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/postList")
+@RequestMapping("/post/search/postList")
 @RequiredArgsConstructor
 public class PostSearchController {
     private final PostSearchRepository postRepository;
@@ -38,7 +38,7 @@ public class PostSearchController {
     public String posts(@ModelAttribute("postSearch") PostSearchCond postSearch, Model model) {
         List<Post> posts = postService.findPosts(postSearch);
         model.addAttribute("posts", posts);
-        return "post/basic/postList";
+        return "post/search/postList";
     }
 
     @GetMapping("/{postId}")
@@ -47,7 +47,7 @@ public class PostSearchController {
         List<Comment> comments = commentService.getCommentsByPostId(postId);
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
-        return "post/basic/post";
+        return "post/search/post";
     }
 
     @GetMapping("/add")
@@ -55,7 +55,7 @@ public class PostSearchController {
         Long memberId = 1L;
         Member member = memberService.findMember(memberId);
         model.addAttribute("member", member);
-        return "post/basic/addPost";
+        return "post/search/addForm";
     }
 
     @PostMapping("/add")
@@ -70,19 +70,19 @@ public class PostSearchController {
         Post savedPost = postService.save(post, tagNames);
         redirectAttributes.addAttribute("postId", savedPost.getId());
         redirectAttributes.addAttribute("status", true);
-        return "redirect:/post/basic/postList/{postId}";
+        return "redirect:/post/search/postList/{postId}";
     }
 
     @GetMapping("/{postId}/edit")
     public String editPost(@PathVariable Long postId, Model model) {
         Post post = postRepository.findById(postId).get();
         model.addAttribute("post", post);
-        return "post/basic/editPost";
+        return "post/search/editForm";
     }
 
     @PostMapping("/{postId}/edit")
     public String editTag(@PathVariable Long postId, @ModelAttribute PostUpdateDto updateParam, @RequestParam String tags, RedirectAttributes redirectAttributes) {
         postService.update(postId, updateParam);
-        return "redirect:/post/basic/postList/{postId}";
+        return "redirect:/post/search/postList/{postId}";
     }
 }

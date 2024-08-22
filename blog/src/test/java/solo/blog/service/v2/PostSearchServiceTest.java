@@ -1,5 +1,6 @@
 package solo.blog.service.v2;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 @SpringBootTest
 class PostSearchServiceTest {
 
@@ -53,11 +55,13 @@ class PostSearchServiceTest {
         Post findPost = repository.findById(postId).get();
         assertThat(findPost.getTitle()).isEqualTo(updateParam.getTitle());
         assertThat(findPost.getContent()).isEqualTo(updateParam.getContent());
+        log.info("saved: {}", findPost.getLoginId());
+
     }
 
     @Test
     void findPosts() {
-        // given
+        // Given
         Post post1 = new Post("test1", "title1", "content1");
         Post post2 = new Post("test2", "title2", "content2");
         Post post3 = new Post("test3", "title3", "content3");
@@ -66,17 +70,30 @@ class PostSearchServiceTest {
         repository.save(post2);
         repository.save(post3);
 
-        // 실제 검색 테스트
-        test(null, null, post1, post2, post3); // 모든 포스트 검색
-        test("title1", null, post1); // title1만 검색
-        test("title2", null, post2); // title2만 검색
-        test(null, "test3", post3); // test3의 포스트만 검색
+        // Title 검색 테스트
+        test("title1", null, post1);
+        test("title2", null, post2);
+        test("title3", null, post3);
+
+        // loginId 검색 테스트
+        test(null, "test1", post1);
+        test(null, "test2", post2);
+        test(null, "test3", post3);
+
+        // Title과 loginId 동시 검색 테스트
+        test("title1", "test1", post1);
+        test("title2", "test2", post2);
+        test("title3", "test3", post3);
     }
 
     void test(String title, String loginId, Post... expectedPosts) {
-        List<Post> result = repository.findAll(new PostSearchCond(title, loginId));
+        // PostSearchCond에 title과 loginId를 넣어 검색 조건 생성
+        PostSearchCond cond = new PostSearchCond(loginId, title);
 
-        // 결과를 검사할 때 순서와 상관없이 포함되는지 확인
+        // 검색 결과 확인
+        List<Post> result = repository.findAll(cond);
+
+        // 예상되는 포스트와 일치하는지 확인
         assertThat(result).containsExactlyInAnyOrder(expectedPosts);
     }
 }
