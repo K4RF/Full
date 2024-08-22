@@ -6,8 +6,8 @@ import solo.blog.repository.v1.MemoryMemberRepositoryV1;
 import solo.blog.repository.v2.MemberRepository;
 import solo.blog.service.v1.MemberServiceV1;
 import solo.blog.service.v1.MemberServiceV1Impl;
-import solo.blog.service.v1.PostService;
-import solo.blog.service.v1.PostServiceImpl;
+import solo.blog.service.v1.PostServiceV1;
+import solo.blog.service.v1.PostServiceV1Impl;
 import solo.blog.service.v2.MemberService;
 
 @Configuration
@@ -27,8 +27,18 @@ public class AppConfig {
     }
 
     @Bean
-    public PostService postService(){
-        return new PostServiceImpl(memberRepository());
+    public PostServiceV1 postServiceV1(){
+        return new PostServiceV1Impl(memberRepository());
     }
 
+    /* 데이터 소스와 트랜잭션 매니저 직접 등록
+    @Bean
+    DataSource dataSource() {
+	    return new DriverManagerDataSource(URL, USERNAME, PASSWORD);
+    }
+    @Bean
+    PlatformTransactionManager transactionManager() {
+	    return new DataSourceTransactionManager(dataSource());
+    }
+     */
 }

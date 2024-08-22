@@ -1,7 +1,6 @@
 package solo.blog.repository.v2;
 
 import org.springframework.stereotype.Repository;
-import solo.blog.entity.v2.Member;
 import solo.blog.entity.v2.Post;
 
 import java.util.ArrayList;

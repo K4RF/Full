@@ -31,6 +31,12 @@
             <label for="loginId">작성자</label>
             <input type="text" id="loginId" name="loginId" class="form-control" th:value="${member.name}" readonly>
         </div>
+        <div>
+            <label for="tags">태그 (쉼표로 구분)</label>
+            <input type="text" id="tags" name="tags" class="form-control"
+                   placeholder="예: Java, Spring, Backend" required>
+        </div>
+
         <hr class="my-4">
         <div class="row">
             <div class="col">

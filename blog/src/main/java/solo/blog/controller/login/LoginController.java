@@ -32,7 +32,7 @@ public class LoginController {
         return "login/loginForm";
     }
 
-   // @PostMapping("/login")
+    // @PostMapping("/login")
     public String login(@Validated @ModelAttribute LoginForm form, BindingResult bindingResult, HttpServletResponse response) {
         if (bindingResult.hasErrors()) {
             return "login/loginForm";
@@ -83,9 +83,9 @@ public class LoginController {
         session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
         return "redirect:/";
     }
-/**
- * 로그인 이후 redirect 처리
- */
+    /**
+     * 로그인 이후 redirect 처리
+     */
     @PostMapping("/login")
     public String loginFilter(
             @Valid @ModelAttribute LoginForm form, BindingResult bindingResult,

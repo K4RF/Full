@@ -6,7 +6,7 @@ import solo.blog.entity.v2.Member;
 import solo.blog.repository.v2.MemberRepository;
 
 @Service
-public class MemberService{
+public class MemberService {
     private final MemberRepository memberRepository;
 
     public MemberService(MemberRepository memberRepository) {

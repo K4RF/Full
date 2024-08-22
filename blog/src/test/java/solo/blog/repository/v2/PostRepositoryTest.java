@@ -1,6 +1,5 @@
 package solo.blog.repository.v2;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import solo.blog.entity.v2.Post;
