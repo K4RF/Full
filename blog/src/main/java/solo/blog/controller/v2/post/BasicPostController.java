@@ -1,20 +1,19 @@
-package solo.blog.controller.v3.post;
+package solo.blog.controller.v2.post;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import solo.blog.entity.v2.Comment;
+
 import solo.blog.entity.v2.Member;
 import solo.blog.entity.v2.Post;
+import solo.blog.entity.v2.Comment;
 import solo.blog.entity.v2.Tag;
-import solo.blog.repository.v2.PostRepositoryV2;
-import solo.blog.repository.v3.PostRepository;
-import solo.blog.service.v2.CommentServiceV2;
-import solo.blog.service.v2.MemberServiceV2;
-import solo.blog.service.v2.TagServiceV2;
-import solo.blog.service.v3.*;
+import solo.blog.repository.v2.PostRepository;
+import solo.blog.service.v2.MemberService;
+import solo.blog.service.v2.CommentService;
+import solo.blog.service.v2.TagService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,17 +25,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BasicPostController {
     private final PostRepository postRepository;
-    private final PostService postService;
     private final MemberService memberService;
     private final CommentService commentService;
     private final TagService tagService;
 
-    @GetMapping
-    public String postList(@ModelAttribute("postSearch") PostSearchCond postSearch, Model model) {
-        List<Post> postList = postService.findPosts(postSearch);
-        model.addAttribute("posts", posts);
-        return "post/basic/postList";
-    }
     @GetMapping
     public String post(Model model) {
         List<Post> posts = postRepository.findAll();

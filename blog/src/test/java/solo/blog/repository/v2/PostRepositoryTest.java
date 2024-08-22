@@ -8,20 +8,20 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-class PostRepositoryV2Test {
+class PostRepositoryTest {
 
-    PostRepositoryV2 postRepositoryV2 = new PostRepositoryV2();
+    PostRepository postRepository = new PostRepository();
     @AfterEach
     void afterEach() {
-        postRepositoryV2.clearStore();
+        postRepository.clearStore();
 
     }
 
     @Test
     void save(){
         Post post = new Post("qwer", "test title1", "test content1");
-        Post savedPost = postRepositoryV2.save(post);
-        Post findPost = postRepositoryV2.findById(post.getId());
+        Post savedPost = postRepository.save(post);
+        Post findPost = postRepository.findById(post.getId());
         assertThat(findPost).isEqualTo(savedPost);
     }
 
@@ -31,10 +31,10 @@ class PostRepositoryV2Test {
         Post post1 = new Post("qwer", "test title1", "test content1");
         Post post2 = new Post("asdf", "test title2", "test content2");
 
-        postRepositoryV2.save(post1);
-        postRepositoryV2.save(post2);
+        postRepository.save(post1);
+        postRepository.save(post2);
 //      when
-        List<Post> result = postRepositoryV2.findAll();
+        List<Post> result = postRepository.findAll();
 
 //        then
         assertThat(result.size()).isEqualTo(2);
@@ -45,14 +45,14 @@ class PostRepositoryV2Test {
     void updatePost() {
 //        given
         Post post1 = new Post("qwer", "test title1", "test content1");
-        Post savedItem = postRepositoryV2.save(post1);
+        Post savedItem = postRepository.save(post1);
         Long postId = savedItem.getId();
 //        when
         Post updateParam = new Post("asdf", "test title2", "test content2");
-        postRepositoryV2.update(postId, updateParam);
+        postRepository.update(postId, updateParam);
 
 //        then
-        Post findPost = postRepositoryV2.findById(postId);
+        Post findPost = postRepository.findById(postId);
 
         assertThat(findPost.getLoginId()).isEqualTo(updateParam.getLoginId());
         assertThat(findPost.getContent()).isEqualTo(updateParam.getContent());

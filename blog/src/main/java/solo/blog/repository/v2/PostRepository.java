@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class PostRepositoryV2 {
+public class PostRepository {
     private static final Map<Long, Post> store = new HashMap<>();
     private static long sequence = 0L;
 

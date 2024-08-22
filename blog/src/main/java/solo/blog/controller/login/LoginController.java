@@ -18,13 +18,13 @@ import solo.blog.controller.session.SessionConst;
 import solo.blog.controller.session.SessionManager;
 import solo.blog.entity.v2.LoginForm;
 import solo.blog.entity.v2.Member;
-import solo.blog.service.v2.LoginServiceV2;
+import solo.blog.service.v2.LoginService;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class LoginController {
-    private final LoginServiceV2 loginServiceV2;
+    private final LoginService loginService;
     private final SessionManager sessionManager;
 
     @GetMapping("login")
@@ -37,7 +37,7 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             return "login/loginForm";
         }
-        Member loginMember = loginServiceV2.login(form.getLoginId(), form.getPassword());
+        Member loginMember = loginService.login(form.getLoginId(), form.getPassword());
         if (loginMember == null) {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
             return "login/loginForm";
@@ -52,7 +52,7 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             return "login/loginForm";
         }
-        Member loginMember = loginServiceV2.login(form.getLoginId(), form.getPassword());
+        Member loginMember = loginService.login(form.getLoginId(), form.getPassword());
         log.info("login? {}", loginMember);
         if (loginMember == null) {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
@@ -69,7 +69,7 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             return "login/loginForm";
         }
-        Member loginMember = loginServiceV2.login(form.getLoginId(),
+        Member loginMember = loginService.login(form.getLoginId(),
                 form.getPassword());
         log.info("login? {}", loginMember);
         if (loginMember == null) {
@@ -93,7 +93,7 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             return "login/loginForm";
         }
-        Member loginMember = loginServiceV2.login(form.getLoginId(),
+        Member loginMember = loginService.login(form.getLoginId(),
                 form.getPassword());
         log.info("login? {}", loginMember);
         if (loginMember == null) {

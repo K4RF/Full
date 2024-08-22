@@ -3,18 +3,18 @@ package solo.blog.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import solo.blog.repository.v1.MemoryMemberRepositoryV1;
-import solo.blog.repository.v2.MemberRepositoryV2;
+import solo.blog.repository.v2.MemberRepository;
 import solo.blog.service.v1.MemberServiceV1;
 import solo.blog.service.v1.MemberServiceV1Impl;
 import solo.blog.service.v1.PostServiceV1;
 import solo.blog.service.v1.PostServiceV1Impl;
-import solo.blog.service.v2.MemberServiceV2;
+import solo.blog.service.v2.MemberService;
 
 @Configuration
 public class AppConfig {
     @Bean
-    public MemberServiceV2 memberService(MemberRepositoryV2 memberRepositoryV2) {
-        return new MemberServiceV2(memberRepositoryV2);
+    public MemberService memberService(MemberRepository memberRepository) {
+        return new MemberService(memberRepository);
     }
    // @Bean
     public MemberServiceV1 memberService(){
