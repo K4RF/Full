@@ -27,17 +27,26 @@ public class PostSearchRepository {
     public List<Post> findAll(PostSearchCond cond) {
         String title = cond.getTitle();
         String loginId = cond.getLoginId();
+
+        // 저장된 데이터 로그 출력
+        System.out.println("Current stored posts: " + store.values());
+
         return store.values().stream()
                 .filter(post -> {
-                    if (ObjectUtils.isEmpty(title)) {
+                    if (title == null || title.isEmpty()) {
                         return true;
                     }
-                    return post.getTitle().contains(title);
-                }).filter(post -> {
-                    if (ObjectUtils.isEmpty(loginId)) {
+                    boolean titleMatch = post.getTitle().contains(title);
+                    System.out.println("Title filter: Post title: " + post.getTitle() + ", Search title: " + title + ", Match: " + titleMatch);
+                    return titleMatch;
+                })
+                .filter(post -> {
+                    if (loginId == null || loginId.isEmpty()) {
                         return true;
                     }
-                    return post.getLoginId().contains(loginId);
+                    boolean loginIdMatch = post.getLoginId().contains(loginId);
+                    System.out.println("LoginId filter: Post loginId: " + post.getLoginId() + ", Search loginId: " + loginId + ", Match: " + loginIdMatch);
+                    return loginIdMatch;
                 })
                 .collect(Collectors.toList());
     }

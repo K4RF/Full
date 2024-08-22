@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,5 +46,21 @@ public class Post {
         return tags.stream()
                 .map(Tag::getName)
                 .collect(Collectors.joining(", "));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return Objects.equals(id, post.id) &&
+                Objects.equals(loginId, post.loginId) &&
+                Objects.equals(title, post.title) &&
+                Objects.equals(content, post.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, loginId, title, content);
     }
 }
