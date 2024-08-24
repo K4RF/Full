@@ -1,4 +1,4 @@
-package solo.blog.repository.jdbcEx;
+package solo.blog.repository.jdbc.ex;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +11,7 @@ import javax.sql.DataSource;
  * JdbcTemplate 사용
  */
 @Slf4j
-public class MemberRepositoryV5 implements MemberRepository{
+public class MemberRepositoryV5 implements MemberRepository {
     private final JdbcTemplate template;
 
     public MemberRepositoryV5(DataSource dataSource) {
