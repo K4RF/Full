@@ -1,11 +1,10 @@
-package solo.blog.config;
+package solo.blog.config.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import solo.blog.repository.jdbc.JdbcTemplateRepositoryV1;
 import solo.blog.repository.jdbc.PostDBRepository;
-import solo.blog.repository.v2.PostRepository;
 import solo.blog.service.jdbc.PostDBService;
 import solo.blog.service.jdbc.PostDBServiceImpl;
 import solo.blog.service.v2.TagService;

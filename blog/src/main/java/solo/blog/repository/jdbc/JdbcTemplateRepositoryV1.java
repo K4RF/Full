@@ -85,7 +85,7 @@ public class JdbcTemplateRepositoryV1 implements PostDBRepository {
             if (andFlag) {
                 sql += " and";
             }
-            sql += " title like concat('%', ?, '%')";
+            sql += " login_id like concat('%', ?, '%')";
             param.add(loginName);
         }
         log.info("sql={}", sql);
