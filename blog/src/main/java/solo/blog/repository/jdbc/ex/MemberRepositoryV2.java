@@ -1,14 +1,25 @@
-package solo.blog.repository.jdbcEx;
+package solo.blog.repository.jdbc.ex;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import solo.blog.entity.database.Member;
-import solo.blog.h2.DBConnectionUtil;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.NoSuchElementException;
 
+/**
+ * 트랜잭션 매니저
+ */
 @Slf4j
-public class MemberRepositoryV0 {
+public class MemberRepositoryV2 {
+    private final DataSource dataSource;
+
+    public MemberRepositoryV2(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     public Member save(Member member) throws SQLException {
         String sql = "insert into member(member_id, login_id, name, password) values(?, ? ,? ,?)";
         Connection con = null;
@@ -29,8 +40,6 @@ public class MemberRepositoryV0 {
             close(con, pstmt, null);
         }
     }
-
-
 
     public Member findById(String memberId) throws SQLException {
         String sql = "Select * from member where member_id = ?";
@@ -104,30 +113,17 @@ public class MemberRepositoryV0 {
     }
 
     private void close(Connection con, Statement stmt, ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
+        JdbcUtils.closeResultSet(rs);
+        JdbcUtils.closeStatement(stmt);
+        // 주의! 트랜잭션 동기화를 사용하려면 DataSourceUtils를 사용해야 한다
+        DataSourceUtils.releaseConnection(con, dataSource);
+        //JdbcUtils.closeConnection(con);
     }
 
-    private Connection getConnection() {
-        return DBConnectionUtil.getConnection();
+    private Connection getConnection() throws SQLException {
+        // 주의! 트랜잭션 동기화를 사용하려면 DataSourceUtils를 사용해야 한다
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        log.info("getConnection={}, class={}");
+        return con;
     }
 }

@@ -1,6 +1,6 @@
-package solo.blog.repository.jdbcEx;
+package solo.blog.repository.jdbc.ex;
 
-public class MyDuplicateKeyException extends MyDbException{
+public class MyDuplicateKeyException extends MyDbException {
     public MyDuplicateKeyException() {
         super();
     }
