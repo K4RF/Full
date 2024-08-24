@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -17,46 +18,38 @@ import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 /**
- * NamedParameterJdbcTemplate
- * SqlParameterSource
- * - BeanPropertySqlParameterSource
- * - MapSqlParameterSource
- * Map
- *
- * BeanPropertyRowMapper
- *
+ * SimpleJdbcInsert
  */
 @Slf4j
 @Repository
-public class JdbcTemplateRepositoryV2 implements PostDBRepository {
+public class JdbcTemplateRepositoryV3 implements PostDBRepository {
     private final NamedParameterJdbcTemplate template;
+    private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateRepositoryV2(DataSource dataSource) {
+    public JdbcTemplateRepositoryV3(DataSource dataSource) {
         this.template = new NamedParameterJdbcTemplate(dataSource);
+        this.jdbcInsert = new SimpleJdbcInsert(dataSource)
+                .withTableName("post")
+                .usingGeneratedKeyColumns("id");
     }
 
     @Override
     public Post save(Post post) {
-        String sql = "insert into post (title, content, login_id) " + "values (:title, :content, :login_id)";
         SqlParameterSource param = new BeanPropertySqlParameterSource(post);
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        template.update(sql, param, keyHolder);
-
-        Long key = keyHolder.getKey().longValue();
-        post.setId(key);
+        Number key = jdbcInsert.executeAndReturnKey(param);
+        post.setId(key.longValue());
         return post;
     }
 
     @Override
     public void update(Long postId, PostUpdateDto updateParam) {
-        String sql = "update post " + "set title=:title, content=:content, login_id=:login_id where id=:id";
+        String sql = "update post " +
+                "set title=:title, content=:content, login_id=:login_id " + "where id=:id";
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("title", updateParam.getTitle())
                 .addValue("content", updateParam.getContent())
@@ -99,7 +92,7 @@ public class JdbcTemplateRepositoryV2 implements PostDBRepository {
             sql += " login_id like concat('%', :login_id, '%')";
         }
         log.info("sql={}", sql);
-        return template.query(sql, param, postRowMapper());
+        return template.query(sql, param,postRowMapper());
     }
 
     private RowMapper<Post> postRowMapper() {
