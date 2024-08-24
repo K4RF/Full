@@ -1,30 +1,15 @@
-package solo.blog.repository.jdbc;
+package solo.blog.repository.jdbcEx;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.jdbc.support.JdbcUtils;
-import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
-import org.springframework.jdbc.support.SQLExceptionTranslator;
 import solo.blog.entity.database.Member;
+import solo.blog.h2.DBConnectionUtil;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.NoSuchElementException;
 
-/**
- * SQLExceptionTranslator 추가
- */
 @Slf4j
-public class MemberRepositoryV4 implements MemberRepository{
-    private final DataSource dataSource;
-    private final SQLExceptionTranslator exTranslator;
-
-    public MemberRepositoryV4(DataSource dataSource) {
-        this.dataSource = dataSource;
-        this.exTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);
-    }
-    @Override
-    public Member save(Member member){
+public class MemberRepositoryV0 {
+    public Member save(Member member) throws SQLException {
         String sql = "insert into member(member_id, login_id, name, password) values(?, ? ,? ,?)";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -39,13 +24,15 @@ public class MemberRepositoryV4 implements MemberRepository{
             return member;
         } catch (SQLException e) {
             log.error("db error", e);
-            throw exTranslator.translate("save", sql, e);
+            throw e;
         }finally {
             close(con, pstmt, null);
         }
     }
-    @Override
-    public Member findById(String memberId){
+
+
+
+    public Member findById(String memberId) throws SQLException {
         String sql = "Select * from member where member_id = ?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -67,13 +54,13 @@ public class MemberRepositoryV4 implements MemberRepository{
             }
         } catch (SQLException e) {
             log.error("db error", e);
-            throw exTranslator.translate("findById", sql, e);
+            throw e;
         }finally{
             close(con, pstmt, rs);
         }
     }
-    @Override
-    public void update(String memberId, String loginId, String name, String password){
+
+    public void update(String memberId, String loginId, String name, String password) throws SQLException {
         String sql = "update member set password=?, name=?, login_id=? where member_id=?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -89,14 +76,13 @@ public class MemberRepositoryV4 implements MemberRepository{
             log.info("resultSize={}", resultSize);
         } catch (SQLException e) {
             log.error("db error", e);
-            throw exTranslator.translate("update", sql, e);
-
+            throw e;
         }finally {
             close(con, pstmt, null);
         }
     }
-    @Override
-    public void delete(String memberId){
+
+    public void delete(String memberId) throws SQLException{
         String sql = "delete from member where member_id=?";
 
         Connection con = null;
@@ -109,8 +95,7 @@ public class MemberRepositoryV4 implements MemberRepository{
             pstmt.executeUpdate();
         }catch (SQLException e){
             log.error("db error", e);
-            throw exTranslator.translate("delete", sql, e);
-
+            throw e;
         }
         finally {
             close(con, pstmt, null);
@@ -119,17 +104,30 @@ public class MemberRepositoryV4 implements MemberRepository{
     }
 
     private void close(Connection con, Statement stmt, ResultSet rs) {
-        JdbcUtils.closeResultSet(rs);
-        JdbcUtils.closeStatement(stmt);
-        // 주의! 트랜잭션 동기화를 사용하려면 DataSourceUtils를 사용해야 한다
-        DataSourceUtils.releaseConnection(con, dataSource);
-        //JdbcUtils.closeConnection(con);
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                log.info("error", e);
+            }
+        }
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+                log.info("error", e);
+            }
+        }
+        if (con != null) {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                log.info("error", e);
+            }
+        }
     }
 
-    private Connection getConnection() throws SQLException {
-        // 주의! 트랜잭션 동기화를 사용하려면 DataSourceUtils를 사용해야 한다
-        Connection con = DataSourceUtils.getConnection(dataSource);
-        log.info("getConnection={}, class={}");
-        return con;
+    private Connection getConnection() {
+        return DBConnectionUtil.getConnection();
     }
 }

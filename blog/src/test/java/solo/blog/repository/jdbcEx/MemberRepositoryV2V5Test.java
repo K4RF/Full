@@ -1,4 +1,4 @@
-package solo.blog.repository.jdbc;
+package solo.blog.repository.jdbcEx;
 
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Bean;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest

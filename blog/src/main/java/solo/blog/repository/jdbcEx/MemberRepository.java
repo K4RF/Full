@@ -1,4 +1,4 @@
-package solo.blog.repository.jdbc;
+package solo.blog.repository.jdbcEx;
 
 import solo.blog.entity.database.Member;
 

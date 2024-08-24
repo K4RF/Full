@@ -1,4 +1,4 @@
-package solo.blog.repository.jdbc;
+package solo.blog.repository.jdbcEx;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

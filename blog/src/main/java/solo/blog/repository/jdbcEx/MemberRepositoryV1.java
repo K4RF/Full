@@ -1,9 +1,8 @@
-package solo.blog.repository.jdbc;
+package solo.blog.repository.jdbcEx;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.support.JdbcUtils;
 import solo.blog.entity.database.Member;
-import solo.blog.h2.DBConnectionUtil;
 
 import javax.sql.DataSource;
 import java.sql.*;

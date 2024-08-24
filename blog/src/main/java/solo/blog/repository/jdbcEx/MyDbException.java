@@ -1,4 +1,4 @@
-package solo.blog.repository.jdbc;
+package solo.blog.repository.jdbcEx;
 
 public class MyDbException extends RuntimeException{
     public MyDbException() {

@@ -7,9 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.support.JdbcUtils;
 import solo.blog.entity.database.Member;
-import solo.blog.repository.jdbc.MemberRepositoryV3;
-import solo.blog.repository.jdbc.MyDbException;
-import solo.blog.repository.jdbc.MyDuplicateKeyException;
+import solo.blog.repository.jdbcEx.MyDbException;
+import solo.blog.repository.jdbcEx.MyDuplicateKeyException;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
