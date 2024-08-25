@@ -18,6 +18,7 @@ import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -75,25 +76,38 @@ public class JdbcTemplateRepositoryV3 implements PostDBRepository {
         String postName = cond.getTitle();
         String loginName = cond.getLoginId();
         SqlParameterSource param = new BeanPropertySqlParameterSource(cond);
-        String sql = "select id, title, content, login_id from id";
-        if (StringUtils.hasText(postName) || loginName != null) {
+
+        // 수정된 테이블 이름: post
+        String sql = "select id, title, content, login_id from post";
+
+        // 조건이 있는 경우 WHERE 절을 추가
+        if (StringUtils.hasText(postName) || StringUtils.hasText(loginName)) {
             sql += " where";
         }
 
         boolean andFlag = false;
+
+        // title로 검색하는 조건 추가
         if (StringUtils.hasText(postName)) {
             sql += " title like concat('%', :title, '%')";
             andFlag = true;
         }
+
+        // login_id로 검색하는 조건 추가
         if (StringUtils.hasText(loginName)) {
             if (andFlag) {
                 sql += " and";
             }
-            sql += " login_id like concat('%', :login_id, '%')";
+            sql += " login_id like concat('%', :loginId, '%')";
         }
-        log.info("sql={}", sql);
-        return template.query(sql, param,postRowMapper());
+
+        // SQL 쿼리 로깅
+        log.info("Generated SQL: {}", sql);
+
+        // 쿼리 실행
+        return template.query(sql, param, postRowMapper());
     }
+
 
     private RowMapper<Post> postRowMapper() {
         return BeanPropertyRowMapper.newInstance(Post.class); //camel 변환 지원

@@ -3,6 +3,7 @@ package solo.blog.repository.jdbcEx;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import solo.blog.entity.database.Member;
+import solo.blog.repository.jdbc.ex.MemberRepositoryV0;
 
 import java.sql.SQLException;
 import java.util.NoSuchElementException;

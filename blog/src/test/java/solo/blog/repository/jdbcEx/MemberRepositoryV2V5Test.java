@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import solo.blog.repository.jdbc.ex.MemberRepository;
+import solo.blog.repository.jdbc.ex.MemberRepositoryV5;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
