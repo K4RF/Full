@@ -1,21 +1,17 @@
-package solo.blog.repository.jdbc;
+package solo.blog.repository.jdbc.ex;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.jdbc.support.JdbcUtils;
 import solo.blog.entity.database.Member;
 
 import javax.sql.DataSource;
-import java.sql.*;
-import java.util.NoSuchElementException;
 
 /**
  * JdbcTemplate 사용
  */
 @Slf4j
-public class MemberRepositoryV5 implements MemberRepository{
+public class MemberRepositoryV5 implements MemberRepository {
     private final JdbcTemplate template;
 
     public MemberRepositoryV5(DataSource dataSource) {

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import solo.blog.entity.v2.Member;
 import solo.blog.entity.v2.Post;
 import solo.blog.entity.v2.Tag;
+import solo.blog.repository.jdbc.PostDBRepository;
 import solo.blog.repository.v2.MemberRepository;
 import solo.blog.repository.v2.PostRepository;
 import solo.blog.service.v2.CommentService;
@@ -22,7 +23,6 @@ public class TestDataInit {
     private final MemberRepository memberRepository;
     private final CommentService commentService;
     private final TagService tagService;  // 태그 서비스 추가
-
 
     //@PostConstruct
     public void init() {
