@@ -8,17 +8,16 @@ import org.springframework.util.StringUtils;
 import solo.blog.entity.database.Post;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
-import solo.blog.repository.jdbc.PostJdbcRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Repository
-public class JpaRepositoryV1 implements PostJPARepository {
+public class PostJpaRepositoryV1 implements PostJPARepository {
     private final EntityManager em;
 
-    public JpaRepositoryV1(EntityManager em) {
+    public PostJpaRepositoryV1(EntityManager em) {
         this.em = em;
     }
 

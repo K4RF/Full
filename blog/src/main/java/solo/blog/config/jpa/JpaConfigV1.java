@@ -3,8 +3,7 @@ package solo.blog.config.jpa;
 import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import solo.blog.repository.jpa.JpaRepositoryV1;
-import solo.blog.repository.jpa.PostJPARepository;
+import solo.blog.repository.jpa.PostJpaRepositoryV1;
 import solo.blog.service.jpa.PostJpaService;
 import solo.blog.service.jpa.PostJpaServiceImpl;
 import solo.blog.service.jpa.TagJpaService;
@@ -21,11 +20,11 @@ public class JpaConfigV1 {
 
     @Bean
     public PostJpaService postJpaService(){
-        return new PostJpaServiceImpl(repository(), tagJpaService);
+        return new PostJpaServiceImpl(postJpaRepositoryV1(), tagJpaService);
     }
 
     @Bean
-    public PostJPARepository repository(){
-        return new JpaRepositoryV1(em);
+    public PostJpaRepositoryV1 postJpaRepositoryV1(){
+        return new PostJpaRepositoryV1(em);
     }
 }
