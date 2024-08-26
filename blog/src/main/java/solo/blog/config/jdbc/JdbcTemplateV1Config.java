@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import solo.blog.repository.jdbc.JdbcTemplateRepositoryV1;
-import solo.blog.repository.jdbc.PostDBRepository;
+import solo.blog.repository.jdbc.PostJdbcRepository;
 import solo.blog.service.jdbc.PostDBService;
 import solo.blog.service.jdbc.PostDBServiceImpl;
 import solo.blog.service.v2.TagService;
@@ -18,7 +18,7 @@ public class JdbcTemplateV1Config {
     private final TagService tagService;
 
     @Bean
-    public PostDBRepository postDBRepository(){
+    public PostJdbcRepository postDBRepository(){
         return new JdbcTemplateRepositoryV1(dataSource);
     }
 

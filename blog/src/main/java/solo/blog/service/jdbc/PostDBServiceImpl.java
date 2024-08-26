@@ -4,8 +4,7 @@ import solo.blog.entity.v2.Post;
 import solo.blog.entity.v2.Tag;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
-import solo.blog.repository.jdbc.PostDBRepository;
-import solo.blog.repository.v2.PostSearchRepository;
+import solo.blog.repository.jdbc.PostJdbcRepository;
 import solo.blog.service.v2.TagService;
 
 import java.util.HashSet;
@@ -14,10 +13,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public class PostDBServiceImpl implements PostDBService{
-    private final PostDBRepository repository;
+    private final PostJdbcRepository repository;
     private final TagService tagService;
 
-    public PostDBServiceImpl(PostDBRepository repository, TagService tagService) {
+    public PostDBServiceImpl(PostJdbcRepository repository, TagService tagService) {
         this.repository = repository;
         this.tagService = tagService;
     }

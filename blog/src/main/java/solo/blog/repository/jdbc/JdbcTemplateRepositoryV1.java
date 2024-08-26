@@ -16,12 +16,11 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
 @Repository
-public class JdbcTemplateRepositoryV1 implements PostDBRepository {
+public class JdbcTemplateRepositoryV1 implements PostJdbcRepository {
     private final JdbcTemplate template;
 
     public JdbcTemplateRepositoryV1(DataSource dataSource) {

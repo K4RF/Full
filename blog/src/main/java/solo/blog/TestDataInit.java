@@ -1,13 +1,11 @@
 package solo.blog;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import solo.blog.entity.v2.Member;
 import solo.blog.entity.v2.Post;
 import solo.blog.entity.v2.Tag;
-import solo.blog.repository.jdbc.PostDBRepository;
 import solo.blog.repository.v2.MemberRepository;
 import solo.blog.repository.v2.PostRepository;
 import solo.blog.service.v2.CommentService;

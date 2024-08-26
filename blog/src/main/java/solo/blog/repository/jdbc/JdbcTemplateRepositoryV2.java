@@ -17,8 +17,6 @@ import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,7 +33,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Repository
-public class JdbcTemplateRepositoryV2 implements PostDBRepository {
+public class JdbcTemplateRepositoryV2 implements PostJdbcRepository {
     private final NamedParameterJdbcTemplate template;
 
     public JdbcTemplateRepositoryV2(DataSource dataSource) {
