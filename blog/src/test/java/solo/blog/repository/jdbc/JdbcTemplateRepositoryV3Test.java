@@ -13,12 +13,10 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import solo.blog.entity.v2.Post;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
-import solo.blog.repository.v2.PostSearchRepository;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
@@ -26,7 +24,7 @@ class JdbcTemplateRepositoryV3Test {
 
     @Autowired
     @Qualifier("postDBRepositoryV3")  // 주입할 빈의 이름을 명시적으로 지정
-    private PostDBRepository repository;
+    private PostJdbcRepository repository;
 
     @Autowired
     PlatformTransactionManager transactionManager;
