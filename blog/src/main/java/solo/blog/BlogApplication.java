@@ -3,12 +3,17 @@ package solo.blog;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import solo.blog.config.jdbc.JdbcTemplateV3Config;
+import solo.blog.config.jpa.JpaConfigV1;
 
 @Slf4j
-@Import(JdbcTemplateV3Config.class)
+@Import(JpaConfigV1.class)
 @SpringBootApplication
+@EnableJpaRepositories(basePackages = "solo.blog.repository.jpa")
+@EntityScan(basePackages = "solo.blog.entity")
 public class BlogApplication {
 
 	public static void main(String[] args) {
