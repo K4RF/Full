@@ -1,9 +1,11 @@
 package solo.blog.service.jpa;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import solo.blog.entity.database.Post;
 import solo.blog.entity.database.Tag;
 import solo.blog.model.PostSearchCond;
+import solo.blog.repository.jpa.PostJPARepository;
 import solo.blog.repository.jpa.PostJpaRepositoryV1;
 
 import java.util.List;
@@ -11,11 +13,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class TagJpaSearch {
-    private final PostJpaRepositoryV1 postJpaRepositoryV1;
+    private final PostJPARepository jpaRepository;
     private final TagJpaService tagService;
 
-    public TagJpaSearch(PostJpaRepositoryV1 postJpaRepositoryV1, TagJpaService tagService) {
-        this.postJpaRepositoryV1 = postJpaRepositoryV1;
+    public TagJpaSearch(PostJPARepository jpaRepository, TagJpaService tagService) {
+        this.jpaRepository = jpaRepository;
         this.tagService = tagService;
     }
 
@@ -27,7 +29,7 @@ public class TagJpaSearch {
         PostSearchCond searchCond = new PostSearchCond();
 
         // findAll 메서드를 호출할 때 PostSearchCond 객체를 전달
-        return postJpaRepositoryV1.findAll(searchCond).stream()
+        return jpaRepository.findAll(searchCond).stream()
                 .filter(post -> post.getTags().contains(tag))
                 .collect(Collectors.toList());
     }

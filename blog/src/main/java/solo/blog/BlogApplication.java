@@ -8,9 +8,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import solo.blog.config.jdbc.JdbcTemplateV3Config;
 import solo.blog.config.jpa.JpaConfigV1;
+import solo.blog.config.jpa.SpringDataJpaConfig;
 
 @Slf4j
-@Import(JpaConfigV1.class)
+//@Import(JpaConfigV1.class)
+@Import(SpringDataJpaConfig.class)
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "solo.blog.repository.jpa")
 @EntityScan(basePackages = "solo.blog.entity")
