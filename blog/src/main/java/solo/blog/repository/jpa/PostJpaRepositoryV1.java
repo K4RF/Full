@@ -44,29 +44,37 @@ public class PostJpaRepositoryV1 implements PostJPARepository {
     @Override
     public List<Post> findAll(PostSearchCond cond) {
         String jpql = "select i from Post i";
-        boolean andFlag = false;
+        boolean hasCondition = false;
 
         String loginId = cond.getLoginId();
         String title = cond.getTitle();
 
-        if(StringUtils.hasText(title)){
-            jpql += " i.title like concat('%', :title, '%')";
-            andFlag = true;
+        if (StringUtils.hasText(title)) {
+            jpql += " where i.title like concat('%', :title, '%')";
+            hasCondition = true;
         }
-        if(StringUtils.hasText(loginId)){
-            if(andFlag){
+
+        if (StringUtils.hasText(loginId)) {
+            if (hasCondition) {
                 jpql += " and";
+            } else {
+                jpql += " where";
             }
-            jpql += " i.login_id like concat ('%', :login_id, '%')";
+            jpql += " i.loginId like concat('%', :loginId, '%')";
         }
-        log.info("jpql={}", jpql);
+
+        log.info("Generated JPQL: {}", jpql);
+
         TypedQuery<Post> query = em.createQuery(jpql, Post.class);
+
         if (StringUtils.hasText(title)) {
             query.setParameter("title", title);
         }
+
         if (StringUtils.hasText(loginId)) {
-            query.setParameter("login_id", loginId);
+            query.setParameter("loginId", loginId);
         }
+
         return query.getResultList();
     }
 }
