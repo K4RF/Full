@@ -10,18 +10,18 @@ import solo.blog.service.jpa.PostJpaService;
 import solo.blog.service.jpa.PostJpaServiceImpl;
 import solo.blog.service.jpa.TagJpaService;
 
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
 public class SpringDataJpaConfig {
     private final SpringDataJpaRepository springDataJpaRepository;
     private final TagJpaService tagJpaService;
 
-    @Bean
+    @Bean(name = "jpaRepositoryV2")
     public PostJPARepository jpaRepositoryV2(){
         return new PostJpaRepositoryV2(springDataJpaRepository);
     }
 
-    @Bean
+    @Bean(name = "postJpaServiceV2Spring")
     public PostJpaService postJpaServiceV2(){
         return new PostJpaServiceImpl(jpaRepositoryV2(), tagJpaService);
     }
