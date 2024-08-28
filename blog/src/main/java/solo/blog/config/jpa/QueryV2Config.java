@@ -11,9 +11,9 @@ import solo.blog.service.jpa.TagJpaService;
 
 @Configuration
 @RequiredArgsConstructor
-public class V3Config {
+public class QueryV2Config {
     private final EntityManager em;
-    private final JpaRepositoryV2 jpaRepositoryV3;  // Spring Data JPA
+    private final JpaRepositoryV2 jpaRepositoryExt;  // Spring Data JPA
     private final TagJpaService tagJpaService;
 
     @Bean
@@ -21,13 +21,13 @@ public class V3Config {
         return new PostQueryRepository(em);
     }
 
-    @Bean(name = "postJPARepositoryV3")
-    public PostJPARepository postJPARepositoryV3(){
+    @Bean(name = "postJpaRepositoryQueryExt")
+    public PostJPARepository postJpaRepositoryQueryExt() {
         return new PostJpaRepositoryV3(em);
     }
 
     @Bean(name = "postJpaServiceV3")
     public PostJpaService postJpaServiceV3(){
-        return new PostJpaServiceV2(jpaRepositoryV3, postQueryRepository());
+        return new PostJpaServiceV2(jpaRepositoryExt, postQueryRepository());
     }
 }
