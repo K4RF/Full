@@ -8,7 +8,7 @@ import solo.blog.model.PostUpdateDto;
 import java.util.List;
 import java.util.Optional;
 
-public interface PostJPARepository {
+public interface JpaRepository {
     Post save(Post post);
     void update(Long postId, PostUpdateDto updateParam);
 

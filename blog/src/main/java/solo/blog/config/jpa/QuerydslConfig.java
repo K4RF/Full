@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import solo.blog.repository.jpa.PostJPARepository;
+import solo.blog.repository.jpa.JpaRepository;
 import solo.blog.repository.jpa.PostJpaRepositoryV3;
 import solo.blog.service.jpa.PostJpaService;
 import solo.blog.service.jpa.PostJpaServiceImpl;
@@ -17,7 +17,7 @@ public class QuerydslConfig {
     private final TagJpaService tagJpaService;
 
     @Bean
-    PostJPARepository postJPARepositoryQuery(){
+    JpaRepository postJPARepositoryQuery(){
         return new PostJpaRepositoryV3(em);
     }
 

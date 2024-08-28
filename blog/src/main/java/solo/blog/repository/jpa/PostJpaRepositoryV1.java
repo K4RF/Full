@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Slf4j
 @Repository
-public class PostJpaRepositoryV1 implements PostJPARepository {
+public class PostJpaRepositoryV1 implements JpaRepository {
     private final EntityManager em;
 
     public PostJpaRepositoryV1(EntityManager em) {

@@ -4,11 +4,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import solo.blog.entity.database.Post;
-import solo.blog.entity.database.QPost;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
 
@@ -19,7 +17,7 @@ import static solo.blog.entity.database.QPost.post;
 
 @Slf4j
 @Repository
-public class PostJpaRepositoryV3 implements PostJPARepository {
+public class PostJpaRepositoryV3 implements JpaRepository {
     private final EntityManager em;
     private final JPAQueryFactory query;
 
@@ -27,7 +25,6 @@ public class PostJpaRepositoryV3 implements PostJPARepository {
         this.em = em;
         this.query = new JPAQueryFactory(em);
     }
-
 
     @Override
     public Post save(Post post) {
@@ -49,55 +46,29 @@ public class PostJpaRepositoryV3 implements PostJPARepository {
         return Optional.ofNullable(post);
     }
 
-    //@Override
-    /*public List<Post> findAllOld(PostSearchCond cond) {
-
-        String loginId = cond.getLoginId();
-        String title = cond.getTitle();
-
-        QPost post = QPost.post;
-        BooleanBuilder builder = new BooleanBuilder();
-        if (StringUtils.hasText(title)) {
-            builder.and(post.title.like("%" + title + "%"));
-        }
-        if (StringUtils.hasText(loginId)) {
-            builder.and(post.loginId.like("%" + loginId + "%"));
-        }
-        List<Post> result = query
-                .select(post)
-                .from(post)
-                .where(builder)
-                .fetch();
-        return result;
-    }
-
-     */
-
     @Override
     public List<Post> findAll(PostSearchCond cond) {
-
         String loginId = cond.getLoginId();
         String title = cond.getTitle();
 
         List<Post> result = query
                 .select(post)
                 .from(post)
-                .where(likeTitle(title), likeLoginId(loginId))
+                .where(
+                        likeTitle(title),
+                        likeLoginId(loginId)
+                )
                 .fetch();
+
+        log.info("Generated Query Result: {}", result);
         return result;
     }
 
     private BooleanExpression likeTitle(String title) {
-        if (StringUtils.hasText(title)) {
-            return post.title.like("%" + title + "%");
-        }
-        return null;
+        return StringUtils.hasText(title) ? post.title.like("%" + title + "%") : null;
     }
 
     private BooleanExpression likeLoginId(String loginId) {
-        if (StringUtils.hasText(loginId)) {
-            return post.title.like("%" + loginId + "%");
-        }
-        return null;
+        return StringUtils.hasText(loginId) ? post.loginId.like("%" + loginId + "%") : null;
     }
 }

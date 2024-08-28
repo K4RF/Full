@@ -1,6 +1,5 @@
 package solo.blog.repository.jpa;
 
-import jakarta.persistence.TypedQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -13,7 +12,7 @@ import java.util.Optional;
 
 @Slf4j
 @Repository
-public class PostJpaRepositoryV2 implements PostJPARepository {
+public class PostJpaRepositoryV2 implements JpaRepository {
     private final SpringDataJpaRepository repository;
 
     public PostJpaRepositoryV2(SpringDataJpaRepository repository) {

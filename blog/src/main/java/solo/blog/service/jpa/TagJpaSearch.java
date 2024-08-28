@@ -1,22 +1,20 @@
 package solo.blog.service.jpa;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import solo.blog.entity.database.Post;
 import solo.blog.entity.database.Tag;
 import solo.blog.model.PostSearchCond;
-import solo.blog.repository.jpa.PostJPARepository;
-import solo.blog.repository.jpa.PostJpaRepositoryV1;
+import solo.blog.repository.jpa.JpaRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class TagJpaSearch {
-    private final PostJPARepository jpaRepository;
+    private final JpaRepository jpaRepository;
     private final TagJpaService tagService;
 
-    public TagJpaSearch(PostJPARepository jpaRepository, TagJpaService tagService) {
+    public TagJpaSearch(JpaRepository jpaRepository, TagJpaService tagService) {
         this.jpaRepository = jpaRepository;
         this.tagService = tagService;
     }
