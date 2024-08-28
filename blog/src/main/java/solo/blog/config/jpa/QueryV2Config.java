@@ -26,8 +26,8 @@ public class QueryV2Config {
         return new PostJpaRepositoryV3(em);
     }
 
-    @Bean(name = "postJpaServiceV3")
-    public PostJpaService postJpaServiceV3(){
+    @Bean(name = "postJpaServiceV3Ext")
+    public PostJpaService postJpaServiceV3Ext(){
         return new PostJpaServiceV2(jpaRepositoryExt, postQueryRepository(), tagJpaService);
     }
 }

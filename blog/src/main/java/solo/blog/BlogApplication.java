@@ -12,8 +12,8 @@ import solo.blog.config.jpa.QuerydslConfig;
 @Slf4j
 //@Import(JpaConfigV1.class)
 //@Import(SpringDataJpaConfig.class)
-@Import(QuerydslConfig.class)
-//@Import(QueryV2Config.class)
+//@Import(QuerydslConfig.class)
+@Import(QueryV2Config.class)
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "solo.blog.repository.jpa")
 @EntityScan(basePackages = "solo.blog.entity")
