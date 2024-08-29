@@ -4,11 +4,11 @@ import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import solo.blog.repository.jpa.JpaRepository;
-import solo.blog.repository.jpa.PostJpaRepositoryV1;
-import solo.blog.service.jpa.PostJpaService;
-import solo.blog.service.jpa.PostJpaServiceImpl;
-import solo.blog.service.jpa.TagJpaService;
+import solo.blog.repository.jpa.post.JpaRepository;
+import solo.blog.repository.jpa.post.PostJpaRepositoryV1;
+import solo.blog.service.jpa.post.PostJpaService;
+import solo.blog.service.jpa.post.PostJpaServiceImpl;
+import solo.blog.service.jpa.post.TagJpaService;
 
 @Configuration
 public class JpaConfigV1 {

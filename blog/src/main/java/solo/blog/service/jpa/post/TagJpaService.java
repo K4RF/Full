@@ -1,8 +1,8 @@
-package solo.blog.service.jpa;
+package solo.blog.service.jpa.post;
 
 import org.springframework.stereotype.Service;
 import solo.blog.entity.database.Tag;
-import solo.blog.repository.jpa.TagJpaRepository;
+import solo.blog.repository.jpa.post.TagJpaRepository;
 
 import java.util.Arrays;
 import java.util.HashSet;

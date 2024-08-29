@@ -1,4 +1,4 @@
-package solo.blog.repository.jpa;
+package solo.blog.repository.jpa.post;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import solo.blog.entity.database.Post;

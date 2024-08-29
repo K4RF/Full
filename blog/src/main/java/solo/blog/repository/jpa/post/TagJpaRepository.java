@@ -1,4 +1,4 @@
-package solo.blog.repository.jpa;
+package solo.blog.repository.jpa.post;
 
 import org.springframework.stereotype.Repository;
 import solo.blog.entity.database.Tag;

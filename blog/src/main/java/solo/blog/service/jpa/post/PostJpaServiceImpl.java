@@ -1,10 +1,10 @@
-package solo.blog.service.jpa;
+package solo.blog.service.jpa.post;
 
 import solo.blog.entity.database.Post;
 import solo.blog.entity.database.Tag;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
-import solo.blog.repository.jpa.JpaRepository;
+import solo.blog.repository.jpa.post.JpaRepository;
 
 import java.util.HashSet;
 import java.util.List;

@@ -1,4 +1,4 @@
-package solo.blog.repository.jpa;
+package solo.blog.repository.jpa.post;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;

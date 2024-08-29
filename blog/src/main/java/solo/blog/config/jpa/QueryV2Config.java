@@ -4,10 +4,13 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import solo.blog.repository.jpa.*;
-import solo.blog.service.jpa.PostJpaService;
-import solo.blog.service.jpa.PostJpaServiceV2;
-import solo.blog.service.jpa.TagJpaService;
+import solo.blog.repository.jpa.post.JpaRepository;
+import solo.blog.repository.jpa.post.JpaRepositoryV2;
+import solo.blog.repository.jpa.post.PostJpaRepositoryV3;
+import solo.blog.repository.jpa.post.PostQueryRepository;
+import solo.blog.service.jpa.post.PostJpaService;
+import solo.blog.service.jpa.post.PostJpaServiceV2;
+import solo.blog.service.jpa.post.TagJpaService;
 
 @Configuration
 @RequiredArgsConstructor

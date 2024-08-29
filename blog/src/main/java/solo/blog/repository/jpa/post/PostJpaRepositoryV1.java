@@ -1,4 +1,4 @@
-package solo.blog.repository.jpa;
+package solo.blog.repository.jpa.post;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;

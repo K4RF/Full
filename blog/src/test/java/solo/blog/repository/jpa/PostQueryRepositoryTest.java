@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import solo.blog.entity.database.Post;
 import solo.blog.model.PostSearchCond;
+import solo.blog.repository.jpa.post.PostJpaRepositoryV3;
+import solo.blog.repository.jpa.post.PostQueryRepository;
 
 import java.util.List;
 

@@ -3,12 +3,12 @@ package solo.blog.config.jpa;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import solo.blog.repository.jpa.JpaRepository;
-import solo.blog.repository.jpa.PostJpaRepositoryV2;
-import solo.blog.repository.jpa.SpringDataJpaRepository;
-import solo.blog.service.jpa.PostJpaService;
-import solo.blog.service.jpa.PostJpaServiceImpl;
-import solo.blog.service.jpa.TagJpaService;
+import solo.blog.repository.jpa.post.JpaRepository;
+import solo.blog.repository.jpa.post.PostJpaRepositoryV2;
+import solo.blog.repository.jpa.post.SpringDataJpaRepository;
+import solo.blog.service.jpa.post.PostJpaService;
+import solo.blog.service.jpa.post.PostJpaServiceImpl;
+import solo.blog.service.jpa.post.TagJpaService;
 
 @Configuration
 @RequiredArgsConstructor
