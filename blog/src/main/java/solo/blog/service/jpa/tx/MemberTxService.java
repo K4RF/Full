@@ -28,6 +28,8 @@ public class MemberTxService {
         logRepository.save(logMessage);
         log.info("== logRepository 호출 종료 ==");
     }
+
+    @Transactional
     public void joinV2(Member member) {
         Log logMessage = new Log(member.getName());
 
