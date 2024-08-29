@@ -3,6 +3,7 @@ package solo.blog.service.jpa.tx;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import solo.blog.entity.database.tx.Log;
 import solo.blog.entity.database.tx.Member;
 import solo.blog.repository.jpa.tx.LogRepository;
@@ -15,6 +16,7 @@ public class MemberTxService {
     private final MemberTxRepository memberTxRepository;
     private final LogRepository logRepository;
 
+    @Transactional
     public void joinV1(Member member) {
         Log logMessage = new Log(member.getName());
 
