@@ -1,11 +1,11 @@
 drop table member if exists cascade;
-create table member (
-                        member_id varchar(10),
-                        login_id varchar(10) not null,
-                        name varchar(10) not null,
-                        password varchar(10) not null,
-                        primary key (member_id)
+CREATE TABLE member (
+                        ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        LOGIN_ID VARCHAR(255) NOT NULL,
+                        NAME VARCHAR(255) NOT NULL,
+                        PASSWORD VARCHAR(255) NOT NULL
 );
+
 
 -- Post 테이블 생성
 drop table if exists post CASCADE;

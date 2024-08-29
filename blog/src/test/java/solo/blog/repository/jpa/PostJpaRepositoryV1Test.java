@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import solo.blog.entity.database.Post;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
+import solo.blog.repository.jpa.post.PostJpaRepositoryV1;
 
 import java.util.List;
 

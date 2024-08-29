@@ -1,4 +1,4 @@
-package solo.blog.service.jpa;
+package solo.blog.service.jpa.post;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -7,8 +7,8 @@ import solo.blog.entity.database.Post;
 import solo.blog.entity.database.Tag;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
-import solo.blog.repository.jpa.JpaRepositoryV2;
-import solo.blog.repository.jpa.PostQueryRepository;
+import solo.blog.repository.jpa.post.JpaRepositoryV2;
+import solo.blog.repository.jpa.post.PostQueryRepository;
 
 import java.util.HashSet;
 import java.util.List;

@@ -1,4 +1,4 @@
-package solo.blog.repository.jpa;
+package solo.blog.repository.jpa.post;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
