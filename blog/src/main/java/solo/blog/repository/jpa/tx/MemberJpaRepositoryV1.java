@@ -2,6 +2,7 @@ package solo.blog.repository.jpa.tx;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import org.springframework.stereotype.Repository;
 import solo.blog.entity.database.tx.Member;
 import solo.blog.entity.database.tx.QMember;
 
@@ -9,8 +10,8 @@ import solo.blog.entity.database.tx.QMember;
 import java.util.List;
 import java.util.Optional;
 
-import static solo.blog.entity.database.tx.QMember.*;
 
+@Repository
 public class MemberJpaRepositoryV1 implements MemberJpaRepository{
     private final EntityManager em;
     private final JPAQueryFactory query;
