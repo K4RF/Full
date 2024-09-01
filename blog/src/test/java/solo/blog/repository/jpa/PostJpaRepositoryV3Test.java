@@ -1,4 +1,4 @@
-package solo.blog.repository.jdbc;
+package solo.blog.repository.jpa;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -7,12 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import solo.blog.entity.v2.Post;
+import org.springframework.transaction.annotation.Transactional;
+import solo.blog.entity.database.Post;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
+import solo.blog.repository.jpa.post.PostJpaRepositoryV3;
 
 import java.util.List;
 
@@ -20,25 +19,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SpringBootTest
-class JdbcTemplateRepositoryV3Test {
+@Transactional // 각 테스트가 자동으로 트랜잭션 내에서 실행되며, 테스트 후 롤백됩니다.
+class PostJpaRepositoryV3Test {
 
     @Autowired
-    @Qualifier("postDBRepositoryV3")  // 주입할 빈의 이름을 명시적으로 지정
-    private PostJdbcRepository repository;
-
-    @Autowired
-    PlatformTransactionManager transactionManager;
-    TransactionStatus status;
+    @Qualifier("postJpaRepositoryV3")  // 정확한 빈 이름을 명시
+    private PostJpaRepositoryV3 repository;
 
     @BeforeEach
-    void beforeEach(){
-        // 트랜잭션 시작
-        status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+    void beforeEach() {
+        // 추가 초기화가 필요한 경우 여기에 작성
     }
 
     @AfterEach
     void afterEach() {
-        transactionManager.rollback(status);
+        // 리소스 정리가 필요한 경우 여기에 작성
     }
 
     @Test
@@ -50,7 +45,8 @@ class JdbcTemplateRepositoryV3Test {
         Post savedPost = repository.save(post);
 
         // then
-        Post findPost = repository.findById(savedPost.getId()).get();
+        Post findPost = repository.findById(savedPost.getId()).orElse(null);
+        assertThat(findPost).isNotNull();  // 데이터가 제대로 저장되었는지 확인
         assertThat(findPost).isEqualTo(savedPost);
     }
 
@@ -63,14 +59,18 @@ class JdbcTemplateRepositoryV3Test {
 
         // when
         PostUpdateDto updateParam = new PostUpdateDto("test1", "title2", "content2");
-        repository.update(postId, updateParam);
+
+        // 업데이트 방식이 save를 사용하는 방식으로 변경
+        Post updatedPost = repository.findById(postId).orElseThrow();
+        updatedPost.setTitle(updateParam.getTitle());
+        updatedPost.setContent(updateParam.getContent());
+        repository.save(updatedPost); // save 메서드를 사용하여 업데이트
 
         // then
         Post findPost = repository.findById(postId).get();
         assertThat(findPost.getTitle()).isEqualTo(updateParam.getTitle());
         assertThat(findPost.getContent()).isEqualTo(updateParam.getContent());
         log.info("saved: {}", findPost.getLoginId());
-
     }
 
     @Test

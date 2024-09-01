@@ -1,13 +1,14 @@
-package solo.blog.repository.jdbc;
+package solo.blog.repository.jpa.post;
 
-import solo.blog.entity.v2.Post;
+
+import solo.blog.entity.database.Post;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface PostDBRepository {
+public interface JpaRepository {
     Post save(Post post);
     void update(Long postId, PostUpdateDto updateParam);
 
