@@ -6,14 +6,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import solo.blog.config.jpa.QueryV2Config;
-import solo.blog.config.jpa.QuerydslConfig;
+import solo.blog.config.jpa.MemberPostConfig;
 
 @Slf4j
 //@Import(JpaConfigV1.class)
 //@Import(SpringDataJpaConfig.class)
 //@Import(QuerydslConfig.class)
-@Import(QueryV2Config.class)
+@Import(MemberPostConfig.class)
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "solo.blog.repository.jpa")
 @EntityScan(basePackages = "solo.blog.entity")

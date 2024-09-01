@@ -11,8 +11,12 @@ import java.util.List;
 import java.util.Optional;
 
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
+
+@Slf4j
 @Repository
-public class MemberJpaRepositoryV1 implements MemberJpaRepository{
+public class MemberJpaRepositoryV1 implements MemberJpaRepository {
     private final EntityManager em;
     private final JPAQueryFactory query;
 
@@ -23,35 +27,42 @@ public class MemberJpaRepositoryV1 implements MemberJpaRepository{
 
     @Override
     public Member save(Member member) {
+        log.info("Saving member: {}", member);
         em.persist(member);
         return member;
     }
 
     @Override
     public Optional<Member> findById(Long id) {
+        log.info("Finding member by ID: {}", id);
         Member member = em.find(Member.class, id);
         return Optional.ofNullable(member);
     }
 
-
     @Override
     public Optional<Member> findByLoginId(String loginId) {
-        QMember member = QMember.member;  // QueryDSL의 Q 타입 클래스 사용
+        log.info("Finding member by Login ID: {}", loginId);
+        QMember member = QMember.member;
 
         Member foundMember = query
                 .selectFrom(member)
                 .where(member.loginId.eq(loginId))
                 .fetchOne();
 
+        log.info("Found member: {}", foundMember);
         return Optional.ofNullable(foundMember);
     }
 
     @Override
     public List<Member> findAll() {
+        log.info("Finding all members");
         QMember member = QMember.member;
 
-        return query
+        List<Member> members = query
                 .selectFrom(member)
                 .fetch();
+
+        log.info("Found {} members", members.size());
+        return members;
     }
 }
