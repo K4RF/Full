@@ -47,7 +47,7 @@ public class MemberPostConfig {
         return new MemberJpaRepositoryV1(em);
     }
 
-    @Bean
+    @Bean(name = "memberJpaService")
     public MemberJpaService memberJpaService() {
         return new MemberJpaServiceImpl(memberJpaRepository());
     }

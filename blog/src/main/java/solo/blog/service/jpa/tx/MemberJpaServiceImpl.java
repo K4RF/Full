@@ -1,5 +1,6 @@
 package solo.blog.service.jpa.tx;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import solo.blog.entity.database.tx.Member;
 import solo.blog.repository.jpa.tx.MemberJpaRepository;
@@ -8,6 +9,7 @@ import java.util.Optional;
 
 
 @Service
+@Primary
 public class MemberJpaServiceImpl implements MemberJpaService{
     private final MemberJpaRepository memberJpaRepository;
 

@@ -36,7 +36,7 @@ public class PostJpaController {
     public String posts(@ModelAttribute("postSearch") PostSearchCond postSearch, Model model) {
         List<Post> posts = postService.findPosts(postSearch);
         model.addAttribute("posts", posts);
-        return "post/search/postList";
+        return "post/jpa/postList";
     }
 
     @GetMapping("/{postId}")
@@ -45,7 +45,7 @@ public class PostJpaController {
         List<Comment> comments = commentService.getCommentsByPostId(postId);
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
-        return "post/search/post";
+        return "post/jpa/post";
     }
 
     @GetMapping("/add")
@@ -53,7 +53,7 @@ public class PostJpaController {
         Long memberId = 1L;
         Member member = memberService.findMember(memberId).orElseThrow();
         model.addAttribute("member", member);
-        return "post/search/addForm";
+        return "post/jpa/addForm";
     }
 
     @PostMapping("/add")
@@ -68,19 +68,19 @@ public class PostJpaController {
         Post savedPost = postService.save(post, tagNames);
         redirectAttributes.addAttribute("postId", savedPost.getId());
         redirectAttributes.addAttribute("status", true);
-        return "redirect:/post/search/postList/{postId}";
+        return "redirect:/post/jpa/postList/{postId}";
     }
 
     @GetMapping("/{postId}/edit")
     public String editPost(@PathVariable Long postId, Model model) {
         Post post = postRepository.findById(postId).get();  // 변경된 부분
         model.addAttribute("post", post);
-        return "post/search/editForm";
+        return "post/jpa/editForm";
     }
 
     @PostMapping("/{postId}/edit")
     public String editTag(@PathVariable Long postId, @ModelAttribute PostUpdateDto updateParam, @RequestParam String tags, RedirectAttributes redirectAttributes) {
         postService.update(postId, updateParam);
-        return "redirect:/post/search/postList/{postId}";
+        return "redirect:/post/jpa/postList/{postId}";
     }
 }

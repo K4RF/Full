@@ -1,6 +1,7 @@
 package solo.blog.service.jpa;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import solo.blog.entity.database.Comment;
 import solo.blog.repository.jpa.CommentJpaRepository;
@@ -8,6 +9,7 @@ import solo.blog.repository.jpa.CommentJpaRepository;
 import java.util.List;
 
 @Service
+@Primary
 @RequiredArgsConstructor
 public class CommentJpaServiceImpl implements CommentJpaService{
     private final CommentJpaRepository commentJpaRepository;

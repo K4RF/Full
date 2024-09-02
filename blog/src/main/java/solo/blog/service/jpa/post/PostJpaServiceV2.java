@@ -1,6 +1,7 @@
 package solo.blog.service.jpa.post;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solo.blog.entity.database.Post;
@@ -18,6 +19,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Primary
 public class PostJpaServiceV2 implements PostJpaService {
     private final JpaRepositoryV2 jpaRepositoryV2;
     private final PostQueryRepository postQueryRepository;
