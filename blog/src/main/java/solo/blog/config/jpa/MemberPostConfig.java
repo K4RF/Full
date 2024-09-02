@@ -4,12 +4,16 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import solo.blog.repository.jpa.CommentJpaRepository;
+import solo.blog.repository.jpa.CommentJpaRepositoryV1;
 import solo.blog.repository.jpa.post.JpaRepository;
 import solo.blog.repository.jpa.post.JpaRepositoryV2;
 import solo.blog.repository.jpa.post.PostJpaRepositoryV3;
 import solo.blog.repository.jpa.post.PostQueryRepository;
 import solo.blog.repository.jpa.tx.MemberJpaRepository;
 import solo.blog.repository.jpa.tx.MemberJpaRepositoryV1;
+import solo.blog.service.jpa.CommentJpaService;
+import solo.blog.service.jpa.CommentJpaServiceImpl;
 import solo.blog.service.jpa.post.PostJpaService;
 import solo.blog.service.jpa.post.PostJpaServiceV2;
 import solo.blog.service.jpa.post.TagJpaService;
@@ -43,8 +47,18 @@ public class MemberPostConfig {
         return new MemberJpaRepositoryV1(em);
     }
 
-    @Bean
+    @Bean(name = "memberJpaService")
     public MemberJpaService memberJpaService() {
         return new MemberJpaServiceImpl(memberJpaRepository());
+    }
+
+    @Bean
+    public CommentJpaRepository commentJpaRepository(){
+        return new CommentJpaRepositoryV1(em);
+    }
+
+    @Bean
+    public CommentJpaService commentJpaService(){
+        return new CommentJpaServiceImpl(commentJpaRepository());
     }
 }

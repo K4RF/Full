@@ -25,7 +25,7 @@ public class TestDataInitJDBC {
     private final CommentService commentService;
     private final TagService tagService;
 
-    @PostConstruct
+    //@PostConstruct
     public void init() {
         // 태그 생성
         Set<Tag> tagsForPost1 = tagService.createTags(Set.of("Java", "Spring"));
