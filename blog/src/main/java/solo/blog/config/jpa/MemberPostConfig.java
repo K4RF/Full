@@ -58,7 +58,7 @@ public class MemberPostConfig {
     }
 
     @Bean
-    public CommentJpaService commentJpaService(){
-        return new CommentJpaServiceImpl(commentJpaRepository());
+    public CommentJpaService commentJpaService() {
+        return new CommentJpaServiceImpl(commentJpaRepository(), jpaRepositoryExt);
     }
 }

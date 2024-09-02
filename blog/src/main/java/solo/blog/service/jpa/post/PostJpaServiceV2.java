@@ -23,15 +23,12 @@ import java.util.Set;
 public class PostJpaServiceV2 implements PostJpaService {
     private final JpaRepositoryV2 jpaRepositoryV2;
     private final PostQueryRepository postQueryRepository;
-    private final TagJpaService tagService;
+    private final TagJpaService tagJpaService;
 
-    @Override
+    @Transactional
     public Post save(Post post, Set<String> tagNames) {
-        // 태그 처리
-        Set<Tag> tags = processTags(tagNames);
+        Set<Tag> tags = tagJpaService.createTags(tagNames);
         post.setTags(tags);
-
-        // 게시물 저장
         return jpaRepositoryV2.save(post);
     }
 
@@ -57,7 +54,7 @@ public class PostJpaServiceV2 implements PostJpaService {
     private Set<Tag> processTags(Set<String> tagNames) {
         Set<Tag> tags = new HashSet<>();
         for (String tagName : tagNames) {
-            Tag tag = tagService.createOrGetTag(tagName);
+            Tag tag = tagJpaService.createOrGetTag(tagName);
             tags.add(tag);
         }
         return tags;

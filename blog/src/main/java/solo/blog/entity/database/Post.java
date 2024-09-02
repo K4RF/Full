@@ -5,14 +5,14 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
-@Getter
-@Setter
 @Data
 @Entity
 public class Post {
@@ -36,7 +36,8 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private Set<Tag> tags = new HashSet<>();  // 변경: 자료형을 Set으로 유지
+    @ToString.Exclude // 순환 참조 방지를 위해 추가
+    private Set<Tag> tags = new HashSet<>();
 
     public Post() {
     }
@@ -46,7 +47,6 @@ public class Post {
         this.title = title;
         this.content = content;
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -62,5 +62,11 @@ public class Post {
     @Override
     public int hashCode() {
         return Objects.hash(id, loginId, title, content);
+    }
+
+    public String getTagsFormatted() {
+        return tags.stream()
+                .map(Tag::getName)
+                .collect(Collectors.joining(", "));
     }
 }

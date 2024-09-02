@@ -1,26 +1,42 @@
 package solo.blog.repository.jpa.post;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
+import solo.blog.entity.database.QTag;
 import solo.blog.entity.database.Tag;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class TagJpaRepository {
-    private Map<Long, Tag> tagStore = new HashMap<>();
-    private Long currentId = 0L;
+
+    @PersistenceContext
+    private EntityManager em;
+    private final JPAQueryFactory queryFactory;
+
+    public TagJpaRepository(EntityManager em) {
+        this.em = em;
+        this.queryFactory = new JPAQueryFactory(em);
+    }
 
     public Tag save(Tag tag) {
-        tag.setId(++currentId);
-        tagStore.put(tag.getId(), tag);
+        if (tag.getId() == null) {
+            em.persist(tag);
+        } else {
+            em.merge(tag);
+        }
         return tag;
     }
 
-    public Tag findByName(String name) {
-        return tagStore.values().stream()
-                .filter(tag -> tag.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+    public Optional<Tag> findByName(String name) {
+        QTag tag = QTag.tag;
+        Tag foundTag = queryFactory
+                .selectFrom(tag)
+                .where(tag.name.eq(name))
+                .fetchOne();
+
+        return Optional.ofNullable(foundTag);
     }
 }

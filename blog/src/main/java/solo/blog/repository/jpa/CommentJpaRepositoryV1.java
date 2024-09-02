@@ -27,8 +27,9 @@ public class CommentJpaRepositoryV1 implements CommentJpaRepository {
 
         log.info("Executing query to find comments by postId: {}", postId);
 
+        // postId를 Post 객체의 id로 수정하여 필터링합니다.
         List<Comment> results = queryFactory.selectFrom(qComment)
-                .where(qComment.postId.eq(postId))
+                .where(qComment.post.id.eq(postId))
                 .fetch();
 
         log.info("Query executed successfully, found {} comments for postId: {}", results.size(), postId);

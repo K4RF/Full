@@ -13,12 +13,13 @@ import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
 import solo.blog.repository.jpa.post.JpaRepositoryV2;
 import solo.blog.service.jpa.CommentJpaService;
-import solo.blog.service.jpa.post.PostJpaService;
+import solo.blog.service.jpa.post.PostJpaServiceV2;
 import solo.blog.service.jpa.post.TagJpaService;
 import solo.blog.service.jpa.tx.MemberJpaService;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,31 +28,34 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostJpaController {
     private final JpaRepositoryV2 postRepository;  // 변경된 부분
-    private final PostJpaService postService;  // 변경된 부분
-    private final MemberJpaService memberService;  // 변경된 부분
-    private final CommentJpaService commentService;  // 변경된 부분
-    private final TagJpaService tagService;  // 변경된 부분
+    private final PostJpaServiceV2 postJpaServiceV2;  // 변경된 부분
+    private final MemberJpaService memberJpaService;  // 변경된 부분
+    private final CommentJpaService commentJpaService;  // 변경된 부분
+    private final TagJpaService tagJpaService;  // 변경된 부분
 
     @GetMapping
     public String posts(@ModelAttribute("postSearch") PostSearchCond postSearch, Model model) {
-        List<Post> posts = postService.findPosts(postSearch);
+        List<Post> posts = postJpaServiceV2.findPosts(postSearch);
         model.addAttribute("posts", posts);
         return "post/jpa/postList";
     }
 
     @GetMapping("/{postId}")
     public String post(@PathVariable long postId, Model model) {
-        Post post = postService.findById(postId).get();
-        List<Comment> comments = commentService.getCommentsByPostId(postId);
+        Post post = postJpaServiceV2.findById(postId).get();
+        List<Comment> comments = commentJpaService.getCommentsByPostId(postId);
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
         return "post/jpa/post";
     }
 
     @GetMapping("/add")
-    public String addPostName(Model model) {
-        Long memberId = 1L;
-        Member member = memberService.findMember(memberId).orElseThrow();
+    public String addPostName(Model model, @SessionAttribute("loginMember") Member loginMember) {
+        // 로그인된 사용자의 ID를 사용
+        Long memberId = loginMember.getId();
+        Member member = memberJpaService.findMember(memberId)
+                .orElseThrow(() -> new NoSuchElementException("Member not found with ID: " + memberId));
+
         model.addAttribute("member", member);
         return "post/jpa/addForm";
     }
@@ -62,14 +66,18 @@ public class PostJpaController {
                 .map(String::trim)
                 .collect(Collectors.toSet());
 
-        Set<Tag> tagSet = tagService.createTags(tagNames);  // 태그 생성 또는 검색
+        // 태그 생성 또는 검색
+        Set<Tag> tagSet = tagJpaService.createTags(tagNames);
+
         post.setTags(tagSet);  // 포스트에 태그 추가
 
-        Post savedPost = postService.save(post, tagNames);
+        Post savedPost = postJpaServiceV2.save(post, tagNames);
         redirectAttributes.addAttribute("postId", savedPost.getId());
         redirectAttributes.addAttribute("status", true);
         return "redirect:/post/jpa/postList/{postId}";
     }
+
+
 
     @GetMapping("/{postId}/edit")
     public String editPost(@PathVariable Long postId, Model model) {
@@ -80,7 +88,7 @@ public class PostJpaController {
 
     @PostMapping("/{postId}/edit")
     public String editTag(@PathVariable Long postId, @ModelAttribute PostUpdateDto updateParam, @RequestParam String tags, RedirectAttributes redirectAttributes) {
-        postService.update(postId, updateParam);
+        postJpaServiceV2.update(postId, updateParam);
         return "redirect:/post/jpa/postList/{postId}";
     }
 }
