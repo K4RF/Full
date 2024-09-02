@@ -9,7 +9,6 @@ import org.springframework.util.PatternMatchUtils;
 import solo.blog.controller.session.SessionConst;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 @Slf4j
 public class LoginCheckFilter implements Filter {
