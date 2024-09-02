@@ -10,6 +10,7 @@ import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
 import solo.blog.repository.jpa.post.JpaRepositoryV2;
 import solo.blog.repository.jpa.post.PostQueryRepository;
+import solo.blog.repository.jpa.post.TagJpaRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,22 +24,41 @@ import java.util.Set;
 public class PostJpaServiceV2 implements PostJpaService {
     private final JpaRepositoryV2 jpaRepositoryV2;
     private final PostQueryRepository postQueryRepository;
-    private final TagJpaService tagJpaService;
+    private final TagJpaRepository tagJpaRepository;  // TagRepository를 주입받습니다.
 
     @Transactional
     public Post save(Post post, Set<String> tagNames) {
-        Set<Tag> tags = tagJpaService.createTags(tagNames);
+        Set<Tag> tags = createTags(tagNames);
         post.setTags(tags);
         return jpaRepositoryV2.save(post);
     }
 
-    @Override
-    public void update(Long postId, PostUpdateDto updateParam) {
-        // 게시물 업데이트
-        Post findPost = findById(postId).orElseThrow();
-        findPost.setTitle(updateParam.getTitle());
-        findPost.setContent(updateParam.getContent());
-        findPost.setLoginId(updateParam.getLoginId());
+    @Transactional
+    public Post update(Long postId, PostUpdateDto postUpdateDto) {
+        // 게시글 조회
+        Post post = jpaRepositoryV2.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 게시글 정보 업데이트
+        post.setTitle(postUpdateDto.getTitle());
+        post.setContent(postUpdateDto.getContent());
+
+        // 태그 정보 처리
+        Set<Tag> tags = new HashSet<>();
+        for (Tag tag : postUpdateDto.getTags()) {
+            // 태그가 데이터베이스에 존재하는지 확인
+            Tag existingTag = tagJpaRepository.findByName(tag.getName())
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag();
+                        newTag.setName(tag.getName());
+                        return tagJpaRepository.save(newTag);
+                    });
+            tags.add(existingTag);
+        }
+
+        // 게시글에 태그 설정
+        post.setTags(tags);
+        return jpaRepositoryV2.save(post);
     }
 
     @Override
@@ -51,10 +71,15 @@ public class PostJpaServiceV2 implements PostJpaService {
         return postQueryRepository.findAll(cond);
     }
 
-    private Set<Tag> processTags(Set<String> tagNames) {
+    private Set<Tag> createTags(Set<String> tagNames) {
         Set<Tag> tags = new HashSet<>();
         for (String tagName : tagNames) {
-            Tag tag = tagJpaService.createOrGetTag(tagName);
+            Tag tag = tagJpaRepository.findByName(tagName)
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag();
+                        newTag.setName(tagName);
+                        return tagJpaRepository.save(newTag);
+                    });
             tags.add(tag);
         }
         return tags;

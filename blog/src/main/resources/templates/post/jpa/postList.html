@@ -57,8 +57,8 @@
             </thead>
             <tbody>
             <tr th:each="post : ${posts}">
-                <td><a href="post.html" th:href="@{/post/search/postList/{postId}(postId=${post.id})}" th:text="${post.id}">포스트 id</a></td>
-                <td><a href="post.html" th:href="@{|/post/search/postList/${post.id}|}"` th:text="${post.title}">제목</a></td>
+                <td><a href="post.html" th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.id}">포스트 id</a></td>
+                <td><a href="post.html" th:href="@{|/post/jpa/postList/${post.id}|}"` th:text="${post.title}">제목</a></td>
                 <td th:text="${post.loginId}">qwer</td>
             </tr>
             </tbody>

@@ -6,10 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import solo.blog.repository.jpa.CommentJpaRepository;
 import solo.blog.repository.jpa.CommentJpaRepositoryV1;
-import solo.blog.repository.jpa.post.JpaRepository;
-import solo.blog.repository.jpa.post.JpaRepositoryV2;
-import solo.blog.repository.jpa.post.PostJpaRepositoryV3;
-import solo.blog.repository.jpa.post.PostQueryRepository;
+import solo.blog.repository.jpa.post.*;
 import solo.blog.repository.jpa.tx.MemberJpaRepository;
 import solo.blog.repository.jpa.tx.MemberJpaRepositoryV1;
 import solo.blog.service.jpa.CommentJpaService;
@@ -39,7 +36,7 @@ public class MemberPostConfig {
 
     @Bean(name = "postJpaServiceV3Ext")
     public PostJpaService postJpaServiceV3Ext(){
-        return new PostJpaServiceV2(jpaRepositoryExt, postQueryRepository(), tagJpaService);
+        return new PostJpaServiceV2(jpaRepositoryExt, postQueryRepository(), new TagJpaRepository(em));
     }
 
     @Bean

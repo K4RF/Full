@@ -87,8 +87,9 @@ public class PostJpaController {
     }
 
     @PostMapping("/{postId}/edit")
-    public String editTag(@PathVariable Long postId, @ModelAttribute PostUpdateDto updateParam, @RequestParam String tags, RedirectAttributes redirectAttributes) {
-        postJpaServiceV2.update(postId, updateParam);
-        return "redirect:/post/jpa/postList/{postId}";
+    public String editPost(@PathVariable Long postId, @ModelAttribute PostUpdateDto postUpdateDto, RedirectAttributes redirectAttributes) {
+        Post updatedPost = postJpaServiceV2.update(postId, postUpdateDto);
+        redirectAttributes.addFlashAttribute("message", "Post updated successfully");
+        return "redirect:/post/jpa/postList/" + updatedPost.getId();  // 업데이트된 포스트 ID를 사용하여 리다이렉트
     }
 }

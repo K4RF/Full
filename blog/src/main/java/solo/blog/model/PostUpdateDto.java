@@ -1,7 +1,7 @@
 package solo.blog.model;
 
 import lombok.Data;
-import solo.blog.entity.v2.Tag;
+import solo.blog.entity.database.Tag;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,21 +13,17 @@ public class PostUpdateDto {
     private String content;
     private String loginId;
 
-
-    public PostUpdateDto() {
-
-    }
-
-    public PostUpdateDto(String loginId, String title, String content) {
-        this.loginId = loginId;
-        this.title = title;
-        this.content = content;
-    }
-
     // 태그 리스트 추가
     private Set<Tag> tags = new HashSet<>();
 
-    // 기존 필드, 생성자, 게터, 세터 생략
+    public PostUpdateDto() {}
+
+    public PostUpdateDto(String loginId, String title, String content, Set<Tag> tags) {
+        this.loginId = loginId;
+        this.title = title;
+        this.content = content;
+        this.tags = tags;
+    }
 
     // 태그 관련 게터, 세터 추가
     public Set<Tag> getTags() {
