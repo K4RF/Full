@@ -4,25 +4,25 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
 @Data
-@Entity // JPA 엔티티로 설정
-@Table(name = "tag") // 테이블 이름 설정 (기본은 클래스 이름과 동일)
+@Entity
+@Table(name = "tag")
 public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @ManyToMany(mappedBy = "tags")
+    @ToString.Exclude // 순환 참조 방지를 위해
     private Set<Post> posts = new HashSet<>();
 
     public Tag() {

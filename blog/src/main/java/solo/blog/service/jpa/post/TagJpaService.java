@@ -1,48 +1,40 @@
 package solo.blog.service.jpa.post;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import solo.blog.entity.database.Tag;
 import solo.blog.repository.jpa.post.TagJpaRepository;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class TagJpaService {
-    private TagJpaRepository tagRepository;
+    private final TagJpaRepository tagRepository;
 
     public TagJpaService(TagJpaRepository tagRepository) {
         this.tagRepository = tagRepository;
     }
 
+    @Transactional
     public Tag createOrGetTag(String name) {
-        Tag tag = tagRepository.findByName(name);
-        if (tag == null) {
-            tag = new Tag(name);
-            tagRepository.save(tag);
-        }
-        return tag;
+        // TagRepository에서 이름으로 태그를 조회
+        return tagRepository.findByName(name)
+                .orElseGet(() -> {
+                    // 태그가 없으면 새로 생성하여 저장
+                    Tag newTag = new Tag(name);
+                    return tagRepository.save(newTag);
+                });
     }
 
+    @Transactional
     public Set<Tag> createTags(Set<String> tagNames) {
+        // 각 태그 이름에 대해 createOrGetTag 메서드를 호출하여 태그를 생성 또는 조회
         return tagNames.stream()
                 .map(this::createOrGetTag)
                 .collect(Collectors.toSet());
     }
 
-    public Set<Tag> createTagsFromInput(String tagsInput) {
-        // 쉼표로 구분된 태그 문자열을 Set<Tag>로 변환
-        Set<String> tagNames = Arrays.stream(tagsInput.split(","))
-                .map(String::trim)
-                .collect(Collectors.toSet());
 
-        Set<Tag> tags = new HashSet<>();
-        for (String name : tagNames) {
-            Tag tag = createOrGetTag(name);  // 이미 있는 메서드로 태그 생성/검색
-            tags.add(tag);
-        }
-        return tags;
-    }
 }

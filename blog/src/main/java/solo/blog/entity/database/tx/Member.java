@@ -6,25 +6,27 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Data
-@Entity
 @Getter
 @Setter
+@Entity
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq_generator")
     @SequenceGenerator(name = "member_seq_generator", sequenceName = "MEMBER_SEQ", allocationSize = 1)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     @NotEmpty
     private String loginId;
+
     @NotEmpty
     private String name;
+
     @NotEmpty
     private String password;
 
     public Member() {
-
+        // 기본 생성자
     }
 
     public Member(String loginId, String name, String password){

@@ -53,7 +53,7 @@ public class PostSearchRepository {
 
     public void update(Long postId, PostUpdateDto updateParam) {
         Post findPost = findById(postId).orElseThrow();
-        findPost.setTags(updateParam.getTags()); // 추가
+        //findPost.setTags(updateParam.getTags()); // 추가
         findPost.setTitle(updateParam.getTitle());
         findPost.setContent(updateParam.getContent());
     }

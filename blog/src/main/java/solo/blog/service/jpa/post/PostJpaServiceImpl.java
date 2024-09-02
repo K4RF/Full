@@ -37,8 +37,9 @@ public class PostJpaServiceImpl implements PostJpaService {
     }
 
     @Override
-    public void update(Long postId, PostUpdateDto updateParam) {
+    public Post update(Long postId, PostUpdateDto updateParam) {
         repository.update(postId, updateParam);
+        return null;
     }
 
     @Override

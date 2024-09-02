@@ -34,3 +34,10 @@ CREATE TABLE post_tag (
                           FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE,
                           FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE
 );
+drop table if exists comment CASCADE;
+CREATE TABLE COMMENT (
+                         ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+                         POST_ID BIGINT NOT NULL,
+                         AUTHOR VARCHAR(255) NOT NULL,
+                         COMET VARCHAR(255) NOT NULL
+);

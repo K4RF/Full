@@ -1,9 +1,11 @@
 package solo.blog.model;
 
 import lombok.Data;
-import solo.blog.entity.v2.Tag;
+import solo.blog.entity.database.Tag;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,32 +15,26 @@ public class PostUpdateDto {
     private String content;
     private String loginId;
 
+    // 태그 리스트를 List로 변경
+    private List<Tag> tags = new ArrayList<>();
 
-    public PostUpdateDto() {
+    public PostUpdateDto() {}
 
-    }
-
-    public PostUpdateDto(String loginId, String title, String content) {
+    public PostUpdateDto(String loginId, String title, String content, List<Tag> tags) {
         this.loginId = loginId;
         this.title = title;
         this.content = content;
-    }
-
-    // 태그 리스트 추가
-    private Set<Tag> tags = new HashSet<>();
-
-    // 기존 필드, 생성자, 게터, 세터 생략
-
-    // 태그 관련 게터, 세터 추가
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 
-    // 태그를 포맷팅하는 메서드 추가
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
     public String getTagsFormatted() {
         return tags.stream()
                 .map(Tag::getName)
