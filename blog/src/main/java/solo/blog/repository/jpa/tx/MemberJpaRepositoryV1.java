@@ -41,16 +41,18 @@ public class MemberJpaRepositoryV1 implements MemberJpaRepository {
 
     @Override
     public Optional<Member> findByLoginId(String loginId) {
-        log.info("Finding member by Login ID: {}", loginId);
         QMember member = QMember.member;
 
-        Member foundMember = query
+        List<Member> foundMembers = query
                 .selectFrom(member)
                 .where(member.loginId.eq(loginId))
-                .fetchOne();
+                .fetch();
 
-        log.info("Found member: {}", foundMember);
-        return Optional.ofNullable(foundMember);
+        if (foundMembers.size() == 1) {
+            return Optional.of(foundMembers.get(0));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override

@@ -18,11 +18,13 @@ import solo.blog.controller.session.SessionManager;
 import solo.blog.entity.database.tx.Member;
 import solo.blog.entity.v2.LoginForm;
 import solo.blog.service.jpa.LoginJpaService;
+
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class LoginController {
-    private final LoginJpaService loginService; // 변경된 부분
+    private final LoginJpaService loginService;
     private final SessionManager sessionManager;
 
     @GetMapping("login")
@@ -31,26 +33,26 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String loginFilter(
-            @Valid @ModelAttribute LoginForm form, BindingResult bindingResult,
-            @RequestParam(defaultValue = "/") String redirectURL, HttpServletRequest request) {
+    public String loginFilter(@Valid LoginForm form, BindingResult bindingResult, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             return "login/loginForm";
         }
-        Member loginMember = loginService.login(form.getLoginId(),
-                form.getPassword());
-        log.info("login? {}", loginMember);
-        if (loginMember == null) {
+
+        Member member = loginService.login(form.getLoginId(), form.getPassword());
+
+        if (member == null) {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
             return "login/loginForm";
         }
-        //로그인 성공 처리
-        //세션이 있으면 있는 세션 반환, 없으면 신규 세션 생성
+
         HttpSession session = request.getSession();
-        //세션에 로그인 회원 정보 보관
-        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
-        //redirectURL 적용
-        return "redirect:" + redirectURL;
+        session.setAttribute(SessionConst.LOGIN_MEMBER, member);
+
+        // 로그 추가
+        log.info("Session saved with member: {}", member);
+        log.info("Saved in session - ID: {}, LoginId: {}, Name: {}", member.getId(), member.getLoginId(), member.getName());
+
+        return "redirect:/";
     }
 
     @PostMapping("/logout")

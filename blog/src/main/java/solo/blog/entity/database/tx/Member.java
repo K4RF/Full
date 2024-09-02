@@ -16,6 +16,7 @@ public class Member {
     @SequenceGenerator(name = "member_seq_generator", sequenceName = "MEMBER_SEQ", allocationSize = 1)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     @NotEmpty
     private String loginId;
     @NotEmpty

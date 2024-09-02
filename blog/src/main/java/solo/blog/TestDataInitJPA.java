@@ -25,7 +25,7 @@ public class TestDataInitJPA {
     private final CommentJpaService commentJpaService;
     private final TagJpaService tagJpaService;
 
-    @PostConstruct
+    //@PostConstruct
     public void init() {
         // 태그 생성
         Set<Tag> tagsForPost1 = tagJpaService.createTags(Set.of("Java", "Spring"));
