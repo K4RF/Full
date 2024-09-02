@@ -12,10 +12,7 @@ import solo.blog.repository.jpa.post.JpaRepositoryV2;
 import solo.blog.repository.jpa.post.PostQueryRepository;
 import solo.blog.repository.jpa.post.TagJpaRepository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +41,7 @@ public class PostJpaServiceV2 implements PostJpaService {
         post.setContent(postUpdateDto.getContent());
 
         // 태그 정보 처리
-        Set<Tag> tags = new HashSet<>();
+        Set<Tag> tagSet = new HashSet<>();
         for (Tag tag : postUpdateDto.getTags()) {
             // 태그가 데이터베이스에 존재하는지 확인
             Tag existingTag = tagJpaRepository.findByName(tag.getName())
@@ -53,11 +50,11 @@ public class PostJpaServiceV2 implements PostJpaService {
                         newTag.setName(tag.getName());
                         return tagJpaRepository.save(newTag);
                     });
-            tags.add(existingTag);
+            tagSet.add(existingTag);
         }
 
-        // 게시글에 태그 설정
-        post.setTags(tags);
+        // 게시글에 태그 설정 (Set으로 변환된 태그 사용)
+        post.setTags(tagSet);
         return jpaRepositoryV2.save(post);
     }
 
