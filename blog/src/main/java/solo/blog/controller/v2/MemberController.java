@@ -13,7 +13,7 @@ import solo.blog.repository.v2.MemberRepository;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/members")
+@RequestMapping("/v2/members")
 public class MemberController {
     private final MemberRepository memberRepository;
 
