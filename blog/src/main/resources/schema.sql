@@ -1,5 +1,5 @@
 CREATE SEQUENCE IF NOT EXISTS MEMBER_SEQ START WITH 1 INCREMENT BY 1;
-
+drop table log if exists cascade;
 drop table member if exists cascade;
 CREATE TABLE member (
                         ID BIGINT AUTO_INCREMENT PRIMARY KEY,
