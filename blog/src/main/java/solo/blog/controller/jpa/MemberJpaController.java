@@ -27,17 +27,20 @@ public class MemberJpaController {
     }
 
     @PostMapping("/add")
-    public String save(@Validated @ModelAttribute Member member, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+    public String save(@Validated @ModelAttribute Member member, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "members/addMemberForm";
+        }
+
+        // 중복 아이디 체크
+        if (memberJpaRepository.findByLoginId(member.getLoginId()).isPresent()) {
+            bindingResult.rejectValue("loginId", "duplicate", "이미 존재하는 로그인 ID입니다.");
             return "members/addMemberForm";
         }
 
         try {
+            // 중복이 없는 경우 회원가입 진행
             memberJpaService.join(member);
-            if (memberJpaRepository.findByLoginId(member.getLoginId()).isPresent()) {
-                bindingResult.rejectValue("loginId", "duplicate", "이미 존재하는 로그인 ID입니다.");
-                return "members/addMemberForm";
-            }
         } catch (Exception e) {
             // 전체 예외 스택 트레이스를 로그에 출력
             log.error("Error occurred during member registration", e);
