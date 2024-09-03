@@ -17,10 +17,7 @@ import solo.blog.service.jpa.post.PostJpaServiceV2;
 import solo.blog.service.jpa.post.TagJpaService;
 import solo.blog.service.jpa.tx.MemberJpaService;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -62,22 +59,23 @@ public class PostJpaController {
 
     @PostMapping("/add")
     public String addPostTag(@ModelAttribute Post post, @RequestParam String tags, RedirectAttributes redirectAttributes) {
-        Set<String> tagNames = Arrays.stream(tags.split(","))
+        List<String> tagNames = Arrays.stream(tags.split(","))
                 .map(String::trim)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
+
+        // List<String>을 Set<String>으로 변환
+        Set<String> tagNamesSet = new HashSet<>(tagNames);
 
         // 태그 생성 또는 검색
-        Set<Tag> tagSet = tagJpaService.createTags(tagNames);
+        List<Tag> tagList = tagJpaService.createTags(tagNamesSet).stream().collect(Collectors.toList());
 
-        post.setTags(tagSet);  // 포스트에 태그 추가
+        post.setTags(tagList);  // 포스트에 태그 추가
 
-        Post savedPost = postJpaServiceV2.save(post, tagNames);
+        Post savedPost = postJpaServiceV2.save(post, tagNamesSet);
         redirectAttributes.addAttribute("postId", savedPost.getId());
         redirectAttributes.addAttribute("status", true);
         return "redirect:/post/jpa/postList/{postId}";
     }
-
-
 
     @GetMapping("/{postId}/edit")
     public String editPost(@PathVariable Long postId, Model model) {

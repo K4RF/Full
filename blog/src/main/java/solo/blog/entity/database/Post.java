@@ -1,17 +1,13 @@
 package solo.blog.entity.database;
 
 import jakarta.persistence.*;
-
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
-
 
 @Data
 @Entity
@@ -37,7 +33,8 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     @ToString.Exclude // 순환 참조 방지를 위해 추가
-    private Set<Tag> tags = new HashSet<>();
+    @OrderColumn(name = "tag_order") // 순서를 보장하기 위해 @OrderColumn 추가
+    private List<Tag> tags = new ArrayList<>(); // Set에서 List로 변경
 
     public Post() {
     }
