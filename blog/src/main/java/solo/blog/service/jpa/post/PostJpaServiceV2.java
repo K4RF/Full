@@ -25,7 +25,7 @@ public class PostJpaServiceV2 implements PostJpaService {
 
     @Transactional
     public Post save(Post post, Set<String> tagNames) {
-        Set<Tag> tags = createTags(tagNames);
+        List<Tag> tags = createTags(tagNames);
         post.setTags(tags);
         return jpaRepositoryV2.save(post);
     }
@@ -41,7 +41,7 @@ public class PostJpaServiceV2 implements PostJpaService {
         post.setContent(postUpdateDto.getContent());
 
         // 태그 정보 처리
-        Set<Tag> tagSet = new HashSet<>();
+        List<Tag> tagList = new ArrayList<>();
         for (Tag tag : postUpdateDto.getTags()) {
             // 태그가 데이터베이스에 존재하는지 확인
             Tag existingTag = tagJpaRepository.findByName(tag.getName())
@@ -50,11 +50,11 @@ public class PostJpaServiceV2 implements PostJpaService {
                         newTag.setName(tag.getName());
                         return tagJpaRepository.save(newTag);
                     });
-            tagSet.add(existingTag);
+            tagList.add(existingTag);
         }
 
-        // 게시글에 태그 설정 (Set으로 변환된 태그 사용)
-        post.setTags(tagSet);
+        // 게시글에 태그 설정 (List로 변환된 태그 사용)
+        post.setTags(tagList);
         return jpaRepositoryV2.save(post);
     }
 
@@ -68,8 +68,8 @@ public class PostJpaServiceV2 implements PostJpaService {
         return postQueryRepository.findAll(cond);
     }
 
-    private Set<Tag> createTags(Set<String> tagNames) {
-        Set<Tag> tags = new HashSet<>();
+    private List<Tag> createTags(Set<String> tagNames) {
+        List<Tag> tags = new ArrayList<>();
         for (String tagName : tagNames) {
             Tag tag = tagJpaRepository.findByName(tagName)
                     .orElseGet(() -> {

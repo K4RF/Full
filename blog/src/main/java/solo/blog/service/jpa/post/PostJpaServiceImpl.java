@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PostJpaServiceImpl implements PostJpaService {
     private final JpaRepository repository;
@@ -31,7 +32,10 @@ public class PostJpaServiceImpl implements PostJpaService {
             Tag tag = tagService.createOrGetTag(tagName);
             tags.add(tag);
         }
-        post.setTags(tags);
+
+        // Set<Tag>를 List<Tag>로 변환
+        List<Tag> tagList = tags.stream().collect(Collectors.toList());
+        post.setTags(tagList);
 
         return repository.save(post);
     }

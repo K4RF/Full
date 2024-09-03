@@ -25,11 +25,14 @@ CREATE TABLE tag (
                      name VARCHAR(255) NOT NULL UNIQUE
 );
 
--- post_tag 조인 테이블 생성 (ManyToMany 관계 매핑)
-drop table if exists post_tag CASCADE;
+-- 기존 post_tag 조인 테이블 삭제
+DROP TABLE IF EXISTS post_tag CASCADE;
+
+-- 수정된 post_tag 조인 테이블 생성 (ManyToMany 관계 매핑)
 CREATE TABLE post_tag (
                           post_id BIGINT NOT NULL,
                           tag_id BIGINT NOT NULL,
+                          tag_order INTEGER NOT NULL, -- 태그 순서를 지정하는 필드 추가
                           PRIMARY KEY (post_id, tag_id),
                           FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE,
                           FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE

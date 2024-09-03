@@ -3,6 +3,7 @@ package solo.blog.service.jpa;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import solo.blog.entity.database.Comment;
 import solo.blog.entity.database.Post;
 import solo.blog.repository.jpa.CommentJpaRepository;
@@ -23,6 +24,7 @@ public class CommentJpaServiceImpl implements CommentJpaService {
     }
 
     @Override
+    @Transactional
     public void addComment(Long postId, String author, String comet) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + postId));
         Comment comment = new Comment(post, author, comet);  // post 객체를 전달
