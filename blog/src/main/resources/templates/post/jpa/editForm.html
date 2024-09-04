@@ -16,28 +16,30 @@
         <h2>포스트 수정 폼</h2>
     </div>
 
-    <form action="post.html" th:action method="post">
+    <!-- 실제로 폼을 제출할 URL로 수정 -->
+    <form th:action="@{/post/jpa/postList/{postId}/edit(postId=${post.id})}" method="post">
         <div>
             <label for="id">포스트 ID</label>
-            <input type="text" id="id" name="id" class="form-control" value="1" th:value="${post.id}" readonly>
+            <input type="text" id="id" name="id" class="form-control" th:value="${post.id}" readonly>
         </div>
         <div>
             <label for="title">제목</label>
-            <input type="text" id="title" name="title" class="form-control" th:value="${post.title}" value="제목">
+            <input type="text" id="title" name="title" class="form-control" th:value="${post.title}">
         </div>
         <div>
             <label for="content">내용</label>
-            <input type="text" id="content" name="content" class="form-control" th:value="${post.content}" value="내용">
+            <input type="text" id="content" name="content" class="form-control" th:value="${post.content}">
         </div>
         <div>
             <label for="loginId">작성자</label>
-            <input type="text" id="loginId" name="loginId" class="form-control" th:value="${post.loginId}" value="작성자" readonly>
+            <input type="text" id="loginId" name="loginId" class="form-control" th:value="${post.loginId}" readonly>
         </div>
         <!-- 태그 -->
         <div>
             <label for="tags">태그</label>
-            <input type="text" id="tags" name="tags" class="form-control"
-                   th:value="${post.tagsFormatted}">
+            <input type="text" id="tags" name="tags" class="form-control" th:value="${post.tagsFormatted}">
+            <!-- 태그 중복 오류 메시지 출력 -->
+            <div th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}">중복된 태그가 있습니다.</div>
         </div>
 
         <hr class="my-4">
@@ -47,7 +49,7 @@
             </div>
             <div class="col">
                 <button class="w-100 btn btn-secondary btn-lg"
-                        onclick="location.href='post.html'" th:onclick="|location.href='@{/post/jpa/postList/{postId}(postId=${post.id})}'|" type="button">취소</button>
+                        th:onclick="|location.href='@{/post/jpa/postList/{postId}(postId=${post.id})}'|" type="button">취소</button>
             </div>
         </div>
     </form>

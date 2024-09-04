@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 @Data
 public class PostUpdateDto {
+    private Long id; // id 필드 추가
     private String title;
     private String content;
     private String loginId;
@@ -18,18 +19,11 @@ public class PostUpdateDto {
 
     public PostUpdateDto() {}
 
-    public PostUpdateDto(String loginId, String title, String content, List<Tag> tags) {
+    public PostUpdateDto(Long id, String loginId, String title, String content, List<Tag> tags) {
+        this.id = id; // id 필드 초기화
         this.loginId = loginId;
         this.title = title;
         this.content = content;
-        this.tags = tags;
-    }
-
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 
