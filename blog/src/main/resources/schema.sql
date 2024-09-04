@@ -32,11 +32,12 @@ DROP TABLE IF EXISTS post_tag CASCADE;
 CREATE TABLE post_tag (
                           post_id BIGINT NOT NULL,
                           tag_id BIGINT NOT NULL,
-                          tag_order INTEGER NOT NULL, -- 태그 순서를 지정하는 필드 추가
+                          tag_order INTEGER NOT NULL DEFAULT 0, -- 기본값 0으로 설정
                           PRIMARY KEY (post_id, tag_id),
                           FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE,
                           FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE
 );
+
 drop table if exists comment CASCADE;
 CREATE TABLE COMMENT (
                          ID BIGINT AUTO_INCREMENT PRIMARY KEY,
