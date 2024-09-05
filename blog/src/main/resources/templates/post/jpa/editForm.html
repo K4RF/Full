@@ -2,8 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <link href="../css/bootstrap.min.css"
-          th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <style>
         .container {
             max-width: 560px;
@@ -16,30 +15,27 @@
         <h2>포스트 수정 폼</h2>
     </div>
 
-    <!-- 실제로 폼을 제출할 URL로 수정 -->
-    <form th:action="@{/post/jpa/postList/{postId}/edit(postId=${post.id})}" method="post">
+    <form th:action="@{/post/jpa/postList/{postId}/edit(postId=${post.id})}" th:object="${post}" method="post">
         <div>
             <label for="id">포스트 ID</label>
-            <input type="text" id="id" name="id" class="form-control" th:value="${post.id}" readonly>
+            <input type="text" id="id" th:field="*{id}" class="form-control" readonly>
         </div>
         <div>
             <label for="title">제목</label>
-            <input type="text" id="title" name="title" class="form-control" th:value="${post.title}">
+            <input type="text" id="title" th:field="*{title}" class="form-control">
         </div>
         <div>
             <label for="content">내용</label>
-            <input type="text" id="content" name="content" class="form-control" th:value="${post.content}">
+            <input type="text" id="content" th:field="*{content}" class="form-control">
         </div>
         <div>
             <label for="loginId">작성자</label>
-            <input type="text" id="loginId" name="loginId" class="form-control" th:value="${post.loginId}" readonly>
+            <input type="text" id="loginId" th:field="*{loginId}" class="form-control" readonly>
         </div>
-        <!-- 태그 -->
         <div>
             <label for="tags">태그</label>
-            <input type="text" id="tags" name="tags" class="form-control" th:value="${post.tagsFormatted}">
-            <!-- 태그 중복 오류 메시지 출력 -->
-            <div th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}">중복된 태그가 있습니다.</div>
+            <input type="text" id="tags" th:field="*{tagsFormatted}" class="form-control">
+            <div class="text-danger" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></div>
         </div>
 
         <hr class="my-4">
@@ -48,11 +44,10 @@
                 <button class="w-100 btn btn-primary btn-lg" type="submit">저장</button>
             </div>
             <div class="col">
-                <button class="w-100 btn btn-secondary btn-lg"
-                        th:onclick="|location.href='@{/post/jpa/postList/{postId}(postId=${post.id})}'|" type="button">취소</button>
+                <button class="w-100 btn btn-secondary btn-lg" th:onclick="|location.href='@{/post/jpa/postList/{postId}(postId=${post.id})}'|" type="button">취소</button>
             </div>
         </div>
     </form>
-</div> <!-- /container -->
+</div>
 </body>
 </html>
