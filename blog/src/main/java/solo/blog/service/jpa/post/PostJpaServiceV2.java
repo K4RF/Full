@@ -81,4 +81,8 @@ public class PostJpaServiceV2 implements PostJpaService {
         }
         return tags;
     }
+
+    public boolean isTitleDuplicate(String title) {
+        return jpaRepositoryV2.existsByTitle(title);
+    }
 }

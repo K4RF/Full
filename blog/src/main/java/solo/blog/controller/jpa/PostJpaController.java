@@ -59,20 +59,43 @@ public class PostJpaController {
         Member member = memberJpaService.findMember(memberId)
                 .orElseThrow(() -> new NoSuchElementException("Member not found with ID: " + memberId));
 
-        model.addAttribute("member", member);
+        Post post = new Post();  // 빈 Post 객체를 생성하여 모델에 추가
+        post.setLoginId(member.getLoginId());  // 로그인한 사용자의 ID를 Post 객체에 설정
+
+        model.addAttribute("post", post);  // 빈 Post 객체를 뷰로 전달
+        model.addAttribute("member", member);  // 작성자 정보도 뷰로 전달
         return "post/jpa/addForm";
     }
 
     // 게시글 등록 처리
     @PostMapping("/add")
-    public String addPostTag(@ModelAttribute Post post, @RequestParam String tags, RedirectAttributes redirectAttributes) {
-        List<String> tagNames = Arrays.stream(tags.split(","))
+    public String addPostTag(@ModelAttribute @Validated Post post, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+        // 태그 처리
+        List<String> tagNames = Arrays.stream(post.getTagsFormatted().split(","))
                 .map(String::trim)
                 .collect(Collectors.toList());
 
         Set<String> tagNamesSet = new HashSet<>(tagNames);
 
-        List<Tag> tagList = tagJpaService.createTags(tagNamesSet).stream().collect(Collectors.toList());
+        // 태그 중복 검증
+        if (tagNames.size() != tagNamesSet.size()) {
+            bindingResult.rejectValue("tagsFormatted", "duplicateTags", "중복된 태그가 있습니다.");
+        }
+
+        // 제목 중복 검증
+        boolean isTitleDuplicate = postJpaServiceV2.isTitleDuplicate(post.getTitle());
+        if (isTitleDuplicate) {
+            bindingResult.rejectValue("title", "duplicateTitle", "이미 존재하는 제목입니다.");
+        }
+
+        // 검증에 실패한 경우 다시 폼으로
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("post", post);
+            return "post/jpa/addForm";
+        }
+
+        // 태그를 생성하고 저장
+        List<Tag> tagList = new ArrayList<>(tagJpaService.createTags(tagNamesSet));
         post.setTags(tagList);
 
         Post savedPost = postJpaServiceV2.save(post, tagNamesSet);
@@ -85,9 +108,10 @@ public class PostJpaController {
     @GetMapping("/{postId}/edit")
     public String editPost(@PathVariable Long postId, Model model) {
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
-        PostUpdateDto postUpdateDto = new PostUpdateDto(post.getId(), post.getLoginId(), post.getTitle(), post.getContent(), post.getTags());
+        PostUpdateDto postUpdateDto = new PostUpdateDto(post.getId(), post.getTitle(), post.getContent(), post.getLoginId(), post.getTags());
+
+        // 템플릿에서 'post'로 접근하기 위해 'postUpdateDto'를 'post'로 변경
         model.addAttribute("post", postUpdateDto);
-        model.addAttribute("tags", post.getTags());
         return "post/jpa/editForm";
     }
 
@@ -122,3 +146,4 @@ public class PostJpaController {
         return "redirect:/post/jpa/postList/" + postId;
     }
 }
+
