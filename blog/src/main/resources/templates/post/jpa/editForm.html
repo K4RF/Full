@@ -35,7 +35,7 @@
         <div>
             <label for="tags">태그</label>
             <input type="text" id="tags" th:field="*{tagsFormatted}" class="form-control">
-            <div th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}">중복된 태그가 있습니다.</div>
+            <div class="text-danger" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></div>
         </div>
 
         <hr class="my-4">
