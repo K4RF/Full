@@ -1,5 +1,6 @@
 package solo.blog.controller.jpa;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -54,10 +55,11 @@ public class PostJpaController {
     }
 
     @GetMapping("/add")
-    public String addPostName(Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
-        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+    public String addPostName(Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트하며, 원래 URL을 함께 전달
         if (loginMember == null) {
-            return "redirect:/login";
+            String redirectURL = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectURL;
         }
 
         Long memberId = loginMember.getId();
@@ -71,6 +73,7 @@ public class PostJpaController {
         model.addAttribute("member", member);
         return "post/jpa/addForm";
     }
+
 
 
     // 게시글 등록 처리
@@ -108,22 +111,21 @@ public class PostJpaController {
     @GetMapping("/{postId}/edit")
     public String editPost(@PathVariable Long postId,
                            @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                           Model model) {
-        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+                           Model model,
+                           HttpServletRequest request) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트하며, 원래 URL을 함께 전달
         if (loginMember == null) {
-            return "redirect:/login";
+            String redirectURL = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectURL;
         }
 
-        // 게시글 조회
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
 
-        // 작성자가 아닌 경우 에러 페이지로 리다이렉트 (또는 예외 처리)
         if (!post.getLoginId().equals(loginMember.getLoginId())) {
             model.addAttribute("errorMessage", "해당 게시글을 수정할 권한이 없습니다.");
-            return "error/accessDenied";  // 접근 권한 없음을 알리는 페이지로 리다이렉트
+            return "error/accessDenied";
         }
 
-        // 수정 폼에 필요한 데이터 추가
         PostUpdateDto postUpdateDto = new PostUpdateDto(post.getId(), post.getTitle(), post.getContent(), post.getLoginId(), post.getTags());
         model.addAttribute("post", postUpdateDto);
         return "post/jpa/editForm";
