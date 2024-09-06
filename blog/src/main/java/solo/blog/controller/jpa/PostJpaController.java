@@ -14,10 +14,8 @@ import solo.blog.entity.database.Tag;
 import solo.blog.entity.database.tx.Member;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
-import solo.blog.repository.jpa.post.JpaRepositoryV2;
 import solo.blog.service.jpa.CommentJpaService;
 import solo.blog.service.jpa.post.PostJpaServiceV2;
-import solo.blog.service.jpa.post.TagJpaService;
 import solo.blog.service.jpa.tx.MemberJpaService;
 
 import java.util.*;
@@ -28,11 +26,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/post/jpa/postList")
 @RequiredArgsConstructor
 public class PostJpaController {
-    private final JpaRepositoryV2 postRepository;
     private final PostJpaServiceV2 postJpaServiceV2;
     private final MemberJpaService memberJpaService;
     private final CommentJpaService commentJpaService;
-    private final TagJpaService tagJpaService;
 
     // 게시글 목록 조회
     @GetMapping
@@ -59,11 +55,11 @@ public class PostJpaController {
         Member member = memberJpaService.findMember(memberId)
                 .orElseThrow(() -> new NoSuchElementException("Member not found with ID: " + memberId));
 
-        Post post = new Post();  // 빈 Post 객체를 생성하여 모델에 추가
-        post.setLoginId(member.getLoginId());  // 로그인한 사용자의 ID를 Post 객체에 설정
+        Post post = new Post();
+        post.setLoginId(member.getLoginId());
 
-        model.addAttribute("post", post);  // 빈 Post 객체를 뷰로 전달
-        model.addAttribute("member", member);  // 작성자 정보도 뷰로 전달
+        model.addAttribute("post", post);
+        model.addAttribute("member", member);
         return "post/jpa/addForm";
     }
 
@@ -75,16 +71,13 @@ public class PostJpaController {
                 .map(String::trim)
                 .collect(Collectors.toList());
 
-        Set<String> tagNamesSet = new HashSet<>(tagNames);
-
         // 태그 중복 검증
-        if (tagNames.size() != tagNamesSet.size()) {
+        if (postJpaServiceV2.hasDuplicateTags(tagNames)) {
             bindingResult.rejectValue("tagsFormatted", "duplicateTags", "중복된 태그가 있습니다.");
         }
 
         // 제목 중복 검증
-        boolean isTitleDuplicate = postJpaServiceV2.isTitleDuplicate(post.getTitle());
-        if (isTitleDuplicate) {
+        if (postJpaServiceV2.isTitleDuplicate(post.getTitle())) {
             bindingResult.rejectValue("title", "duplicateTitle", "이미 존재하는 제목입니다.");
         }
 
@@ -94,11 +87,8 @@ public class PostJpaController {
             return "post/jpa/addForm";
         }
 
-        // 태그를 생성하고 저장
-        List<Tag> tagList = new ArrayList<>(tagJpaService.createTags(tagNamesSet));
-        post.setTags(tagList);
-
-        Post savedPost = postJpaServiceV2.save(post, tagNamesSet);
+        // 게시글 저장
+        Post savedPost = postJpaServiceV2.save(post, new HashSet<>(tagNames));
         redirectAttributes.addAttribute("postId", savedPost.getId());
         redirectAttributes.addAttribute("status", true);
         return "redirect:/post/jpa/postList/{postId}";
@@ -109,8 +99,6 @@ public class PostJpaController {
     public String editPost(@PathVariable Long postId, Model model) {
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
         PostUpdateDto postUpdateDto = new PostUpdateDto(post.getId(), post.getTitle(), post.getContent(), post.getLoginId(), post.getTags());
-
-        // 템플릿에서 'post'로 접근하기 위해 'postUpdateDto'를 'post'로 변경
         model.addAttribute("post", postUpdateDto);
         return "post/jpa/editForm";
     }
@@ -123,21 +111,18 @@ public class PostJpaController {
                            Model model,
                            RedirectAttributes redirectAttributes) {
 
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("post", postUpdateDto);
-            return "post/jpa/editForm";
-        }
-
         // 태그 중복 확인
         List<String> tagNames = postUpdateDto.getTags().stream()
                 .map(Tag::getName)
                 .collect(Collectors.toList());
 
-        Set<String> tagNamesSet = new HashSet<>(tagNames);
+        if (postJpaServiceV2.hasDuplicateTags(tagNames)) {
+            bindingResult.rejectValue("tags", "duplicateTags", "중복된 태그가 있습니다.");
+        }
 
-        if (tagNames.size() != tagNamesSet.size()) {
-            bindingResult.rejectValue("tags", "duplicate", "중복된 태그가 있습니다.");
-            model.addAttribute("tags", postUpdateDto.getTags());
+        // 검증에 실패한 경우 다시 폼으로
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("post", postUpdateDto);
             return "post/jpa/editForm";
         }
 
@@ -146,4 +131,3 @@ public class PostJpaController {
         return "redirect:/post/jpa/postList/" + postId;
     }
 }
-
