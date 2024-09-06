@@ -2,8 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <link th:href="@{/css/bootstrap.min.css}"
-          href="../css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 </head>
 <body>
 <div class="container" style="max-width: 600px">
@@ -11,18 +10,15 @@
         <h2>글 목록</h2>
     </div>
 
-    <!--
-    <div class="row">
-        <div class="col">
-            <button class="btn btn-primary float-end"
-                    onclick="location.href='addForm.html'"
-                    th:onclick="|location.href='@{/items/add}'|"
-                    type="button">상품 등록
-            </button>
+    <!-- 로그인/로그아웃 버튼 -->
+    <div class="d-flex justify-content-end">
+        <div>
+            <a href="/login" class="btn btn-primary">로그인</a>
         </div>
     </div>
--->
+
     <form th:object="${postSearch}" method="get" class="form-inline">
+        <!-- 검색 폼 -->
         <div class="row">
             <div class="col">
                 <input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
@@ -34,17 +30,17 @@
                 <button type="submit" class="btn btn-secondary mb-2">검색</button>
             </div>
             <div class="col">
-            </div>
-            <div class="col">
                 <div class="col">
                     <button class="btn btn-primary float-end"
-                            onclick="location.href='addForm.html'"
                             th:onclick="|location.href='@{/post/jpa/postList/add}'|"
-                            type="button">상품 등록
+                            th:if="${loginMember != null}"
+                            type="button">포스트 등록
                     </button>
                 </div>
             </div>
         </div>
+    </form>
+
     <hr class="my-4">
     <div>
         <table class="table">
@@ -57,9 +53,9 @@
             </thead>
             <tbody>
             <tr th:each="post : ${posts}">
-                <td><a href="post.html" th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.id}">포스트 id</a></td>
-                <td><a href="post.html" th:href="@{|/post/jpa/postList/${post.id}|}"` th:text="${post.title}">제목</a></td>
-                <td th:text="${post.loginId}">qwer</td>
+                <td><a th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.id}">포스트 id</a></td>
+                <td><a th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.title}">제목</a></td>
+                <td th:text="${post.loginId}">작성자</td>
             </tr>
             </tbody>
         </table>
