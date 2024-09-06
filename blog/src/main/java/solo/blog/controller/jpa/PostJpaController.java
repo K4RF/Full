@@ -1,5 +1,6 @@
 package solo.blog.controller.jpa;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -32,7 +33,12 @@ public class PostJpaController {
 
     // 게시글 목록 조회
     @GetMapping
-    public String posts(@ModelAttribute("postSearch") PostSearchCond postSearch, Model model) {
+    public String posts(@ModelAttribute("postSearch") PostSearchCond postSearch,
+                        @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                        Model model) {
+        // 로그인 상태 확인
+        model.addAttribute("loginMember", loginMember);
+
         List<Post> posts = postJpaServiceV2.findPosts(postSearch);
         model.addAttribute("posts", posts);
         return "post/jpa/postList";
@@ -48,9 +54,14 @@ public class PostJpaController {
         return "post/jpa/post";
     }
 
-    // 게시글 작성 폼
     @GetMapping("/add")
-    public String addPostName(Model model, @SessionAttribute("loginMember") Member loginMember) {
+    public String addPostName(Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트하며, 원래 URL을 함께 전달
+        if (loginMember == null) {
+            String redirectURL = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectURL;
+        }
+
         Long memberId = loginMember.getId();
         Member member = memberJpaService.findMember(memberId)
                 .orElseThrow(() -> new NoSuchElementException("Member not found with ID: " + memberId));
@@ -62,6 +73,8 @@ public class PostJpaController {
         model.addAttribute("member", member);
         return "post/jpa/addForm";
     }
+
+
 
     // 게시글 등록 처리
     @PostMapping("/add")
@@ -96,8 +109,23 @@ public class PostJpaController {
 
     // 게시글 수정 폼 (GET)
     @GetMapping("/{postId}/edit")
-    public String editPost(@PathVariable Long postId, Model model) {
+    public String editPost(@PathVariable Long postId,
+                           @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                           Model model,
+                           HttpServletRequest request) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트하며, 원래 URL을 함께 전달
+        if (loginMember == null) {
+            String redirectURL = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectURL;
+        }
+
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
+
+        if (!post.getLoginId().equals(loginMember.getLoginId())) {
+            model.addAttribute("errorMessage", "해당 게시글을 수정할 권한이 없습니다.");
+            return "error/accessDenied";
+        }
+
         PostUpdateDto postUpdateDto = new PostUpdateDto(post.getId(), post.getTitle(), post.getContent(), post.getLoginId(), post.getTags());
         model.addAttribute("post", postUpdateDto);
         return "post/jpa/editForm";
@@ -106,10 +134,24 @@ public class PostJpaController {
     // 게시글 수정 처리 (POST)
     @PostMapping("/{postId}/edit")
     public String editPost(@PathVariable Long postId,
+                           @SessionAttribute(value = "loginMember", required = false) Member loginMember,
                            @Validated @ModelAttribute("post") PostUpdateDto postUpdateDto,
                            BindingResult bindingResult,
                            Model model,
                            RedirectAttributes redirectAttributes) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        if (loginMember == null) {
+            return "redirect:/login";
+        }
+
+        // 게시글 조회
+        Post post = postJpaServiceV2.findById(postId).orElseThrow();
+
+        // 작성자가 아닌 경우 에러 페이지로 리다이렉트 (또는 예외 처리)
+        if (!post.getLoginId().equals(loginMember.getLoginId())) {
+            model.addAttribute("errorMessage", "해당 게시글을 수정할 권한이 없습니다.");
+            return "error/accessDenied";  // 접근 권한 없음을 알리는 페이지로 리다이렉트
+        }
 
         // 태그 중복 확인
         List<String> tagNames = postUpdateDto.getTags().stream()
@@ -126,6 +168,7 @@ public class PostJpaController {
             return "post/jpa/editForm";
         }
 
+        // 게시글 업데이트
         postJpaServiceV2.update(postId, postUpdateDto);
         redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 수정되었습니다.");
         return "redirect:/post/jpa/postList/" + postId;
