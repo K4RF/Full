@@ -106,8 +106,24 @@ public class PostJpaController {
 
     // 게시글 수정 폼 (GET)
     @GetMapping("/{postId}/edit")
-    public String editPost(@PathVariable Long postId, Model model) {
+    public String editPost(@PathVariable Long postId,
+                           @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                           Model model) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        if (loginMember == null) {
+            return "redirect:/login";
+        }
+
+        // 게시글 조회
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
+
+        // 작성자가 아닌 경우 에러 페이지로 리다이렉트 (또는 예외 처리)
+        if (!post.getLoginId().equals(loginMember.getLoginId())) {
+            model.addAttribute("errorMessage", "해당 게시글을 수정할 권한이 없습니다.");
+            return "error/accessDenied";  // 접근 권한 없음을 알리는 페이지로 리다이렉트
+        }
+
+        // 수정 폼에 필요한 데이터 추가
         PostUpdateDto postUpdateDto = new PostUpdateDto(post.getId(), post.getTitle(), post.getContent(), post.getLoginId(), post.getTags());
         model.addAttribute("post", postUpdateDto);
         return "post/jpa/editForm";
@@ -116,10 +132,24 @@ public class PostJpaController {
     // 게시글 수정 처리 (POST)
     @PostMapping("/{postId}/edit")
     public String editPost(@PathVariable Long postId,
+                           @SessionAttribute(value = "loginMember", required = false) Member loginMember,
                            @Validated @ModelAttribute("post") PostUpdateDto postUpdateDto,
                            BindingResult bindingResult,
                            Model model,
                            RedirectAttributes redirectAttributes) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        if (loginMember == null) {
+            return "redirect:/login";
+        }
+
+        // 게시글 조회
+        Post post = postJpaServiceV2.findById(postId).orElseThrow();
+
+        // 작성자가 아닌 경우 에러 페이지로 리다이렉트 (또는 예외 처리)
+        if (!post.getLoginId().equals(loginMember.getLoginId())) {
+            model.addAttribute("errorMessage", "해당 게시글을 수정할 권한이 없습니다.");
+            return "error/accessDenied";  // 접근 권한 없음을 알리는 페이지로 리다이렉트
+        }
 
         // 태그 중복 확인
         List<String> tagNames = postUpdateDto.getTags().stream()
@@ -136,6 +166,7 @@ public class PostJpaController {
             return "post/jpa/editForm";
         }
 
+        // 게시글 업데이트
         postJpaServiceV2.update(postId, postUpdateDto);
         redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 수정되었습니다.");
         return "redirect:/post/jpa/postList/" + postId;
