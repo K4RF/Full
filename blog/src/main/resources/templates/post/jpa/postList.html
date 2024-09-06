@@ -8,12 +8,15 @@
 <div class="container" style="max-width: 600px">
     <div class="py-5 text-center">
         <h2>글 목록</h2>
-    </div>
+        <div class="d-flex justify-content-end">
+            <div>
+                <!-- 로그인 상태에 따라 버튼 표시 -->
+                <a th:if="${loginMember == null}" href="/login" class="btn btn-primary">로그인</a>
 
-    <!-- 로그인/로그아웃 버튼 -->
-    <div class="d-flex justify-content-end">
-        <div>
-            <a href="/login" class="btn btn-primary">로그인</a>
+                <form th:if="${loginMember != null}" th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-secondary">로그아웃</button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -31,9 +34,9 @@
             </div>
             <div class="col">
                 <div class="col">
+                    <!-- 로그인 여부와 상관없이 포스트 등록 버튼 표시 -->
                     <button class="btn btn-primary float-end"
                             th:onclick="|location.href='@{/post/jpa/postList/add}'|"
-                            th:if="${loginMember != null}"
                             type="button">포스트 등록
                     </button>
                 </div>

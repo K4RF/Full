@@ -32,7 +32,12 @@ public class PostJpaController {
 
     // 게시글 목록 조회
     @GetMapping
-    public String posts(@ModelAttribute("postSearch") PostSearchCond postSearch, Model model) {
+    public String posts(@ModelAttribute("postSearch") PostSearchCond postSearch,
+                        @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                        Model model) {
+        // 로그인 상태 확인
+        model.addAttribute("loginMember", loginMember);
+
         List<Post> posts = postJpaServiceV2.findPosts(postSearch);
         model.addAttribute("posts", posts);
         return "post/jpa/postList";
@@ -48,9 +53,13 @@ public class PostJpaController {
         return "post/jpa/post";
     }
 
-    // 게시글 작성 폼
     @GetMapping("/add")
-    public String addPostName(Model model, @SessionAttribute("loginMember") Member loginMember) {
+    public String addPostName(Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        if (loginMember == null) {
+            return "redirect:/login";
+        }
+
         Long memberId = loginMember.getId();
         Member member = memberJpaService.findMember(memberId)
                 .orElseThrow(() -> new NoSuchElementException("Member not found with ID: " + memberId));
@@ -62,6 +71,7 @@ public class PostJpaController {
         model.addAttribute("member", member);
         return "post/jpa/addForm";
     }
+
 
     // 게시글 등록 처리
     @PostMapping("/add")
