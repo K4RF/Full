@@ -7,6 +7,15 @@
         .container {
             max-width: 560px;
         }
+
+        /* 태그 입력 오류 시 빨간색으로 표시 */
+        .is-invalid {
+            border-color: #dc3545;
+        }
+
+        .text-danger {
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -34,7 +43,10 @@
         </div>
         <div>
             <label for="tags">태그</label>
-            <input type="text" id="tags" th:field="*{tagsFormatted}" class="form-control">
+            <!-- 태그 중복 오류가 있을 경우 클래스에 is-invalid 추가 -->
+            <input type="text" id="tags" th:field="*{tagsFormatted}" class="form-control"
+                   th:classappend="${#fields.hasErrors('tags')} ? 'is-invalid' : ''">
+            <!-- 태그 중복 오류 메시지 표시 -->
             <div class="text-danger" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></div>
         </div>
 

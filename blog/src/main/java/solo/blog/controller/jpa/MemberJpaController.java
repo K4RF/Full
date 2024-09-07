@@ -14,6 +14,8 @@ import solo.blog.service.jpa.tx.MemberJpaService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Optional;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
@@ -72,8 +74,9 @@ public class MemberJpaController {
             return "/members/updateMemberForm";
         }
 
-        // 이름 중복 체크
-        if (memberJpaRepository.existsByName(updateDto.getName())) {
+        // 본인의 loginId로 이름 중복 확인
+        Optional<Member> existingMember = memberJpaRepository.findByLoginId(updateDto.getName());
+        if (existingMember.isPresent() && !existingMember.get().getLoginId().equals(updateDto.getMemberId())) {
             bindingResult.rejectValue("name", "duplicate", "이미 존재하는 이름입니다.");
             return "/members/updateMemberForm";
         }
