@@ -26,7 +26,7 @@ public class PostSearchRepository {
 
     public List<Post> findAll(PostSearchCond cond) {
         String title = cond.getTitle();
-        String loginId = cond.getLoginId();
+        String loginId = cond.getAuthorName();
 
         // 저장된 데이터 로그 출력
         System.out.println("Current stored posts: " + store.values());

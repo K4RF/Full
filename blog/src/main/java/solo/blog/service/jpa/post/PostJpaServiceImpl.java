@@ -55,4 +55,9 @@ public class PostJpaServiceImpl implements PostJpaService {
     public List<Post> findPosts(PostSearchCond cond) {
         return repository.findAll(cond);
     }
+
+    @Override
+    public List<Post> findByLoginId(String loginId) {
+        return null;
+    }
 }

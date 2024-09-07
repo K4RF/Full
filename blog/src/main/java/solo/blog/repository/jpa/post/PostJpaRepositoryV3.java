@@ -48,7 +48,7 @@ public class PostJpaRepositoryV3 implements JpaRepository {
 
     @Override
     public List<Post> findAll(PostSearchCond cond) {
-        String loginId = cond.getLoginId();
+        String loginId = cond.getAuthorName();
         String title = cond.getTitle();
 
         List<Post> result = query

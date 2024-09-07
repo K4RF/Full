@@ -9,5 +9,5 @@ public interface MemberJpaService {
     void join(Member member);
     Optional<Member> findMember(Long memberId);
 
-    void updateMember(MemberUpdateDto updateDto);
+    Member updateMember(MemberUpdateDto updateDto);
 }

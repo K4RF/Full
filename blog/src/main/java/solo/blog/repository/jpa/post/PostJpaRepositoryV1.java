@@ -46,7 +46,7 @@ public class PostJpaRepositoryV1 implements JpaRepository {
         String jpql = "select i from Post i";
         boolean hasCondition = false;
 
-        String loginId = cond.getLoginId();
+        String loginId = cond.getAuthorName();
         String title = cond.getTitle();
 
         if (StringUtils.hasText(title)) {

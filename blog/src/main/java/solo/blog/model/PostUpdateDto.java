@@ -15,14 +15,17 @@ public class PostUpdateDto {
     private String content;
     private String loginId;
     private List<Tag> tags = new ArrayList<>();
+    private String authorName; // 작성자의 이름
+
 
     // 생성자 정의
-    public PostUpdateDto(Long id, String title, String content, String loginId, List<Tag> tags) {
+    public PostUpdateDto(Long id, String title, String content, String loginId, List<Tag> tags, String authorName) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.loginId = loginId;
         this.tags = tags;
+        this.authorName = authorName;
     }
 
     public String getTagsFormatted() {

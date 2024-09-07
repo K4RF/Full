@@ -71,7 +71,7 @@ public class JdbcTemplateRepositoryV3 implements PostJdbcRepository {
     @Override
     public List<Post> findAll(PostSearchCond cond) {
         String postName = cond.getTitle();
-        String loginName = cond.getLoginId();
+        String loginName = cond.getAuthorName();
         SqlParameterSource param = new BeanPropertySqlParameterSource(cond);
 
         // 수정된 테이블 이름: post

@@ -67,18 +67,19 @@ public class PostJpaController {
                 .orElseThrow(() -> new NoSuchElementException("Member not found with ID: " + memberId));
 
         Post post = new Post();
-        post.setLoginId(member.getLoginId());
+        post.setLoginId(member.getLoginId());  // DB에 loginId는 저장되지만 화면에서는 표시 안 됨
+        post.setAuthorName(member.getName());  // 작성자 이름 설정
 
         model.addAttribute("post", post);
         model.addAttribute("member", member);
         return "post/jpa/addForm";
     }
 
-
-
     // 게시글 등록 처리
     @PostMapping("/add")
-    public String addPostTag(@ModelAttribute @Validated Post post, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+    public String addPostTag(@ModelAttribute @Validated Post post, BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes, Model model,
+                             @SessionAttribute("loginMember") Member loginMember) {
         // 태그 처리
         List<String> tagNames = Arrays.stream(post.getTagsFormatted().split(","))
                 .map(String::trim)
@@ -100,7 +101,11 @@ public class PostJpaController {
             return "post/jpa/addForm";
         }
 
-        // 게시글 저장
+        // 작성자 이름과 loginId 설정
+        post.setAuthorName(loginMember.getName());
+        post.setLoginId(loginMember.getLoginId());
+
+        // 나머지 로직 처리 후 게시글 저장
         Post savedPost = postJpaServiceV2.save(post, new HashSet<>(tagNames));
         redirectAttributes.addAttribute("postId", savedPost.getId());
         redirectAttributes.addAttribute("status", true);
@@ -126,7 +131,7 @@ public class PostJpaController {
             return "error/accessDenied";
         }
 
-        PostUpdateDto postUpdateDto = new PostUpdateDto(post.getId(), post.getTitle(), post.getContent(), post.getLoginId(), post.getTags());
+        PostUpdateDto postUpdateDto = new PostUpdateDto(post.getId(), post.getTitle(), post.getContent(), post.getLoginId(), post.getTags(), post.getAuthorName());
         model.addAttribute("post", postUpdateDto);
         return "post/jpa/editForm";
     }

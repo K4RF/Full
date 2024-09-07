@@ -25,7 +25,7 @@ public class PostQueryRepository {
                 .from(post)
                 .where(
                         likeTitle(cond.getTitle()),
-                        likeLoginId(cond.getLoginId())
+                        likeLoginId(cond.getAuthorName())
                 ).fetch();
     }
 
@@ -41,5 +41,11 @@ public class PostQueryRepository {
             return post.loginId.like("%" + loginId + "%");
         }
         return null;
+    }
+
+    public List<Post> findByLoginId(String loginId) {
+        return query.selectFrom(post)
+                .where(post.loginId.eq(loginId))
+                .fetch();
     }
 }

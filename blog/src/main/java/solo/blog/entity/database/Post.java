@@ -19,7 +19,10 @@ public class Post {
     private Long id;
 
     @Column(name = "login_id", length = 10, nullable = false)
-    private String loginId;
+    private String loginId; // 로그인 ID (외부에 보이지 않음)
+
+    @Column(nullable = false)
+    private String authorName; // 작성자의 이름
 
     @Column(nullable = false)
     private String title;

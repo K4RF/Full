@@ -41,7 +41,7 @@ public class PostJpaRepositoryV2 implements JpaRepository {
     public List<Post> findAll(PostSearchCond cond) {
         boolean hasCondition = false;
 
-        String loginId = cond.getLoginId();
+        String loginId = cond.getAuthorName();
         String title = cond.getTitle();
         if(StringUtils.hasText(title) && StringUtils.hasText(loginId)){
             return repository.findPosts("%" + title + "%", loginId);
