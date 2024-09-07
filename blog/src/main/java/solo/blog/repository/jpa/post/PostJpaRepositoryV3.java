@@ -48,7 +48,7 @@ public class PostJpaRepositoryV3 implements JpaRepository {
 
     @Override
     public List<Post> findAll(PostSearchCond cond) {
-        String loginId = cond.getAuthorName();
+        String authorName = cond.getAuthorName();
         String title = cond.getTitle();
 
         List<Post> result = query
@@ -56,7 +56,7 @@ public class PostJpaRepositoryV3 implements JpaRepository {
                 .from(post)
                 .where(
                         likeTitle(title),
-                        likeLoginId(loginId)
+                        likeAuthorName(authorName)
                 )
                 .fetch();
 
@@ -68,7 +68,7 @@ public class PostJpaRepositoryV3 implements JpaRepository {
         return StringUtils.hasText(title) ? post.title.like("%" + title + "%") : null;
     }
 
-    private BooleanExpression likeLoginId(String loginId) {
-        return StringUtils.hasText(loginId) ? post.loginId.like("%" + loginId + "%") : null;
+    private BooleanExpression likeAuthorName(String authorName) {
+        return StringUtils.hasText(authorName) ? post.authorName.like("%" + authorName + "%") : null;
     }
 }
