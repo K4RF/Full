@@ -10,4 +10,7 @@ public interface MemberJpaService {
     Optional<Member> findMember(Long memberId);
 
     Member updateMember(MemberUpdateDto updateDto);
+
+    boolean isNameDuplicate(String name);
+
 }

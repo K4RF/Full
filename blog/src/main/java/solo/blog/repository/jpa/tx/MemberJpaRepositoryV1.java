@@ -67,4 +67,17 @@ public class MemberJpaRepositoryV1 implements MemberJpaRepository {
         log.info("Found {} members", members.size());
         return members;
     }
+
+    // 이름 중복 확인 메서드 추가
+    public boolean existsByName(String name) {
+        log.info("Checking if name exists: {}", name);
+        QMember member = QMember.member;
+
+        long count = query
+                .selectFrom(member)
+                .where(member.name.eq(name))
+                .fetchCount();
+
+        return count > 0;
+    }
 }

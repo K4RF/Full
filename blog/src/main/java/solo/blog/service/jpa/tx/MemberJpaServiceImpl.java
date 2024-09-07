@@ -68,4 +68,8 @@ public class MemberJpaServiceImpl implements MemberJpaService{
         return memberJpaRepository.save(member);
     }
 
+    @Override
+    public boolean isNameDuplicate(String name) {
+        return memberJpaRepository.existsByName(name);
+    }
 }

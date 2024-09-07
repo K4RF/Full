@@ -58,11 +58,8 @@ public class MemberJpaController {
             return "redirect:/login?redirectURL=" + redirectURL;
         }
 
-        // loginMember의 id가 올바르게 전달되는지 확인
-        Long memberId = loginMember.getId();  // 여기서 memberId를 가져옵니다.
-
-        // `MemberUpdateDto`에 `memberId`를 설정
-        MemberUpdateDto updateDto = new MemberUpdateDto(loginMember.getId(), loginMember.getName(), loginMember.getPassword());
+        Long memberId = loginMember.getId(); // loginMember에서 memberId 가져오기
+        MemberUpdateDto updateDto = new MemberUpdateDto(memberId, loginMember.getName(), loginMember.getPassword());
         model.addAttribute("member", updateDto);
         return "/members/updateMemberForm";
     }
@@ -75,12 +72,19 @@ public class MemberJpaController {
             return "/members/updateMemberForm";
         }
 
+        // 이름 중복 체크
+        if (memberJpaRepository.existsByName(updateDto.getName())) {
+            bindingResult.rejectValue("name", "duplicate", "이미 존재하는 이름입니다.");
+            return "/members/updateMemberForm";
+        }
+
+        // 오류가 있는 경우 다시 폼으로 반환
         if (bindingResult.hasErrors()) {
             return "/members/updateMemberForm";
         }
 
+        // 회원 정보 업데이트
         memberJpaService.updateMember(updateDto);
         return "redirect:/post/jpa/postList";
     }
-
 }
