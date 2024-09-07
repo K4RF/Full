@@ -7,6 +7,15 @@
         .container {
             max-width: 560px;
         }
+
+        /* 오류 발생 시 폼 필드를 빨간색으로 표시 */
+        .is-invalid {
+            border-color: #dc3545;
+        }
+
+        .text-danger {
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -18,7 +27,9 @@
     <form th:action="@{/post/jpa/postList/add}" th:object="${post}" method="post">
         <div>
             <label for="title">제목</label>
-            <input type="text" id="title" th:field="*{title}" class="form-control">
+            <!-- 제목 중복 시 is-invalid 클래스 추가 -->
+            <input type="text" id="title" th:field="*{title}" class="form-control"
+                   th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''">
             <!-- 제목 중복 오류 메시지 -->
             <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
         </div>
@@ -29,13 +40,15 @@
         </div>
 
         <div>
-            <label for="loginId">작성자</label>
-            <input type="text" id="loginId" th:field="*{loginId}" class="form-control" readonly>
+            <label for="authorName">작성자</label>
+            <input type="text" id="authorName" th:field="*{authorName}" class="form-control" readonly>
         </div>
 
         <div>
             <label for="tags">태그 (쉼표로 구분)</label>
-            <input type="text" id="tags" th:field="*{tagsFormatted}" class="form-control">
+            <!-- 태그 중복 시 is-invalid 클래스 추가 -->
+            <input type="text" id="tags" th:field="*{tagsFormatted}" class="form-control"
+                   th:classappend="${#fields.hasErrors('tagsFormatted')} ? 'is-invalid' : ''">
             <!-- 태그 중복 오류 메시지 -->
             <div class="text-danger" th:if="${#fields.hasErrors('tagsFormatted')}" th:errors="*{tagsFormatted}"></div>
         </div>

@@ -15,7 +15,10 @@
 
                 <form th:if="${loginMember != null}" th:action="@{/logout}" method="post" style="display:inline;">
                     <button type="submit" class="btn btn-secondary">로그아웃</button>
+                    <!-- 포스트 리스트에서 회원 정보 버튼 추가 -->
+                    <a href="/members/update" class="btn btn-info">회원정보</a>
                 </form>
+
             </div>
         </div>
     </div>
@@ -27,7 +30,7 @@
                 <input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
             </div>
             <div class="col">
-                <input type="text" th:field="*{loginId}" class="form-control" placeholder="작성자"/>
+                <input type="text" th:field="*{authorName}" class="form-control" placeholder="작성자"/>
             </div>
             <div class="col">
                 <button type="submit" class="btn btn-secondary mb-2">검색</button>
@@ -58,7 +61,7 @@
             <tr th:each="post : ${posts}">
                 <td><a th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.id}">포스트 id</a></td>
                 <td><a th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.title}">제목</a></td>
-                <td th:text="${post.loginId}">작성자</td>
+                <td th:text="${post.authorName}">작성자</td>
             </tr>
             </tbody>
         </table>

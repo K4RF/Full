@@ -117,5 +117,10 @@ public class PostJpaServiceV2 implements PostJpaService {
         Set<String> tagSet = new HashSet<>(tagNames);
         return tagSet.size() != tagNames.size();
     }
+
+    // 로그인 ID로 게시글 찾기
+    public List<Post> findByLoginId(String loginId) {
+        return postQueryRepository.findByLoginId(loginId);
+    }
 }
 

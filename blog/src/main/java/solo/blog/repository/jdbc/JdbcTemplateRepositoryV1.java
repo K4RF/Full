@@ -67,7 +67,7 @@ public class JdbcTemplateRepositoryV1 implements PostJdbcRepository {
     @Override
     public List<Post> findAll(PostSearchCond cond) {
         String postName = cond.getTitle();
-        String loginName = cond.getLoginId();
+        String loginName = cond.getAuthorName();
         String sql = "select id, title, content, login_id from id";
         if (StringUtils.hasText(postName) || loginName != null) {
             sql += " where";

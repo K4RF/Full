@@ -13,4 +13,5 @@ public interface PostJpaService {
     Post update(Long postId, PostUpdateDto updateParam);  // 반환 타입을 void에서 Post로 변경
     Optional<Post> findById(Long id);
     List<Post> findPosts(PostSearchCond cond);
+    List<Post> findByLoginId(String loginId);
 }
