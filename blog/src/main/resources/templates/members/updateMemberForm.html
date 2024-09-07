@@ -18,54 +18,43 @@
 <div class="container">
 
   <div class="py-5 text-center">
-    <h2>로그인</h2>
+    <h2>회원 정보 수정</h2>
   </div>
 
-  <!-- 로그인 폼 -->
-  <form th:action="@{/login}" th:object="${loginForm}" method="post">
+  <h4 class="mb-3">회원 정보 입력</h4>
 
-    <!-- Global Errors -->
+  <form th:action="@{/members/update}" th:object="${member}" method="post">
+    <input type="hidden" th:field="*{memberId}" />
+
     <div th:if="${#fields.hasGlobalErrors()}">
       <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
     </div>
 
-    <!-- 로그인 ID 입력 -->
     <div>
-      <label for="loginId">로그인 ID</label>
-      <input type="text" id="loginId" th:field="*{loginId}" class="form-control" th:errorclass="field-error">
-      <div class="field-error" th:errors="*{loginId}" />
+      <label for="name">이름</label>
+      <input type="text" id="name" th:field="*{name}" class="form-control" th:errorclass="field-error">
+      <div class="field-error" th:errors="*{name}" />
     </div>
 
-    <!-- 비밀번호 입력 -->
     <div>
       <label for="password">비밀번호</label>
       <input type="password" id="password" th:field="*{password}" class="form-control" th:errorclass="field-error">
       <div class="field-error" th:errors="*{password}" />
     </div>
 
-    <!-- redirectURL 히든 필드로 추가 -->
-    <input type="hidden" th:field="*{redirectURL}" th:value="${param.redirectURL}" />
-
     <hr class="my-4">
 
-    <!-- 로그인 버튼 -->
     <div class="row">
       <div class="col">
-        <button class="w-100 btn btn-primary btn-lg" type="submit">로그인</button>
+        <button class="w-100 btn btn-primary btn-lg" type="submit">회원 정보 수정</button>
       </div>
       <div class="col">
         <button class="w-100 btn btn-secondary btn-lg" type="button" th:onclick="|location.href='@{/}'|">취소</button>
       </div>
     </div>
 
-    <!-- 회원가입 버튼 -->
-    <div class="row mt-3">
-      <div class="col">
-        <button class="w-100 btn btn-success btn-lg" type="button" th:onclick="|location.href='@{/members/add}'|">회원가입</button>
-      </div>
-    </div>
-
   </form>
+
 
 </div> <!-- /container -->
 </body>

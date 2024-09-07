@@ -12,16 +12,15 @@ import java.util.stream.Collectors;
 @Setter
 public class PostSearchCond {
     private String title;
-    private String loginId;
-
+    private String authorName; // 작성자의 이름
 
 
     public PostSearchCond(){
 
     }
 
-    public PostSearchCond(String loginId, String title) {
-        this.loginId = loginId;
+    public PostSearchCond(String authorName, String title) {
+        this.authorName = authorName;
         this.title = title;
     }
 }

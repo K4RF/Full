@@ -12,7 +12,10 @@ import java.io.IOException;
 
 @Slf4j
 public class LoginCheckFilter implements Filter {
-    private static final String[] whiteList = {"/", "/members/add", "/login", "/logout", "/css/*"};
+    // 화이트리스트에 정적 리소스 및 favicon 추가
+    private static final String[] whiteList = {
+            "/", "/members/add", "/login", "/logout", "/css/*", "/post/jpa/postList", "/post/jpa/postList/**", "/favicon.ico", "/images/**", "/js/**", "/webjars/**"
+    };
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -21,32 +24,30 @@ public class LoginCheckFilter implements Filter {
 
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        try{
-            log.info("인증 체크 필터 시작{}", requestURI);
+        try {
+            log.info("인증 체크 필터 시작 {}", requestURI);
 
-            if(isLoginCheckPath(requestURI)){
-                log.info("인증 체크 로직 실행{}", requestURI);
-                HttpSession session = httpRequest.getSession();
-                if(session == null || session.getAttribute(SessionConst.LOGIN_MEMBER) == null){
-                    log.info("미인증 상요자 요청 {}", requestURI);
-                    // 로그인으로 redirect
+            if (isLoginCheckPath(requestURI)) {
+                log.info("인증 체크 로직 실행 {}", requestURI);
+                HttpSession session = httpRequest.getSession(false);
+                if (session == null || session.getAttribute(SessionConst.LOGIN_MEMBER) == null) {
+                    log.info("미인증 사용자 요청 {}", requestURI);
                     httpResponse.sendRedirect("/login?redirectURL=" + requestURI);
                     return;
                 }
             }
             chain.doFilter(request, response);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw e;
-        }finally {
-            log.info("인증 체크 필터 종료{}", requestURI);
+        } finally {
+            log.info("인증 체크 필터 종료 {}", requestURI);
         }
-
     }
 
     /**
-     * 화이트 리스트의 경우 인증 체크 x
+     * 화이트리스트에 해당하는 경로는 인증 체크를 하지 않음
      */
-    private boolean isLoginCheckPath(String requestURI){
+    private boolean isLoginCheckPath(String requestURI) {
         return !PatternMatchUtils.simpleMatch(whiteList, requestURI);
     }
 }

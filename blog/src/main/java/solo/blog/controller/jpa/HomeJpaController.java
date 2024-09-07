@@ -18,7 +18,7 @@ import solo.blog.repository.jpa.tx.MemberJpaRepository;
 @RequiredArgsConstructor
 public class HomeJpaController {
 
-    @GetMapping("/")
+    //@GetMapping("/")
     public String homeArgumentResolverV2(@Login Member loginMember, Model model) {
         // 세션에 회원 데이터가 없으면 home
         if (loginMember == null) {
@@ -27,6 +27,11 @@ public class HomeJpaController {
 
         // 세션이 유지되면 로그인으로 이동
         model.addAttribute("member", loginMember);
+        return "redirect:/post/jpa/postList";
+    }
+
+    @GetMapping("/")
+    public String redirectUrl() {
         return "redirect:/post/jpa/postList";
     }
 }

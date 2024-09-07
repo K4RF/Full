@@ -19,7 +19,6 @@ import solo.blog.entity.database.tx.Member;
 import solo.blog.entity.v2.LoginForm;
 import solo.blog.service.jpa.LoginJpaService;
 
-
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -28,12 +27,18 @@ public class LoginController {
     private final SessionManager sessionManager;
 
     @GetMapping("login")
-    public String loginForm(@ModelAttribute("loginForm") LoginForm form) {
+    public String loginForm(@ModelAttribute("loginForm") LoginForm form,
+                            @RequestParam(value = "redirectURL", required = false) String redirectURL,
+                            HttpServletRequest request) {
+        // redirectURL이 존재하면 세션에 저장
+        if (redirectURL != null && !redirectURL.isEmpty()) {
+            request.getSession().setAttribute("redirectURL", redirectURL);
+        }
         return "login/loginForm";
     }
 
     @PostMapping("/login")
-    public String loginFilter(@Valid LoginForm form, BindingResult bindingResult, HttpServletRequest request) {
+    public String loginFilter(@Valid @ModelAttribute LoginForm form, BindingResult bindingResult, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             return "login/loginForm";
         }
@@ -45,29 +50,25 @@ public class LoginController {
             return "login/loginForm";
         }
 
+        // 로그인 성공 시 세션에 로그인 정보 저장
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, member);
 
-        // 로그 추가
-        log.info("Session saved with member: {}", member);
-        log.info("Saved in session - ID: {}, LoginId: {}, Name: {}", member.getId(), member.getLoginId(), member.getName());
-
-        return "redirect:/";
+        // 세션에 저장된 redirectURL로 리다이렉트 (없으면 기본 페이지로 이동)
+        String redirectURL = (String) session.getAttribute("redirectURL");
+        if (redirectURL != null && !redirectURL.isEmpty()) {
+            session.removeAttribute("redirectURL");
+            return "redirect:" + redirectURL;
+        }
+        return "redirect:/post/jpa/postList";
     }
 
     @PostMapping("/logout")
     public String logoutServlet(HttpServletRequest request) {
-        // 세션을 삭제
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
         return "redirect:/";
-    }
-
-    private static void expireCookie(HttpServletResponse response, String cookieName) {
-        Cookie cookie = new Cookie(cookieName, null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
     }
 }

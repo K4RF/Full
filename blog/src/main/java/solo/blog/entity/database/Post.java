@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -18,7 +19,10 @@ public class Post {
     private Long id;
 
     @Column(name = "login_id", length = 10, nullable = false)
-    private String loginId;
+    private String loginId; // 로그인 ID (외부에 보이지 않음)
+
+    @Column(nullable = false)
+    private String authorName; // 작성자의 이름
 
     @Column(nullable = false)
     private String title;
@@ -32,38 +36,21 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    @ToString.Exclude // 순환 참조 방지를 위해 추가
-    @OrderColumn(name = "tag_order") // 순서를 보장하기 위해 @OrderColumn 추가
-    private List<Tag> tags = new ArrayList<>(); // Set에서 List로 변경
-
-    public Post() {
-    }
-
-    public Post(String loginId, String title, String content) {
-        this.loginId = loginId;
-        this.title = title;
-        this.content = content;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Post post = (Post) o;
-        return Objects.equals(id, post.id) &&
-                Objects.equals(loginId, post.loginId) &&
-                Objects.equals(title, post.title) &&
-                Objects.equals(content, post.content);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, loginId, title, content);
-    }
+    @ToString.Exclude
+    @OrderColumn(name = "tag_order")
+    private List<Tag> tags = new ArrayList<>();
 
     public String getTagsFormatted() {
         return tags.stream()
                 .map(Tag::getName)
                 .collect(Collectors.joining(", "));
     }
+
+    public void setTagsFormatted(String tagsFormatted) {
+        this.tags = Arrays.stream(tagsFormatted.split(","))
+                .map(String::trim)
+                .map(Tag::new)
+                .collect(Collectors.toList());
+    }
 }
+

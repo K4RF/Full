@@ -22,25 +22,14 @@ import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    // @Bean
-    public FilterRegistrationBean logFilter() {
-        FilterRegistrationBean<Filter> filterRegistrationBean = new
-                FilterRegistrationBean<>();
-        filterRegistrationBean.setFilter(new LoginFilter());
-        filterRegistrationBean.setOrder(1);
-        filterRegistrationBean.addUrlPatterns("/*");
-        return filterRegistrationBean;
-    }
 
     @Bean
     public FilterRegistrationBean loginCheckFilter() {
-        FilterRegistrationBean<Filter> filterRegistrationBean = new
-                FilterRegistrationBean<>();
+        FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new LoginCheckFilter());
         filterRegistrationBean.setOrder(2);
         filterRegistrationBean.addUrlPatterns("/*");
         filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ERROR);
-
         return filterRegistrationBean;
     }
 
@@ -49,13 +38,14 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginInterceptor())
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**");
+                .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**", "/post/jpa/postList/**");
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error", "/error-page/**");
+                        "/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error", "/error-page/**", "/post/jpa/postList/**");
     }
+
     @Override
     public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
         resolvers.add(new MyHandlerExceptionResolver());

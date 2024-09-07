@@ -25,7 +25,7 @@ public class PostQueryRepository {
                 .from(post)
                 .where(
                         likeTitle(cond.getTitle()),
-                        likeLoginId(cond.getLoginId())
+                        likeAuthorName(cond.getAuthorName())
                 ).fetch();
     }
 
@@ -36,10 +36,16 @@ public class PostQueryRepository {
         return null;
     }
 
-    private BooleanExpression likeLoginId(String loginId){
-        if(StringUtils.hasText(loginId)){
-            return post.loginId.like("%" + loginId + "%");
+    private BooleanExpression likeAuthorName(String authorName){
+        if(StringUtils.hasText(authorName)){
+            return post.authorName.like("%" + authorName + "%");
         }
         return null;
+    }
+
+    public List<Post> findByLoginId(String loginId) {
+        return query.selectFrom(post)
+                .where(post.loginId.eq(loginId))
+                .fetch();
     }
 }

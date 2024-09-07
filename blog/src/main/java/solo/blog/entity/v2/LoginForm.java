@@ -9,4 +9,5 @@ public class LoginForm {
     private String loginId;
     @NotEmpty
     private String password;
+    private String redirectURL; // redirectURL 필드 추가
 }

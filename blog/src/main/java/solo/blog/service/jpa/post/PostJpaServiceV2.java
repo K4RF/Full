@@ -25,8 +25,11 @@ public class PostJpaServiceV2 implements PostJpaService {
 
     @Transactional
     public Post save(Post post, Set<String> tagNames) {
+        // 태그 생성 및 저장
         List<Tag> tags = createTags(tagNames);
         post.setTags(tags);
+
+        // 게시글 저장
         return jpaRepositoryV2.save(post);
     }
 
@@ -40,21 +43,11 @@ public class PostJpaServiceV2 implements PostJpaService {
         post.setTitle(postUpdateDto.getTitle());
         post.setContent(postUpdateDto.getContent());
 
-        // 태그 정보 처리
-        List<Tag> tagList = new ArrayList<>();
-        for (Tag tag : postUpdateDto.getTags()) {
-            // 태그가 데이터베이스에 존재하는지 확인
-            Tag existingTag = tagJpaRepository.findByName(tag.getName())
-                    .orElseGet(() -> {
-                        Tag newTag = new Tag();
-                        newTag.setName(tag.getName());
-                        return tagJpaRepository.save(newTag);
-                    });
-            tagList.add(existingTag);
-        }
+        // 태그 정보 업데이트
+        List<Tag> tags = updateTags(postUpdateDto.getTags());
+        post.setTags(tags);
 
-        // 게시글에 태그 설정 (List로 변환된 태그 사용)
-        post.setTags(tagList);
+        // 게시글 저장
         return jpaRepositoryV2.save(post);
     }
 
@@ -68,6 +61,11 @@ public class PostJpaServiceV2 implements PostJpaService {
         return postQueryRepository.findAll(cond);
     }
 
+    /**
+     * 태그 생성 로직을 분리하여 재사용 가능하도록 처리
+     * @param tagNames 태그 이름 Set
+     * @return 태그 리스트
+     */
     private List<Tag> createTags(Set<String> tagNames) {
         List<Tag> tags = new ArrayList<>();
         for (String tagName : tagNames) {
@@ -81,4 +79,48 @@ public class PostJpaServiceV2 implements PostJpaService {
         }
         return tags;
     }
+
+    /**
+     * 태그 업데이트 로직
+     * @param tagsToUpdate 업데이트할 태그 리스트
+     * @return 업데이트된 태그 리스트
+     */
+    private List<Tag> updateTags(List<Tag> tagsToUpdate) {
+        List<Tag> updatedTags = new ArrayList<>();
+        for (Tag tag : tagsToUpdate) {
+            Tag existingTag = tagJpaRepository.findByName(tag.getName())
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag();
+                        newTag.setName(tag.getName());
+                        return tagJpaRepository.save(newTag);
+                    });
+            updatedTags.add(existingTag);
+        }
+        return updatedTags;
+    }
+
+    /**
+     * 제목 중복 여부를 확인하는 메서드
+     * @param title 확인할 제목
+     * @return 중복 여부
+     */
+    public boolean isTitleDuplicate(String title) {
+        return jpaRepositoryV2.existsByTitle(title);
+    }
+
+    /**
+     * 태그 중복 여부를 확인하는 메서드
+     * @param tagNames 태그 이름 리스트
+     * @return 중복 여부
+     */
+    public boolean hasDuplicateTags(List<String> tagNames) {
+        Set<String> tagSet = new HashSet<>(tagNames);
+        return tagSet.size() != tagNames.size();
+    }
+
+    // 로그인 ID로 게시글 찾기
+    public List<Post> findByLoginId(String loginId) {
+        return postQueryRepository.findByLoginId(loginId);
+    }
 }
+

@@ -12,4 +12,7 @@ public interface MemberJpaRepository {
     Optional<Member> findById(Long id);
     Optional<Member> findByLoginId(String loginId);
     List<Member> findAll();
+
+    boolean existsByName(String name);
+
 }

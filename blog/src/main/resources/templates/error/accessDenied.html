@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .container {
+      max-width: 600px;
+      margin-top: 50px;
+    }
+    .error-message {
+      color: #dc3545;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container text-center">
+  <h2 class="error-message">접근 권한이 없습니다.</h2>
+  <p th:text="${errorMessage}">해당 페이지에 접근할 권한이 없습니다.</p>
+
+  <div class="mt-4">
+    <a href="/" class="btn btn-primary">홈으로 돌아가기</a>
+  </div>
+</div>
+
+</body>
+</html>
