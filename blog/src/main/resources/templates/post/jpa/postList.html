@@ -8,8 +8,6 @@
 <div class="container" style="max-width: 600px">
     <div class="py-5 text-center">
         <h2>글 목록</h2>
-        <!-- 포스트 리스트에서 회원 정보 버튼 추가 -->
-        <a href="/members/update" class="btn btn-info">회원정보</a>
         <div class="d-flex justify-content-end">
             <div>
                 <!-- 로그인 상태에 따라 버튼 표시 -->
@@ -17,7 +15,10 @@
 
                 <form th:if="${loginMember != null}" th:action="@{/logout}" method="post" style="display:inline;">
                     <button type="submit" class="btn btn-secondary">로그아웃</button>
+                    <!-- 포스트 리스트에서 회원 정보 버튼 추가 -->
+                    <a href="/members/update" class="btn btn-info">회원정보</a>
                 </form>
+
             </div>
         </div>
     </div>
@@ -60,7 +61,7 @@
             <tr th:each="post : ${posts}">
                 <td><a th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.id}">포스트 id</a></td>
                 <td><a th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.title}">제목</a></td>
-                <td th:text="${post.loginId}">작성자</td>
+                <td th:text="${post.authorName}">작성자</td>
             </tr>
             </tbody>
         </table>

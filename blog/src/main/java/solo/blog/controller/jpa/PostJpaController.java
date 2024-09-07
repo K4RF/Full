@@ -31,7 +31,7 @@ public class PostJpaController {
     private final MemberJpaService memberJpaService;
     private final CommentJpaService commentJpaService;
 
-    // 게시글 목록 조회
+    // 게시글 목록 조회에서 loginId 대신 authorName을 사용
     @GetMapping
     public String posts(@ModelAttribute("postSearch") PostSearchCond postSearch,
                         @SessionAttribute(value = "loginMember", required = false) Member loginMember,
@@ -43,6 +43,7 @@ public class PostJpaController {
         model.addAttribute("posts", posts);
         return "post/jpa/postList";
     }
+
 
     // 특정 게시글 조회
     @GetMapping("/{postId}")
