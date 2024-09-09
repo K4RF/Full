@@ -122,5 +122,15 @@ public class PostJpaServiceV2 implements PostJpaService {
     public List<Post> findByLoginId(String loginId) {
         return postQueryRepository.findByLoginId(loginId);
     }
+
+    @Transactional
+    public void delete(Long postId) {
+        // 게시글 존재 여부 확인
+        Post post = jpaRepositoryV2.findById(postId)
+                .orElseThrow(() -> new NoSuchElementException("해당 포스트를 찾을 수 없습니다."));
+
+        // 게시글 삭제
+        jpaRepositoryV2.delete(post);
+    }
 }
 

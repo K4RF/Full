@@ -14,4 +14,6 @@ public interface PostJpaService {
     Optional<Post> findById(Long id);
     List<Post> findPosts(PostSearchCond cond);
     List<Post> findByLoginId(String loginId);
+    void delete(Long postId);
+
 }
