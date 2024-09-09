@@ -8,4 +8,6 @@ public interface CommentJpaService {
     List<Comment> getCommentsByPostId(Long postId);
 
     void addComment(Long postId, String author, String comet);
+    void deleteByPostId(Long postId);
+
 }

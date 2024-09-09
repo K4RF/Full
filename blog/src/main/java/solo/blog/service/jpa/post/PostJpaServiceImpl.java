@@ -1,15 +1,13 @@
 package solo.blog.service.jpa.post;
 
+import jakarta.transaction.Transactional;
 import solo.blog.entity.database.Post;
 import solo.blog.entity.database.Tag;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
 import solo.blog.repository.jpa.post.JpaRepository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PostJpaServiceImpl implements PostJpaService {
@@ -59,5 +57,9 @@ public class PostJpaServiceImpl implements PostJpaService {
     @Override
     public List<Post> findByLoginId(String loginId) {
         return null;
+    }
+
+    @Override
+    public void delete(Long postId) {
     }
 }

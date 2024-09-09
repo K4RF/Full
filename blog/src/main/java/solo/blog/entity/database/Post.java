@@ -52,5 +52,8 @@ public class Post {
                 .map(Tag::new)
                 .collect(Collectors.toList());
     }
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 }
 

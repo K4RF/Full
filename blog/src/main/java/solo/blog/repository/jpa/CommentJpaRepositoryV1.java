@@ -27,7 +27,6 @@ public class CommentJpaRepositoryV1 implements CommentJpaRepository {
 
         log.info("Executing query to find comments by postId: {}", postId);
 
-        // postId를 Post 객체의 id로 수정하여 필터링합니다.
         List<Comment> results = queryFactory.selectFrom(qComment)
                 .where(qComment.post.id.eq(postId))
                 .fetch();
@@ -48,5 +47,19 @@ public class CommentJpaRepositoryV1 implements CommentJpaRepository {
             em.merge(comment);
             log.info("Comment updated successfully with id: {}", comment.getId());
         }
+    }
+
+    // 새로운 댓글 삭제 로직 추가
+    @Override
+    public void deleteByPostId(Long postId) {
+        QComment qComment = QComment.comment;
+
+        log.info("Executing query to delete comments by postId: {}", postId);
+
+        long deletedCount = queryFactory.delete(qComment)
+                .where(qComment.post.id.eq(postId))
+                .execute();
+
+        log.info("Deleted {} comments for postId: {}", deletedCount, postId);
     }
 }
