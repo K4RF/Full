@@ -80,4 +80,21 @@ public class MemberJpaRepositoryV1 implements MemberJpaRepository {
 
         return count > 0;
     }
+
+    @Override
+    public Optional<Member> findByName(String name) {
+        QMember member = QMember.member;
+
+        List<Member> foundMembers = query
+                .selectFrom(member)
+                .where(member.name.eq(name))
+                .fetch();
+
+        if (foundMembers.size() == 1) {
+            return Optional.of(foundMembers.get(0));
+        } else {
+            return Optional.empty();
+        }
+    }
+
 }
