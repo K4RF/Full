@@ -67,16 +67,19 @@ public class MemberJpaController {
     }
 
     @PostMapping("/update")
-    public String updateMember(@ModelAttribute("member") @Validated MemberUpdateDto updateDto, BindingResult bindingResult) {
+    public String updateMember(@ModelAttribute("member") @Validated MemberUpdateDto updateDto, BindingResult bindingResult,
+                               @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                               HttpServletRequest request) {
         // ID가 없을 경우 예외 처리
         if (updateDto.getMemberId() == null) {
             bindingResult.rejectValue("memberId", "nullId", "회원 ID가 없습니다.");
             return "/members/updateMemberForm";
         }
 
-        // 본인의 loginId로 이름 중복 확인
-        Optional<Member> existingMember = memberJpaRepository.findByLoginId(updateDto.getName());
-        if (existingMember.isPresent() && !existingMember.get().getLoginId().equals(updateDto.getMemberId())) {
+        // 본인의 이름 중복 확인
+        Optional<Member> existingMember = memberJpaRepository.findByName(updateDto.getName());
+
+        if (existingMember.isPresent() && !existingMember.get().getId().equals(updateDto.getMemberId())) {
             bindingResult.rejectValue("name", "duplicate", "이미 존재하는 이름입니다.");
             return "/members/updateMemberForm";
         }
@@ -88,6 +91,11 @@ public class MemberJpaController {
 
         // 회원 정보 업데이트
         memberJpaService.updateMember(updateDto);
+
+        // 세션에 있는 회원 정보 업데이트
+        loginMember.setName(updateDto.getName()); // 변경된 이름 반영
+        request.getSession().setAttribute("loginMember", loginMember); // 세션에 업데이트된 정보 저장
+
         return "redirect:/post/jpa/postList";
     }
 }
