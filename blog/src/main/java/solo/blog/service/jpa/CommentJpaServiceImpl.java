@@ -30,4 +30,9 @@ public class CommentJpaServiceImpl implements CommentJpaService {
         Comment comment = new Comment(post, author, comet);  // post 객체를 전달
         commentJpaRepository.save(comment);
     }
+
+    @Transactional
+    public void deleteByPostId(Long postId) {
+        commentJpaRepository.deleteByPostId(postId);
+    }
 }

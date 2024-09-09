@@ -11,6 +11,7 @@ import solo.blog.model.PostUpdateDto;
 import solo.blog.repository.jpa.post.JpaRepositoryV2;
 import solo.blog.repository.jpa.post.PostQueryRepository;
 import solo.blog.repository.jpa.post.TagJpaRepository;
+import solo.blog.service.jpa.CommentJpaService;
 
 import java.util.*;
 
@@ -22,6 +23,7 @@ public class PostJpaServiceV2 implements PostJpaService {
     private final JpaRepositoryV2 jpaRepositoryV2;
     private final PostQueryRepository postQueryRepository;
     private final TagJpaRepository tagJpaRepository;  // TagRepository를 주입받습니다.
+    private final CommentJpaService commentJpaService;
 
     @Transactional
     public Post save(Post post, Set<String> tagNames) {
@@ -125,9 +127,11 @@ public class PostJpaServiceV2 implements PostJpaService {
 
     @Transactional
     public void delete(Long postId) {
-        // 게시글 존재 여부 확인
         Post post = jpaRepositoryV2.findById(postId)
-                .orElseThrow(() -> new NoSuchElementException("해당 포스트를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 게시글에 연결된 댓글들 삭제
+        commentJpaService.deleteByPostId(postId);
 
         // 게시글 삭제
         jpaRepositoryV2.delete(post);
