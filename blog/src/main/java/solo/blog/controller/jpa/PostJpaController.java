@@ -46,12 +46,20 @@ public class PostJpaController {
 
 
     // 특정 게시글 조회
+    // 특정 게시글 조회
     @GetMapping("/{postId}")
-    public String post(@PathVariable long postId, Model model) {
+    public String post(@PathVariable long postId,
+                       @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                       Model model) {
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
         List<Comment> comments = commentJpaService.getCommentsByPostId(postId);
+
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
+
+        // 로그인된 사용자가 있으면 모델에 추가
+        model.addAttribute("loginMember", loginMember);
+
         return "post/jpa/post";
     }
 
