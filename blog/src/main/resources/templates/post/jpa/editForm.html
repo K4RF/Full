@@ -8,7 +8,7 @@
             max-width: 560px;
         }
 
-        /* 태그 입력 오류 시 빨간색으로 표시 */
+        /* 오류 발생 시 폼 필드를 빨간색으로 표시 */
         .is-invalid {
             border-color: #dc3545;
         }
@@ -16,6 +16,22 @@
         .text-danger {
             color: #dc3545;
         }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-header {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        /* 버튼 스타일 */
+        .btn-lg {
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
     </style>
 </head>
 <body>
@@ -25,28 +41,28 @@
     </div>
 
     <form th:action="@{/post/jpa/postList/{postId}/edit(postId=${post.id})}" th:object="${post}" method="post">
-        <div>
-            <label for="id">포스트 ID</label>
+        <div class="form-group">
+            <label for="id" class="form-header">포스트 ID</label>
             <input type="text" id="id" th:field="*{id}" class="form-control" readonly>
         </div>
-        <div>
-            <label for="title">제목</label>
-            <input type="text" id="title" th:field="*{title}" class="form-control">
+        <div class="form-group">
+            <label for="title" class="form-header">제목</label>
+            <input type="text" id="title" th:field="*{title}" class="form-control" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''">
+            <!-- 제목 중복 오류 메시지 -->
+            <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
         </div>
-        <div>
-            <label for="content">내용</label>
+        <div class="form-group">
+            <label for="content" class="form-header">내용</label>
             <input type="text" id="content" th:field="*{content}" class="form-control">
         </div>
-        <div>
-            <label for="authorName">작성자</label>
+        <div class="form-group">
+            <label for="authorName" class="form-header">작성자</label>
             <input type="text" id="authorName" th:field="*{authorName}" class="form-control" readonly>
         </div>
-        <div>
-            <label for="tags">태그</label>
-            <!-- 태그 중복 오류가 있을 경우 클래스에 is-invalid 추가 -->
-            <input type="text" id="tags" th:field="*{tagsFormatted}" class="form-control"
-                   th:classappend="${#fields.hasErrors('tags')} ? 'is-invalid' : ''">
-            <!-- 태그 중복 오류 메시지 표시 -->
+        <div class="form-group">
+            <label for="tags" class="form-header">태그</label>
+            <input type="text" id="tags" th:field="*{tagsFormatted}" class="form-control" th:classappend="${#fields.hasErrors('tags')} ? 'is-invalid' : ''">
+            <!-- 태그 중복 오류 메시지 -->
             <div class="text-danger" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></div>
         </div>
 
