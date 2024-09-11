@@ -8,6 +8,7 @@ import solo.blog.entity.database.Comment;
 import solo.blog.entity.database.QComment;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -61,5 +62,16 @@ public class CommentJpaRepositoryV1 implements CommentJpaRepository {
                 .execute();
 
         log.info("Deleted {} comments for postId: {}", deletedCount, postId);
+    }
+
+    @Override
+    public Optional<Comment> findById(Long commentId) {
+        return Optional.ofNullable(em.find(Comment.class, commentId));
+    }
+
+
+    @Override
+    public void delete(Comment comment) {
+        em.remove(comment); // 댓글 삭제
     }
 }

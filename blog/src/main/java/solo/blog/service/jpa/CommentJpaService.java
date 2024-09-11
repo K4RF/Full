@@ -9,5 +9,8 @@ public interface CommentJpaService {
 
     void addComment(Long postId, String author, String comet);
     void deleteByPostId(Long postId);
+    // 새로 추가된 메서드
+    void updateComment(Long commentId, String newComet, String loginMemberName); // 댓글 수정
+    void deleteComment(Long commentId, String loginMemberName); // 댓글 삭제
 
 }
