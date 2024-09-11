@@ -69,7 +69,7 @@
         /* 댓글 작성 폼이 열릴 때 배경색 강조 */
         #comment-form {
             display: none;
-            background-color: #f1f8ff; /* 폼이 열릴 때 배경색 */
+            background-color: #f1f8ff;
             padding: 15px;
             border: 1px solid #007bff;
             border-radius: 5px;
@@ -88,7 +88,6 @@
         <h2>글 상세</h2>
     </div>
 
-    <!-- 저장 완료 메시지 -->
     <h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
 
     <div>
@@ -112,7 +111,6 @@
                th:value="${post.authorName}" readonly>
     </div>
 
-    <!-- 태그 -->
     <div>
         <label for="tags">태그</label>
         <input type="text" id="tags" name="tags" class="form-control"
@@ -125,17 +123,53 @@
     <h3>댓글</h3>
     <ul>
         <li th:each="comment : ${comments}">
-            <p><strong th:text="${comment.author}">작성자</strong>: <span th:text="${comment.comet}">댓글 내용</span></p>
+            <p>
+                <strong th:text="${comment.author}">작성자</strong>:
+                <span th:text="${comment.comet}">댓글 내용</span>
+
+                <span th:if="${loginMember != null and comment.author == loginMember.name}" style="float: right;">
+    <!-- 댓글 수정 -->
+    <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.id})|">수정</a> |
+
+                    <!-- 댓글 삭제 -->
+    <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.id}').submit();|">삭제</a>
+                </span>
+
+                <!-- 삭제 폼 (POST 메서드로 제출) - 블록 요소를 span 외부에 배치 -->
+            <form th:id="|delete-comment-${comment.id}|" th:action="@{'/post/jpa/postList/' + ${post.id} + '/comments/' + ${comment.id} + '/delete'}" method="post" style="display:none;">
+                <input type="hidden" name="_method" value="delete">
+            </form>
+            </p>
+
+            <!-- 댓글 수정 폼 (숨김 처리되어 있으며 수정 링크 클릭 시 표시됨) -->
+            <div th:id="'edit-comment-form-' + ${comment.id}" style="display: none; margin-top: 10px;">
+                <form th:action="@{'/post/jpa/postList/' + ${post.id} + '/comments/' + ${comment.id} + '/edit'}" method="post">
+                    <div>
+                        <label th:for="'newComet-' + ${comment.id}">새 댓글 내용</label>
+                        <input type="text" th:id="'newComet-' + ${comment.id}" name="newComet" class="form-control" placeholder="새 댓글 내용" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">수정</button>
+                </form>
+            </div>
         </li>
     </ul>
 
-    <!-- 댓글 작성 제목 클릭 시 폼을 보이거나 숨기도록 -->
+    <script>
+        function toggleEditForm(commentId) {
+            var formElement = document.getElementById('edit-comment-form-' + commentId);
+            if (formElement.style.display === 'none' || formElement.style.display === '') {
+                formElement.style.display = 'block';
+            } else {
+                formElement.style.display = 'none';
+            }
+        }
+    </script>
+
     <h3 th:if="${loginMember != null}" th:onclick="toggleCommentForm()" class="comment-title">댓글 작성</h3>
     <h3 th:if="${loginMember == null}">
         <a th:href="'/login?redirectURL=/post/jpa/postList/' + ${post.id}">댓글 작성</a>
     </h3>
 
-    <!-- 댓글 입력 폼 (로그인된 사용자만 보임) -->
     <div th:if="${loginMember != null}" id="comment-form">
         <form th:action="@{'/post/jpa/postList/' + ${post.id} + '/comments'}" method="post">
             <div>
@@ -151,19 +185,17 @@
     </div>
 
     <script>
-        // 댓글 작성 폼을 열고 닫는 함수
         function toggleCommentForm() {
             var commentForm = document.getElementById('comment-form');
             if (commentForm.style.display === 'none') {
-                commentForm.style.display = 'block'; // 폼 보이기
+                commentForm.style.display = 'block';
             } else {
-                commentForm.style.display = 'none';  // 폼 숨기기
+                commentForm.style.display = 'none';
             }
         }
     </script>
 
     <hr class="my-4">
-    <!-- 수정 및 목록 버튼 -->
     <div class="row">
         <div class="col">
             <button class="w-100 btn btn-primary btn-lg"
@@ -181,6 +213,6 @@
                     type="button">목록으로</button>
         </div>
     </div>
-</div> <!-- /container -->
+</div>
 </body>
 </html>

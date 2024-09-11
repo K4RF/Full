@@ -35,4 +35,27 @@ public class CommentJpaServiceImpl implements CommentJpaService {
     public void deleteByPostId(Long postId) {
         commentJpaRepository.deleteByPostId(postId);
     }
+
+    @Override
+    @Transactional
+    public void updateComment(Long commentId, String newComet, String loginMemberName) {
+        Comment comment = commentJpaRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+        if (!comment.getAuthor().equals(loginMemberName)) {
+            throw new RuntimeException("댓글 수정 권한이 없습니다.");
+        }
+        comment.setComet(newComet);
+        commentJpaRepository.save(comment);  // 수정 후 저장
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long commentId, String loginMemberName) {
+        Comment comment = commentJpaRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+        if (!comment.getAuthor().equals(loginMemberName)) {
+            throw new RuntimeException("댓글 삭제 권한이 없습니다.");
+        }
+        commentJpaRepository.delete(comment);  // 댓글 삭제
+    }
 }

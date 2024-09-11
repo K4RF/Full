@@ -38,4 +38,29 @@ public class CommentJpaController {
         commentJpaService.addComment(postId, loginMember.getName(), comet);
         return "redirect:/post/jpa/postList/" + postId;
     }
+
+    @PostMapping("/{commentId}/edit")
+    public String editComment(@PathVariable Long postId,
+                              @PathVariable Long commentId,
+                              @RequestParam String newComet,
+                              @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        if (loginMember == null) {
+            return "redirect:/login?redirectURL=/post/jpa/postList/" + postId;
+        }
+        commentJpaService.updateComment(commentId, newComet, loginMember.getName());
+        return "redirect:/post/jpa/postList/" + postId;
+    }
+
+    @PostMapping("/{commentId}/delete")
+    public String deleteComment(@PathVariable Long postId,
+                                @PathVariable Long commentId,
+                                @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        if (loginMember == null) {
+            return "redirect:/login?redirectURL=/post/jpa/postList/" + postId;
+        }
+
+        // 댓글 삭제 로직 실행
+        commentJpaService.deleteComment(commentId, loginMember.getName());
+        return "redirect:/post/jpa/postList/" + postId;
+    }
 }
