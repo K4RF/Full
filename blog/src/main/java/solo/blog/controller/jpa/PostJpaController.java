@@ -43,14 +43,14 @@ public class PostJpaController {
         model.addAttribute("posts", posts);
         return "post/jpa/postList";
     }
-
-
-    // 특정 게시글 조회
+    
     // 특정 게시글 조회
     @GetMapping("/{postId}")
     public String post(@PathVariable long postId,
                        @SessionAttribute(value = "loginMember", required = false) Member loginMember,
                        Model model) {
+        postJpaServiceV2.incrementViewCount(postId); // 조회수만 증가
+
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
         List<Comment> comments = commentJpaService.getCommentsByPostId(postId);
 

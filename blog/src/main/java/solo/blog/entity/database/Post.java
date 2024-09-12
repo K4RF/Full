@@ -30,6 +30,8 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
+    private int viewCount = 0; // 조회수 필드
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "post_tag",
@@ -55,5 +57,10 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    public void incrementViewCount() {
+        this.viewCount++;
+    }
+
 }
 

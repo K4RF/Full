@@ -136,5 +136,13 @@ public class PostJpaServiceV2 implements PostJpaService {
         // 게시글 삭제
         jpaRepositoryV2.delete(post);
     }
+
+    @Transactional
+    public void incrementViewCount(Long postId) {
+        Post post = jpaRepositoryV2.findById(postId).orElseThrow(() -> new NoSuchElementException("Post not found"));
+        post.incrementViewCount();
+        jpaRepositoryV2.save(post); // 조회수만 업데이트
+    }
+
 }
 

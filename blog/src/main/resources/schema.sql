@@ -17,8 +17,10 @@ CREATE TABLE post (
                       login_id VARCHAR(10) NOT NULL,
                       author_name VARCHAR(255) NOT NULL,  -- 작성자 이름 추가
                       title VARCHAR(255) NOT NULL,
-                      content TEXT NOT NULL
+                      content TEXT NOT NULL,
+                      view_count INT DEFAULT 0  -- 조회수 필드 추가, 기본값 0
 );
+
 
 -- Tag 테이블 생성
 DROP TABLE IF EXISTS tag CASCADE;
