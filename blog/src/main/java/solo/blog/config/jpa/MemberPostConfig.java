@@ -36,7 +36,7 @@ public class MemberPostConfig {
 
     @Bean(name = "postJpaServiceV3Ext")
     public PostJpaService postJpaServiceV3Ext(){
-        return new PostJpaServiceV2(jpaRepositoryExt, postQueryRepository(), new TagJpaRepository(em));
+        return new PostJpaServiceV2(jpaRepositoryExt, postQueryRepository(), new TagJpaRepository(em), commentJpaService());
     }
 
     @Bean

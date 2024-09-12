@@ -44,14 +44,22 @@ public class PostJpaController {
         return "post/jpa/postList";
     }
 
-
     // 특정 게시글 조회
     @GetMapping("/{postId}")
-    public String post(@PathVariable long postId, Model model) {
+    public String post(@PathVariable long postId,
+                       @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                       Model model) {
+        postJpaServiceV2.incrementViewCount(postId); // 조회수만 증가
+
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
         List<Comment> comments = commentJpaService.getCommentsByPostId(postId);
+
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
+
+        // 로그인된 사용자가 있으면 모델에 추가
+        model.addAttribute("loginMember", loginMember);
+
         return "post/jpa/post";
     }
 
@@ -178,5 +186,35 @@ public class PostJpaController {
         postJpaServiceV2.update(postId, postUpdateDto);
         redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 수정되었습니다.");
         return "redirect:/post/jpa/postList/" + postId;
+    }
+
+    // PostJpaController.java
+
+    // 포스트 삭제 처리
+    @PostMapping("/{postId}/delete")
+    public String deletePost(@PathVariable Long postId,
+                             @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                             RedirectAttributes redirectAttributes,
+                             Model model) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        if (loginMember == null) {
+            return "redirect:/login";
+        }
+
+        // 게시글 조회
+        Post post = postJpaServiceV2.findById(postId).orElseThrow();
+
+        // 작성자가 아닌 경우 에러 페이지로 리다이렉트 (또는 예외 처리)
+        if (!post.getLoginId().equals(loginMember.getLoginId())) {
+            model.addAttribute("errorMessage", "해당 게시글을 삭제할 권한이 없습니다.");
+            return "error/accessDenied";  // 접근 권한 없음을 알리는 페이지로 리다이렉트
+        }
+
+        // 게시글 삭제
+        postJpaServiceV2.delete(postId);
+
+        // 삭제 완료 메시지
+        redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 삭제되었습니다.");
+        return "redirect:/post/jpa/postList";
     }
 }

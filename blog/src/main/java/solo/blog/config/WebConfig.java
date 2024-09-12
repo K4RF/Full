@@ -2,13 +2,13 @@ package solo.blog.config;
 
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.Filter;
-import org.aopalliance.intercept.Interceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import solo.blog.controller.login.LoginArgumentResolver;
 import solo.blog.controller.login.LoginCheckInterceptor;
@@ -16,7 +16,6 @@ import solo.blog.controller.login.LoginInterceptor;
 import solo.blog.exception.resolver.MyHandlerExceptionResolver;
 import solo.blog.exception.resolver.UserHandlerExceptionResolver;
 import solo.blog.filter.LoginCheckFilter;
-import solo.blog.filter.LoginFilter;
 
 import java.util.List;
 
@@ -24,7 +23,7 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
 
     @Bean
-    public FilterRegistrationBean loginCheckFilter() {
+    public FilterRegistrationBean<Filter> loginCheckFilter() {
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new LoginCheckFilter());
         filterRegistrationBean.setOrder(2);
@@ -55,5 +54,16 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new LoginArgumentResolver());
+    }
+
+    // 리소스 핸들러 설정
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/favicon.ico")  // /favicon.ico 요청 처리
+                .addResourceLocations("classpath:/static/");  // 리소스 위치 설정
+
+        // 추가적인 정적 리소스 처리
+        registry.addResourceHandler("/css/**")
+                .addResourceLocations("classpath:/static/css/");
     }
 }

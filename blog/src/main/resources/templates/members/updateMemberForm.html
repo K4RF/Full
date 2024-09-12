@@ -6,10 +6,34 @@
   <style>
     .container {
       max-width: 560px;
+      margin-top: 40px;
     }
+
     .field-error {
-      border-color: #dc3545;
       color: #dc3545;
+      font-size: 0.875rem;
+    }
+
+    .form-control.is-invalid {
+      border-color: #dc3545;
+    }
+
+    .btn {
+      font-size: 1.125rem;
+      padding: 10px 20px;
+    }
+
+    .btn-lg {
+      padding: 12px;
+    }
+
+    .text-center {
+      margin-bottom: 40px;
+    }
+
+    hr {
+      margin-top: 20px;
+      margin-bottom: 20px;
     }
   </style>
 </head>
@@ -26,20 +50,23 @@
   <form th:action="@{/members/update}" th:object="${member}" method="post">
     <input type="hidden" th:field="*{memberId}" />
 
+    <!-- 글로벌 오류 메시지 표시 -->
     <div th:if="${#fields.hasGlobalErrors()}">
       <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
     </div>
 
-    <div>
-      <label for="name">이름</label>
-      <input type="text" id="name" th:field="*{name}" class="form-control" th:errorclass="field-error">
-      <div class="field-error" th:errors="*{name}" />
+    <div class="mb-3">
+      <label for="name" class="form-label">이름</label>
+      <input type="text" id="name" th:field="*{name}" class="form-control"
+             th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+      <div class="field-error" th:errors="*{name}"></div>
     </div>
 
-    <div>
-      <label for="password">비밀번호</label>
-      <input type="password" id="password" th:field="*{password}" class="form-control" th:errorclass="field-error">
-      <div class="field-error" th:errors="*{password}" />
+    <div class="mb-3">
+      <label for="password" class="form-label">비밀번호</label>
+      <input type="password" id="password" th:field="*{password}" class="form-control"
+             th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
+      <div class="field-error" th:errors="*{password}"></div>
     </div>
 
     <hr class="my-4">
@@ -55,7 +82,7 @@
 
   </form>
 
-
 </div> <!-- /container -->
+
 </body>
 </html>

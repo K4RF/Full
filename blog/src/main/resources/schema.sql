@@ -9,16 +9,18 @@ CREATE TABLE member (
                         PASSWORD VARCHAR(255) NOT NULL
 );
 
--- Post 테이블 생성
 DROP TABLE IF EXISTS post CASCADE;
 
 CREATE TABLE post (
                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
                       login_id VARCHAR(10) NOT NULL,
-                      author_name VARCHAR(255) NOT NULL,  -- 작성자 이름 추가
+                      author_name VARCHAR(255) NOT NULL,  -- 작성자 이름
                       title VARCHAR(255) NOT NULL,
-                      content TEXT NOT NULL
+                      content TEXT NOT NULL,
+                      view_count INT DEFAULT 0,  -- 조회수 필드, 기본값 0
+                      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 등록 시간 필드, 기본값 현재 시간
 );
+
 
 -- Tag 테이블 생성
 DROP TABLE IF EXISTS tag CASCADE;
