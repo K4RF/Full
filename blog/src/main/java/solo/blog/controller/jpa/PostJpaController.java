@@ -43,7 +43,7 @@ public class PostJpaController {
         model.addAttribute("posts", posts);
         return "post/jpa/postList";
     }
-    
+
     // 특정 게시글 조회
     @GetMapping("/{postId}")
     public String post(@PathVariable long postId,
