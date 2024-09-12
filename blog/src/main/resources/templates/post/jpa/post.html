@@ -112,6 +112,12 @@
     </div>
 
     <div>
+        <label for="createdAt">등록 시간</label>
+        <input type="text" id="createdAt" name="createdAt" class="form-control"
+               th:value="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}" readonly>
+    </div>
+
+    <div>
         <label for="tags">태그</label>
         <input type="text" id="tags" name="tags" class="form-control"
                th:value="${post.tagsFormatted}" readonly>

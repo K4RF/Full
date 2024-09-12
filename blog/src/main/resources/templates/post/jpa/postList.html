@@ -55,6 +55,7 @@
                 <th>ID</th>
                 <th>제목</th>
                 <th>작성자</th>
+                <th>조회수</th> <!-- 조회수 컬럼 추가 -->
             </tr>
             </thead>
             <tbody>
@@ -62,6 +63,7 @@
                 <td><a th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.id}">포스트 id</a></td>
                 <td><a th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.title}">제목</a></td>
                 <td th:text="${post.authorName}">작성자</td>
+                <td th:text="${post.viewCount}">0</td> <!-- 조회수 값 표시 -->
             </tr>
             </tbody>
         </table>
