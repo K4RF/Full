@@ -2,8 +2,6 @@ package solo.blog.entity.database;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.util.HashSet;
@@ -18,7 +16,7 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", nullable = false) // unique = true 제거
     private String name;
 
     @ManyToMany(mappedBy = "tags")
