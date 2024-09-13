@@ -22,17 +22,20 @@ import java.util.*;
 public class PostJpaServiceV2 implements PostJpaService {
     private final JpaRepositoryV2 jpaRepositoryV2;
     private final PostQueryRepository postQueryRepository;
-    private final TagJpaRepository tagJpaRepository;  // TagRepository를 주입받습니다.
+    private final TagJpaRepository tagJpaRepository;
     private final CommentJpaService commentJpaService;
 
     @Transactional
     public Post save(Post post, Set<String> tagNames) {
-        // 태그 생성 및 저장
-        List<Tag> tags = createTags(tagNames);
-        post.setTags(tags);
+        // 게시글 저장 (이때 post.getId()는 null일 수 있음)
+        Post savedPost = jpaRepositoryV2.save(post);
 
-        // 게시글 저장
-        return jpaRepositoryV2.save(post);
+        // 태그 생성 및 저장
+        List<Tag> tags = createTags(tagNames, savedPost.getId()); // savedPost.getId()를 전달
+        savedPost.setTags(tags);
+
+        // 태그가 설정된 게시글 다시 저장
+        return jpaRepositoryV2.save(savedPost);
     }
 
     @Transactional
@@ -46,11 +49,37 @@ public class PostJpaServiceV2 implements PostJpaService {
         post.setContent(postUpdateDto.getContent());
 
         // 태그 정보 업데이트
-        List<Tag> tags = updateTags(postUpdateDto.getTags());
+        List<Tag> tags = updateTags(postUpdateDto.getTags(), postId); // postId를 전달
         post.setTags(tags);
 
         // 게시글 저장
         return jpaRepositoryV2.save(post);
+    }
+
+    private List<Tag> createTags(Set<String> tagNames, Long postId) {
+        List<Tag> tags = new ArrayList<>();
+        for (String tagName : tagNames) {
+            Tag tag = tagJpaRepository.findByNameAndPostId(tagName, postId)
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag(tagName, postId);
+                        return tagJpaRepository.save(newTag);
+                    });
+            tags.add(tag);
+        }
+        return tags;
+    }
+
+    private List<Tag> updateTags(List<Tag> tagsToUpdate, Long postId) {
+        List<Tag> updatedTags = new ArrayList<>();
+        for (Tag tag : tagsToUpdate) {
+            Tag existingTag = tagJpaRepository.findByNameAndPostId(tag.getName(), postId)
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag(tag.getName(), postId);
+                        return tagJpaRepository.save(newTag);
+                    });
+            updatedTags.add(existingTag);
+        }
+        return updatedTags;
     }
 
     @Override
@@ -63,64 +92,15 @@ public class PostJpaServiceV2 implements PostJpaService {
         return postQueryRepository.findAll(cond);
     }
 
-    /**
-     * 태그 생성 로직을 분리하여 재사용 가능하도록 처리
-     * @param tagNames 태그 이름 Set
-     * @return 태그 리스트
-     */
-    private List<Tag> createTags(Set<String> tagNames) {
-        List<Tag> tags = new ArrayList<>();
-        for (String tagName : tagNames) {
-            Tag tag = tagJpaRepository.findByName(tagName)
-                    .orElseGet(() -> {
-                        Tag newTag = new Tag();
-                        newTag.setName(tagName);
-                        return tagJpaRepository.save(newTag);
-                    });
-            tags.add(tag);
-        }
-        return tags;
-    }
-
-    /**
-     * 태그 업데이트 로직
-     * @param tagsToUpdate 업데이트할 태그 리스트
-     * @return 업데이트된 태그 리스트
-     */
-    private List<Tag> updateTags(List<Tag> tagsToUpdate) {
-        List<Tag> updatedTags = new ArrayList<>();
-        for (Tag tag : tagsToUpdate) {
-            Tag existingTag = tagJpaRepository.findByName(tag.getName())
-                    .orElseGet(() -> {
-                        Tag newTag = new Tag();
-                        newTag.setName(tag.getName());
-                        return tagJpaRepository.save(newTag);
-                    });
-            updatedTags.add(existingTag);
-        }
-        return updatedTags;
-    }
-
-    /**
-     * 제목 중복 여부를 확인하는 메서드
-     * @param title 확인할 제목
-     * @return 중복 여부
-     */
     public boolean isTitleDuplicate(String title) {
         return jpaRepositoryV2.existsByTitle(title);
     }
 
-    /**
-     * 태그 중복 여부를 확인하는 메서드
-     * @param tagNames 태그 이름 리스트
-     * @return 중복 여부
-     */
     public boolean hasDuplicateTags(List<String> tagNames) {
         Set<String> tagSet = new HashSet<>(tagNames);
         return tagSet.size() != tagNames.size();
     }
 
-    // 로그인 ID로 게시글 찾기
     public List<Post> findByLoginId(String loginId) {
         return postQueryRepository.findByLoginId(loginId);
     }
@@ -130,10 +110,8 @@ public class PostJpaServiceV2 implements PostJpaService {
         Post post = jpaRepositoryV2.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // 게시글에 연결된 댓글들 삭제
         commentJpaService.deleteByPostId(postId);
 
-        // 게시글 삭제
         jpaRepositoryV2.delete(post);
     }
 
@@ -143,6 +121,4 @@ public class PostJpaServiceV2 implements PostJpaService {
         post.incrementViewCount();
         jpaRepositoryV2.save(post); // 조회수만 업데이트
     }
-
 }
-

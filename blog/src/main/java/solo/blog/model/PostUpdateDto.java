@@ -17,7 +17,6 @@ public class PostUpdateDto {
     private List<Tag> tags = new ArrayList<>();
     private String authorName; // 작성자의 이름
 
-
     // 생성자 정의
     public PostUpdateDto(Long id, String title, String content, String loginId, List<Tag> tags, String authorName) {
         this.id = id;
@@ -37,9 +36,11 @@ public class PostUpdateDto {
     public void setTagsFormatted(String tagsFormatted) {
         this.tags = Arrays.stream(tagsFormatted.split(","))
                 .map(String::trim)
-                .map(Tag::new)
+                .map(name -> {
+                    // postId를 설정하지 않고, Tag 객체를 생성
+                    Tag tag = new Tag(name); // postId는 나중에 Post 객체에서 관리
+                    return tag;
+                })
                 .collect(Collectors.toList());
     }
 }
-
-

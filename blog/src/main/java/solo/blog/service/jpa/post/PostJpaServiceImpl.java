@@ -20,6 +20,7 @@ public class PostJpaServiceImpl implements PostJpaService {
     }
 
     @Override
+    @Transactional
     public Post save(Post post, Set<String> tagNames) {
         post.setTitle(post.getTitle());
         post.setContent(post.getContent());
@@ -27,7 +28,7 @@ public class PostJpaServiceImpl implements PostJpaService {
 
         Set<Tag> tags = new HashSet<>();
         for (String tagName : tagNames) {
-            Tag tag = tagService.createOrGetTag(tagName);
+            Tag tag = tagService.createOrGetTag(tagName, post.getId()); // post.getId() 전달
             tags.add(tag);
         }
 
@@ -39,9 +40,22 @@ public class PostJpaServiceImpl implements PostJpaService {
     }
 
     @Override
+    @Transactional
     public Post update(Long postId, PostUpdateDto updateParam) {
-        repository.update(postId, updateParam);
-        return null;
+        Post post = repository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 게시글 정보 업데이트
+        post.setTitle(updateParam.getTitle());
+        post.setContent(updateParam.getContent());
+        post.setLoginId(updateParam.getLoginId());
+
+        // 태그 정보 업데이트
+        List<Tag> tags = updateParam.getTags().stream()
+                .map(tag -> tagService.createOrGetTag(tag.getName(), postId)) // postId 전달
+                .collect(Collectors.toList());
+        post.setTags(tags);
+
+        return repository.save(post);
     }
 
     @Override
