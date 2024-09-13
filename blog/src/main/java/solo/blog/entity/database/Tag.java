@@ -16,11 +16,8 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false) // unique = true 제거
     private String name;
-
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
 
     @ManyToMany(mappedBy = "tags")
     @ToString.Exclude // 순환 참조 방지를 위해
@@ -31,9 +28,5 @@ public class Tag {
 
     public Tag(String name) {
         this.name = name;
-    }
-    public Tag(String name, Long postId) {
-        this.name = name;
-        this.postId = postId;
     }
 }

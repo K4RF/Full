@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import solo.blog.entity.database.Tag;
 import solo.blog.repository.jpa.post.TagJpaRepository;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,24 +18,24 @@ public class TagJpaService {
     }
 
     @Transactional
-    public Tag createOrGetTag(String name, Long postId) {
-        Optional<Tag> optionalTag = tagRepository.findByNameAndPostId(name, postId);
-        return optionalTag.orElseGet(() -> {
-            Tag newTag = new Tag(name, postId);
-            return tagRepository.save(newTag);
-        });
+    public Tag createOrGetTag(String name) {
+        // TagRepository에서 이름으로 태그를 조회
+        return tagRepository.findByName(name)
+                .orElseGet(() -> {
+                    // 태그가 없으면 새로 생성하여 저장
+                    Tag newTag = new Tag(name);
+                    return tagRepository.save(newTag);
+                });
     }
 
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> dd29b18785b2f555859f67cb43c517de0832c3fc
     @Transactional
-    public Set<Tag> createTags(Set<String> tagNames, Long postId) {
+    public Set<Tag> createTags(Set<String> tagNames) {
         // 각 태그 이름에 대해 createOrGetTag 메서드를 호출하여 태그를 생성 또는 조회
         return tagNames.stream()
-                .map(tagName -> createOrGetTag(tagName, postId))
+                .map(this::createOrGetTag)
                 .collect(Collectors.toSet());
     }
+
+
 }

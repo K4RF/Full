@@ -27,15 +27,12 @@ public class PostJpaServiceV2 implements PostJpaService {
 
     @Transactional
     public Post save(Post post, Set<String> tagNames) {
-        // 게시글 저장 (이때 post.getId()는 null일 수 있음)
-        Post savedPost = jpaRepositoryV2.save(post);
-
         // 태그 생성 및 저장
-        List<Tag> tags = createTags(tagNames, savedPost.getId()); // savedPost.getId()를 전달
-        savedPost.setTags(tags);
+        List<Tag> tags = createTags(tagNames);
+        post.setTags(tags);
 
-        // 태그가 설정된 게시글 다시 저장
-        return jpaRepositoryV2.save(savedPost);
+        // 게시글 저장
+        return jpaRepositoryV2.save(post);
     }
 
     @Transactional
@@ -49,37 +46,11 @@ public class PostJpaServiceV2 implements PostJpaService {
         post.setContent(postUpdateDto.getContent());
 
         // 태그 정보 업데이트
-        List<Tag> tags = updateTags(postUpdateDto.getTags(), postId); // postId를 전달
+        List<Tag> tags = updateTags(postUpdateDto.getTags());
         post.setTags(tags);
 
         // 게시글 저장
         return jpaRepositoryV2.save(post);
-    }
-
-    private List<Tag> createTags(Set<String> tagNames, Long postId) {
-        List<Tag> tags = new ArrayList<>();
-        for (String tagName : tagNames) {
-            Tag tag = tagJpaRepository.findByNameAndPostId(tagName, postId)
-                    .orElseGet(() -> {
-                        Tag newTag = new Tag(tagName, postId);
-                        return tagJpaRepository.save(newTag);
-                    });
-            tags.add(tag);
-        }
-        return tags;
-    }
-
-    private List<Tag> updateTags(List<Tag> tagsToUpdate, Long postId) {
-        List<Tag> updatedTags = new ArrayList<>();
-        for (Tag tag : tagsToUpdate) {
-            Tag existingTag = tagJpaRepository.findByNameAndPostId(tag.getName(), postId)
-                    .orElseGet(() -> {
-                        Tag newTag = new Tag(tag.getName(), postId);
-                        return tagJpaRepository.save(newTag);
-                    });
-            updatedTags.add(existingTag);
-        }
-        return updatedTags;
     }
 
     @Override
@@ -90,6 +61,32 @@ public class PostJpaServiceV2 implements PostJpaService {
     @Override
     public List<Post> findPosts(PostSearchCond cond) {
         return postQueryRepository.findAll(cond);
+    }
+
+    private List<Tag> createTags(Set<String> tagNames) {
+        List<Tag> tags = new ArrayList<>();
+        for (String tagName : tagNames) {
+            Tag tag = tagJpaRepository.findByName(tagName)
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag(tagName);
+                        return tagJpaRepository.save(newTag);
+                    });
+            tags.add(tag);
+        }
+        return tags;
+    }
+
+    private List<Tag> updateTags(List<Tag> tagsToUpdate) {
+        List<Tag> updatedTags = new ArrayList<>();
+        for (Tag tag : tagsToUpdate) {
+            Tag existingTag = tagJpaRepository.findByName(tag.getName())
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag(tag.getName());
+                        return tagJpaRepository.save(newTag);
+                    });
+            updatedTags.add(existingTag);
+        }
+        return updatedTags;
     }
 
     public boolean isTitleDuplicate(String title) {
