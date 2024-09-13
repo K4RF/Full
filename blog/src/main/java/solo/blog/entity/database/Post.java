@@ -58,9 +58,15 @@ public class Post {
     public void setTagsFormatted(String tagsFormatted) {
         this.tags = Arrays.stream(tagsFormatted.split(","))
                 .map(String::trim)
-                .map(Tag::new)
+                .map(name -> {
+                    // postId를 설정하여 Tag 객체를 생성
+                    Tag tag = new Tag(name);
+                    tag.setPostId(this.id); // 현재 Post의 ID를 설정
+                    return tag;
+                })
                 .collect(Collectors.toList());
     }
+
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
