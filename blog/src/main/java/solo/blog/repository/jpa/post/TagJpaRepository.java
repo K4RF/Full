@@ -30,11 +30,23 @@ public class TagJpaRepository {
         return tag;
     }
 
+    public Optional<Tag> findByNameAndPostId(String name, Long postId) {
+        QTag qTag = QTag.tag;
+
+        Tag foundTag = queryFactory.selectFrom(qTag)
+                .where(qTag.name.eq(name)
+                        .and(postId == null ? qTag.postId.isNull() : qTag.postId.eq(postId)))
+                .fetchOne();
+
+        return Optional.ofNullable(foundTag);
+    }
+
     public Optional<Tag> findByName(String name) {
         QTag tag = QTag.tag;
         Tag foundTag = queryFactory
                 .selectFrom(tag)
-                .where(tag.name.eq(name))
+                .where(tag.name.eq(name)
+                        .and(tag.postId.isNull())) // postId가 null인 경우 찾기
                 .fetchOne();
 
         return Optional.ofNullable(foundTag);
