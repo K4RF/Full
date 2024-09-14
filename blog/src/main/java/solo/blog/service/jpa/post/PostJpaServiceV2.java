@@ -27,31 +27,77 @@ public class PostJpaServiceV2 implements PostJpaService {
 
     @Transactional
     public Post save(Post post, Set<String> tagNames) {
-        // 태그 생성 및 저장
-        List<Tag> tags = createTags(tagNames);
-        post.setTags(tags);
+        // 1. 먼저 Post 저장
+        Post savedPost = jpaRepositoryV2.save(post);
 
-        // 게시글 저장
-        return jpaRepositoryV2.save(post);
+        // 2. Tag 생성 후 저장
+        List<Tag> tags = createTags(tagNames, savedPost); // Post와 연관된 Tag 생성
+        savedPost.setTags(tags);
+
+        // 3. Post 업데이트
+        return jpaRepositoryV2.save(savedPost);
+    }
+
+
+    private List<Tag> createTags(Set<String> tagNames, Post post) {
+        List<Tag> tags = new ArrayList<>();
+        for (String tagName : tagNames) {
+            Tag tag = tagJpaRepository.findByNameAndPostId(tagName, post.getId())
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag(tagName, post); // post와 연결된 태그 생성
+                        return tagJpaRepository.save(newTag);
+                    });
+            tags.add(tag);
+        }
+        return tags;
     }
 
     @Transactional
     public Post update(Long postId, PostUpdateDto postUpdateDto) {
-        // 게시글 조회
+        // 포스트 가져오기
         Post post = jpaRepositoryV2.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // 게시글 정보 업데이트
+        // 태그가 null인 경우 빈 리스트로 초기화
+        if (postUpdateDto.getTags() == null) {
+            postUpdateDto.setTags(new ArrayList<>());
+        }
+
+        // 기존 태그 삭제 및 업데이트
+        List<Tag> updatedTags = updateTags(postUpdateDto.getTags(), post);
+        post.setTags(updatedTags);
+
+        // 제목, 내용 업데이트
         post.setTitle(postUpdateDto.getTitle());
         post.setContent(postUpdateDto.getContent());
 
-        // 태그 정보 업데이트
-        List<Tag> tags = updateTags(postUpdateDto.getTags());
-        post.setTags(tags);
-
-        // 게시글 저장
         return jpaRepositoryV2.save(post);
     }
+
+    private List<Tag> updateTags(List<Tag> tagsToUpdate, Post post) {
+        // 기존 태그 목록 가져오기
+        List<Tag> existingTags = post.getTags();
+
+        // 기존 태그 중 삭제할 태그 찾아 삭제
+        for (Tag existingTag : existingTags) {
+            if (tagsToUpdate.stream().noneMatch(t -> t.getName().equals(existingTag.getName()))) {
+                tagJpaRepository.delete(existingTag);
+            }
+        }
+
+        // 새로운 태그 추가 또는 업데이트
+        List<Tag> updatedTags = new ArrayList<>();
+        for (Tag tag : tagsToUpdate) {
+            Tag existingTag = tagJpaRepository.findByNameAndPostId(tag.getName(), post.getId())
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag(tag.getName(), post);
+                        return tagJpaRepository.save(newTag);
+                    });
+            updatedTags.add(existingTag);
+        }
+        return updatedTags;
+    }
+
 
     @Override
     public Optional<Post> findById(Long id) {
@@ -61,32 +107,6 @@ public class PostJpaServiceV2 implements PostJpaService {
     @Override
     public List<Post> findPosts(PostSearchCond cond) {
         return postQueryRepository.findAll(cond);
-    }
-
-    private List<Tag> createTags(Set<String> tagNames) {
-        List<Tag> tags = new ArrayList<>();
-        for (String tagName : tagNames) {
-            Tag tag = tagJpaRepository.findByName(tagName)
-                    .orElseGet(() -> {
-                        Tag newTag = new Tag(tagName);
-                        return tagJpaRepository.save(newTag);
-                    });
-            tags.add(tag);
-        }
-        return tags;
-    }
-
-    private List<Tag> updateTags(List<Tag> tagsToUpdate) {
-        List<Tag> updatedTags = new ArrayList<>();
-        for (Tag tag : tagsToUpdate) {
-            Tag existingTag = tagJpaRepository.findByName(tag.getName())
-                    .orElseGet(() -> {
-                        Tag newTag = new Tag(tag.getName());
-                        return tagJpaRepository.save(newTag);
-                    });
-            updatedTags.add(existingTag);
-        }
-        return updatedTags;
     }
 
     public boolean isTitleDuplicate(String title) {
@@ -102,15 +122,21 @@ public class PostJpaServiceV2 implements PostJpaService {
         return postQueryRepository.findByLoginId(loginId);
     }
 
+    // PostJpaService.java
     @Transactional
     public void delete(Long postId) {
         Post post = jpaRepositoryV2.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
+        // 연관된 태그 삭제
+        tagJpaRepository.deleteByPostId(postId);
 
+        // 댓글 삭제
         commentJpaService.deleteByPostId(postId);
 
+        // 포스트 삭제
         jpaRepositoryV2.delete(post);
     }
+
 
     @Transactional
     public void incrementViewCount(Long postId) {

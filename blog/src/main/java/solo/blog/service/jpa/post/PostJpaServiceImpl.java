@@ -27,7 +27,7 @@ public class PostJpaServiceImpl implements PostJpaService {
 
         Set<Tag> tags = new HashSet<>();
         for (String tagName : tagNames) {
-            Tag tag = tagService.createOrGetTag(tagName);
+            Tag tag = tagService.createOrGetTag(tagName, post);
             tags.add(tag);
         }
 

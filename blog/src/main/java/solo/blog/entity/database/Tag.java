@@ -23,10 +23,15 @@ public class Tag {
     @ToString.Exclude // 순환 참조 방지를 위해
     private Set<Post> posts = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+
     public Tag() {
     }
 
-    public Tag(String name) {
+    public Tag(String name, Post post) {
         this.name = name;
+        this.post = post;
     }
 }

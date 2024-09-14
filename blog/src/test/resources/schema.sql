@@ -41,3 +41,5 @@ CREATE TABLE COMMENT (
                          AUTHOR VARCHAR(255) NOT NULL,
                          COMET VARCHAR(255) NOT NULL
 );
+ALTER TABLE tag ADD COLUMN post_id BIGINT;
+ALTER TABLE tag ADD FOREIGN KEY (post_id) REFERENCES post(id);
