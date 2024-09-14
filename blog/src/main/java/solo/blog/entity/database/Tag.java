@@ -34,4 +34,8 @@ public class Tag {
         this.name = name;
         this.post = post;
     }
+
+    public Tag(String name) {
+        this.name = name;
+    }
 }

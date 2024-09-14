@@ -1,10 +1,12 @@
 package solo.blog.service.jpa.post;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solo.blog.entity.database.Post;
+import solo.blog.entity.database.QPost;
 import solo.blog.entity.database.Tag;
 import solo.blog.model.PostSearchCond;
 import solo.blog.model.PostUpdateDto;
@@ -15,6 +17,7 @@ import solo.blog.service.jpa.CommentJpaService;
 
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -54,49 +57,35 @@ public class PostJpaServiceV2 implements PostJpaService {
 
     @Transactional
     public Post update(Long postId, PostUpdateDto postUpdateDto) {
-        // 포스트 가져오기
+        // 게시글 조회
         Post post = jpaRepositoryV2.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // 태그가 null인 경우 빈 리스트로 초기화
-        if (postUpdateDto.getTags() == null) {
-            postUpdateDto.setTags(new ArrayList<>());
-        }
-
-        // 기존 태그 삭제 및 업데이트
-        List<Tag> updatedTags = updateTags(postUpdateDto.getTags(), post);
-        post.setTags(updatedTags);
-
-        // 제목, 내용 업데이트
+        // 게시글 정보 업데이트
         post.setTitle(postUpdateDto.getTitle());
         post.setContent(postUpdateDto.getContent());
 
+        // 태그 정보 업데이트
+        List<Tag> tags = updateTags(postUpdateDto.getTags(), post);
+        post.setTags(tags);
+
+        // 게시글 저장
         return jpaRepositoryV2.save(post);
     }
 
     private List<Tag> updateTags(List<Tag> tagsToUpdate, Post post) {
-        // 기존 태그 목록 가져오기
-        List<Tag> existingTags = post.getTags();
-
-        // 기존 태그 중 삭제할 태그 찾아 삭제
-        for (Tag existingTag : existingTags) {
-            if (tagsToUpdate.stream().noneMatch(t -> t.getName().equals(existingTag.getName()))) {
-                tagJpaRepository.delete(existingTag);
-            }
-        }
-
-        // 새로운 태그 추가 또는 업데이트
         List<Tag> updatedTags = new ArrayList<>();
         for (Tag tag : tagsToUpdate) {
             Tag existingTag = tagJpaRepository.findByNameAndPostId(tag.getName(), post.getId())
                     .orElseGet(() -> {
-                        Tag newTag = new Tag(tag.getName(), post);
+                        Tag newTag = new Tag(tag.getName(), post); // post 설정
                         return tagJpaRepository.save(newTag);
                     });
             updatedTags.add(existingTag);
         }
         return updatedTags;
     }
+
 
 
     @Override

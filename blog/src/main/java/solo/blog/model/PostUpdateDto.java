@@ -1,7 +1,6 @@
 package solo.blog.model;
 
 import lombok.Data;
-import solo.blog.entity.database.Post;
 import solo.blog.entity.database.Tag;
 
 import java.util.ArrayList;
@@ -35,12 +34,11 @@ public class PostUpdateDto {
                 .collect(Collectors.joining(", "));
     }
 
-    public void setTagsFormatted(String tagsFormatted, Post post) {
+    public void setTagsFormatted(String tagsFormatted) {
         this.tags = Arrays.stream(tagsFormatted.split(","))
                 .map(String::trim)
-                .map(tagName -> new Tag(tagName, post)) // Post 객체와 함께 태그 생성
+                .map(Tag::new)
                 .collect(Collectors.toList());
     }
-
 }
 
