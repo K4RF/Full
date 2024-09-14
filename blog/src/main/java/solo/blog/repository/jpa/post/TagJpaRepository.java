@@ -77,4 +77,26 @@ public class TagJpaRepository {
             }
         }
     }
+
+    public void updateDelete(Long postId, List<String> tagNames) {
+        QTag tag = QTag.tag;
+
+        List<Tag> tags = queryFactory
+                .selectFrom(tag)
+                .where(tag.post.id.eq(postId)
+                        .and(tag.name.notIn(tagNames))) // 업데이트된 태그 목록에 없는 태그들만 찾음
+                .fetch();
+
+        for (Tag tagEntity : tags) {
+            if (em.contains(tagEntity)) {
+                em.remove(tagEntity);
+            } else {
+                Tag managedTag = em.find(Tag.class, tagEntity.getId());
+                if (managedTag != null) {
+                    em.remove(managedTag);
+                }
+            }
+        }
+    }
+
 }

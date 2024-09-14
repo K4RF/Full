@@ -16,6 +16,7 @@ import solo.blog.repository.jpa.post.TagJpaRepository;
 import solo.blog.service.jpa.CommentJpaService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -66,26 +67,29 @@ public class PostJpaServiceV2 implements PostJpaService {
         post.setContent(postUpdateDto.getContent());
 
         // 태그 정보 업데이트
-        List<Tag> tags = updateTags(postUpdateDto.getTags(), post);
-        post.setTags(tags);
+        List<Tag> updatedTags = updateTags(postUpdateDto.getTags(), post);
+
+        // 기존 태그와 비교해 사라진 태그 삭제
+        changeDelete(post, updatedTags);
 
         // 게시글 저장
+        post.setTags(updatedTags);
         return jpaRepositoryV2.save(post);
     }
+
 
     private List<Tag> updateTags(List<Tag> tagsToUpdate, Post post) {
         List<Tag> updatedTags = new ArrayList<>();
         for (Tag tag : tagsToUpdate) {
             Tag existingTag = tagJpaRepository.findByNameAndPostId(tag.getName(), post.getId())
                     .orElseGet(() -> {
-                        Tag newTag = new Tag(tag.getName(), post); // post 설정
+                        Tag newTag = new Tag(tag.getName(), post); // 새로운 태그 생성 시 post와 연결
                         return tagJpaRepository.save(newTag);
                     });
             updatedTags.add(existingTag);
         }
         return updatedTags;
     }
-
 
 
     @Override
@@ -132,5 +136,16 @@ public class PostJpaServiceV2 implements PostJpaService {
         Post post = jpaRepositoryV2.findById(postId).orElseThrow(() -> new NoSuchElementException("Post not found"));
         post.incrementViewCount();
         jpaRepositoryV2.save(post); // 조회수만 업데이트
+    }
+
+    @Transactional
+    public void changeDelete(Post post, List<Tag> updatedTags) {
+        // 업데이트된 태그 이름만 추출
+        List<String> updatedTagNames = updatedTags.stream()
+                .map(Tag::getName)
+                .collect(Collectors.toList());
+
+        // 삭제할 태그 처리
+        tagJpaRepository.updateDelete(post.getId(), updatedTagNames);
     }
 }
