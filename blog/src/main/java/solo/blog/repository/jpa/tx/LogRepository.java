@@ -32,5 +32,4 @@ public class LogRepository {
                 .setParameter("message", message)
                 .getResultList().stream().findAny();
     }
-
 }
