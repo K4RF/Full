@@ -59,14 +59,14 @@
       <label for="name" class="form-label">이름</label>
       <input type="text" id="name" th:field="*{name}" class="form-control"
              th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
-      <div class="field-error" th:errors="*{name}"></div>
+      <div class="field-error" th:errors="*{name}">이름에 특수문자가 포함될 수 없습니다.</div>
     </div>
 
     <div class="mb-3">
       <label for="password" class="form-label">비밀번호</label>
       <input type="password" id="password" th:field="*{password}" class="form-control"
              th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
-      <div class="field-error" th:errors="*{password}"></div>
+      <div class="field-error" th:errors="*{password}">비밀번호는 8자에서 16자 사이여야 합니다.</div>
     </div>
 
     <hr class="my-4">
