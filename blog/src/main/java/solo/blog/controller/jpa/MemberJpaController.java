@@ -31,13 +31,29 @@ public class MemberJpaController {
 
     @PostMapping("/add")
     public String save(@Validated @ModelAttribute Member member, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "members/addMemberForm";
+
+        // 로그인 ID 유효성 검사: 영어로 16자 이내
+        if (!member.getLoginId().matches("^[a-zA-Z0-9]{1,16}$")) {
+            bindingResult.rejectValue("loginId", "invalidFormat", "로그인 ID는 영어로 16자 이내여야 합니다.");
+        }
+
+        // 비밀번호 유효성 검사: 8~16글자
+        if (!member.getPassword().matches("^[a-zA-Z0-9]{8,16}$")) {
+            bindingResult.rejectValue("password", "invalidLength", "비밀번호는 8자에서 16자 사이여야 합니다.");
+        }
+
+        // 이름 유효성 검사: 특수문자 제외
+        if (!member.getName().matches("^[a-zA-Z가-힣 ]+$")) {
+            bindingResult.rejectValue("name", "invalidFormat", "이름에는 특수 문자가 포함될 수 없습니다.");
         }
 
         // 중복 아이디 체크
         if (memberJpaRepository.findByLoginId(member.getLoginId()).isPresent()) {
             bindingResult.rejectValue("loginId", "duplicate", "이미 존재하는 로그인 ID입니다.");
+        }
+
+        // 오류가 있을 경우 다시 폼으로 이동
+        if (bindingResult.hasErrors()) {
             return "members/addMemberForm";
         }
 
@@ -51,6 +67,7 @@ public class MemberJpaController {
 
         return "redirect:/";
     }
+
 
     @GetMapping("/update")
     public String showUpdateForm(@SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request, Model model) {
@@ -67,24 +84,28 @@ public class MemberJpaController {
     }
 
     @PostMapping("/update")
-    public String updateMember(@ModelAttribute("member") @Validated MemberUpdateDto updateDto, BindingResult bindingResult,
+    public String updateMember(@ModelAttribute("member") @Validated MemberUpdateDto updateDto,
+                               BindingResult bindingResult,
                                @SessionAttribute(value = "loginMember", required = false) Member loginMember,
                                HttpServletRequest request) {
-        // ID가 없을 경우 예외 처리
-        if (updateDto.getMemberId() == null) {
-            bindingResult.rejectValue("memberId", "nullId", "회원 ID가 없습니다.");
-            return "/members/updateMemberForm";
+
+        // 이름 유효성 검사: 특수문자 제외
+        if (!updateDto.getName().matches("^[a-zA-Z가-힣 ]+$")) {
+            bindingResult.rejectValue("name", "invalidFormat", "이름에는 특수 문자가 포함될 수 없습니다.");
         }
 
-        // 본인의 이름 중복 확인
-        Optional<Member> existingMember = memberJpaRepository.findByName(updateDto.getName());
+        // 비밀번호 유효성 검사: 8~16자
+        if (!updateDto.getPassword().matches("^[a-zA-Z0-9]{8,16}$")) {
+            bindingResult.rejectValue("password", "invalidLength", "비밀번호는 8자에서 16자 사이여야 합니다.");
+        }
 
+        // 이름 중복 확인
+        Optional<Member> existingMember = memberJpaRepository.findByName(updateDto.getName());
         if (existingMember.isPresent() && !existingMember.get().getId().equals(updateDto.getMemberId())) {
             bindingResult.rejectValue("name", "duplicate", "이미 존재하는 이름입니다.");
-            return "/members/updateMemberForm";
         }
 
-        // 오류가 있는 경우 다시 폼으로 반환
+        // 오류가 있을 경우 다시 폼으로 이동
         if (bindingResult.hasErrors()) {
             return "/members/updateMemberForm";
         }
@@ -92,10 +113,11 @@ public class MemberJpaController {
         // 회원 정보 업데이트
         memberJpaService.updateMember(updateDto);
 
-        // 세션에 있는 회원 정보 업데이트
-        loginMember.setName(updateDto.getName()); // 변경된 이름 반영
-        request.getSession().setAttribute("loginMember", loginMember); // 세션에 업데이트된 정보 저장
+        // 세션 업데이트
+        loginMember.setName(updateDto.getName());
+        request.getSession().setAttribute("loginMember", loginMember);
 
         return "redirect:/post/jpa/postList";
     }
+
 }
