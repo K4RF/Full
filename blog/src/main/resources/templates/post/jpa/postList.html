@@ -2,25 +2,33 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Blog</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item" th:if="${loginMember == null}">
+                <a class="nav-link" href="/login">로그인</a>
+            </li>
+            <li class="nav-item" th:if="${loginMember != null}">
+                <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
+                <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
+            </li>
+            <li class="nav-item" th:if="${loginMember != null}">
+                <a class="nav-link" href="/members/update">회원정보</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 <div class="container" style="max-width: 600px">
     <div class="py-5 text-center">
         <h2>글 목록</h2>
-        <div class="d-flex justify-content-end">
-            <div>
-                <!-- 로그인 상태에 따라 버튼 표시 -->
-                <a th:if="${loginMember == null}" href="/login" class="btn btn-primary">로그인</a>
-
-                <form th:if="${loginMember != null}" th:action="@{/logout}" method="post" style="display:inline;">
-                    <button type="submit" class="btn btn-secondary">로그아웃</button>
-                    <!-- 포스트 리스트에서 회원 정보 버튼 추가 -->
-                    <a href="/members/update" class="btn btn-info">회원정보</a>
-                </form>
-
-            </div>
-        </div>
     </div>
 
     <form th:object="${postSearch}" method="get" class="form-inline">
@@ -68,6 +76,7 @@
             </tbody>
         </table>
     </div>
-</div> <!-- /container -->
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

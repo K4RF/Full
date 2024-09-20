@@ -34,13 +34,14 @@ public class PostJpaController {
     // 게시글 목록 조회에서 loginId 대신 authorName을 사용
     @GetMapping
     public String posts(@ModelAttribute("postSearch") PostSearchCond postSearch,
-                        @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                        Model model) {
-        // 로그인 상태 확인
-        model.addAttribute("loginMember", loginMember);
+                        Model model,
+                        HttpServletRequest request) {
+        Member loginMember = (Member) request.getSession().getAttribute("loginMember");
 
         List<Post> posts = postJpaServiceV2.findPosts(postSearch);
+        model.addAttribute("loginMember", loginMember);
         model.addAttribute("posts", posts);
+
         return "post/jpa/postList";
     }
 
