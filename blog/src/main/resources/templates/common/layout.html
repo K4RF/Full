@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
-  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -13,29 +13,28 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="/">홈</a>
-      </li>
-      <li th:if="${loginMember == null}" class="nav-item">
+      <li class="nav-item" th:if="${loginMember == null}">
         <a class="nav-link" href="/login">로그인</a>
       </li>
-      <li th:if="${loginMember != null}" class="nav-item">
+      <li class="nav-item" th:if="${loginMember != null}">
         <a class="nav-link" href="#"
            th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
         <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
       </li>
-      <li th:if="${loginMember != null}" class="nav-item">
+      <li class="nav-item" th:if="${loginMember != null}">
         <a class="nav-link" href="/members/update">회원정보</a>
       </li>
     </ul>
   </div>
 </nav>
+
 <div class="container">
-  <!-- 페이지 별 내용이 들어갈 위치 -->
-  <div th:fragment="content">
-    <p>내용을 이 위치에 추가하십시오.</p>
+  <div th:replace="~{post/jpa/postList :: content}">
+    <p>기본 내용</p>
   </div>
+
 </div>
+
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
