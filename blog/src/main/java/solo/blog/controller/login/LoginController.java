@@ -1,8 +1,6 @@
 package solo.blog.controller.login;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +24,24 @@ public class LoginController {
     private final LoginJpaService loginService;
     private final SessionManager sessionManager;
 
-    @GetMapping("login")
+    @GetMapping("/login")
     public String loginForm(@ModelAttribute("loginForm") LoginForm form,
                             @RequestParam(value = "redirectURL", required = false) String redirectURL,
                             HttpServletRequest request) {
+        // 로그인된 사용자인지 확인
+        HttpSession session = request.getSession(false);
+        Member loginMember = (Member) (session != null ? session.getAttribute(SessionConst.LOGIN_MEMBER) : null);
+
+        // 로그인된 사용자가 '/login' 요청 시 postList로 리다이렉트
+        if (loginMember != null) {
+            return "redirect:/post/jpa/postList";
+        }
+
         // redirectURL이 존재하면 세션에 저장
         if (redirectURL != null && !redirectURL.isEmpty()) {
             request.getSession().setAttribute("redirectURL", redirectURL);
         }
+
         return "login/loginForm";
     }
 

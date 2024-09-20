@@ -119,6 +119,12 @@ public class PostJpaController {
     // 게시글 수정 폼 (GET)
     @GetMapping("/{postId}/edit")
     public String editPost(@PathVariable Long postId, Model model, HttpServletRequest request, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트하며, 원래 URL을 함께 전달
+        if (loginMember == null) {
+            String redirectURL = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectURL;
+        }
+
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
 
         if (!post.getLoginId().equals(loginMember.getLoginId())) {
@@ -136,6 +142,11 @@ public class PostJpaController {
     public String editPost(@PathVariable Long postId,
                            @Validated @ModelAttribute("post") PostUpdateDto postUpdateDto,
                            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        if (loginMember == null) {
+            return "redirect:/login";
+        }
+
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
 
         if (!post.getLoginId().equals(loginMember.getLoginId())) {
@@ -164,9 +175,26 @@ public class PostJpaController {
         return "redirect:/post/jpa/postList/" + postId;
     }
 
+    // 포스트 삭제 처리 - GET 요청 방어 처리
+    @GetMapping("/{postId}/delete")
+    public String handleGetDeleteRequest(@PathVariable Long postId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트하며, 원래 URL을 함께 전달
+        if (loginMember == null) {
+            String redirectURL = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectURL;
+        }
+
+        // GET 요청으로 삭제 시도 방지: 기본 목록 페이지로 리다이렉트
+        return "redirect:/post/jpa/postList";
+    }
     // 포스트 삭제 처리
     @PostMapping("/{postId}/delete")
     public String deletePost(@PathVariable Long postId, RedirectAttributes redirectAttributes, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        if (loginMember == null) {
+            return "redirect:/login";
+        }
+
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
 
         if (!post.getLoginId().equals(loginMember.getLoginId())) {
