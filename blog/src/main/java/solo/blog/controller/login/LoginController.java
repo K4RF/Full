@@ -54,13 +54,17 @@ public class LoginController {
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, member);
 
-        // 세션에 저장된 redirectURL로 리다이렉트 (없으면 기본 페이지로 이동)
-        String redirectURL = (String) session.getAttribute("redirectURL");
-        if (redirectURL != null && !redirectURL.isEmpty()) {
-            session.removeAttribute("redirectURL");
-            return "redirect:" + redirectURL;
+        // 리다이렉트 URL 검증과 사용
+        String redirectURL = request.getParameter("redirectURL");
+        if (redirectURL == null || redirectURL.isEmpty() || !isSafeRedirectUrl(redirectURL)) {
+            redirectURL = "/post/jpa/postList"; // 기본 리다이렉트 페이지
         }
-        return "redirect:/post/jpa/postList";
+        return "redirect:" + redirectURL;
+    }
+
+    private boolean isSafeRedirectUrl(String url) {
+        // URL이 도메인 내의 경로로만 구성되었는지 확인하는 로직
+        return url.startsWith("/post/jpa/postList"); // 예시: 도메인 내의 URL로 시작하는지 검증
     }
 
     @PostMapping("/logout")
