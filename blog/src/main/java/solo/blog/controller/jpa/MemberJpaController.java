@@ -24,6 +24,12 @@ public class MemberJpaController {
     private final MemberJpaRepository memberJpaRepository;
     private final MemberJpaService memberJpaService;
 
+    // 모든 요청에서 loginMember 모델을 추가
+    @ModelAttribute
+    public void addLoginMemberToModel(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model) {
+        model.addAttribute("loginMember", loginMember);
+    }
+
     @GetMapping("/add")
     public String addForm(@ModelAttribute("member") Member member) {
         return "members/addMemberForm";
@@ -67,7 +73,6 @@ public class MemberJpaController {
 
         return "redirect:/";
     }
-
 
     @GetMapping("/update")
     public String showUpdateForm(@SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request, Model model) {
@@ -119,5 +124,4 @@ public class MemberJpaController {
 
         return "redirect:/post/jpa/postList";
     }
-
 }

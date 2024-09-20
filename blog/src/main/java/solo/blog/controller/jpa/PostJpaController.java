@@ -31,25 +31,23 @@ public class PostJpaController {
     private final MemberJpaService memberJpaService;
     private final CommentJpaService commentJpaService;
 
+    // 모든 요청에서 loginMember 모델을 추가
+    @ModelAttribute
+    public void addLoginMemberToModel(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model) {
+        model.addAttribute("loginMember", loginMember);
+    }
+
     // 게시글 목록 조회에서 loginId 대신 authorName을 사용
     @GetMapping
-    public String posts(@ModelAttribute("postSearch") PostSearchCond postSearch,
-                        Model model,
-                        HttpServletRequest request) {
-        Member loginMember = (Member) request.getSession().getAttribute("loginMember");
-
+    public String posts(@ModelAttribute("postSearch") PostSearchCond postSearch, Model model) {
         List<Post> posts = postJpaServiceV2.findPosts(postSearch);
-        model.addAttribute("loginMember", loginMember);
         model.addAttribute("posts", posts);
-
         return "post/jpa/postList";
     }
 
     // 특정 게시글 조회
     @GetMapping("/{postId}")
-    public String post(@PathVariable long postId,
-                       @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                       Model model) {
+    public String post(@PathVariable long postId, Model model) {
         postJpaServiceV2.incrementViewCount(postId); // 조회수만 증가
 
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
@@ -57,9 +55,6 @@ public class PostJpaController {
 
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
-
-        // 로그인된 사용자가 있으면 모델에 추가
-        model.addAttribute("loginMember", loginMember);
 
         return "post/jpa/post";
     }
@@ -88,8 +83,7 @@ public class PostJpaController {
     // 게시글 등록 처리
     @PostMapping("/add")
     public String addPostTag(@ModelAttribute @Validated Post post, BindingResult bindingResult,
-                             RedirectAttributes redirectAttributes, Model model,
-                             @SessionAttribute("loginMember") Member loginMember) {
+                             RedirectAttributes redirectAttributes, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
         // 태그 처리
         List<String> tagNames = Arrays.stream(post.getTagsFormatted().split(","))
                 .map(String::trim)
@@ -124,10 +118,7 @@ public class PostJpaController {
 
     // 게시글 수정 폼 (GET)
     @GetMapping("/{postId}/edit")
-    public String editPost(@PathVariable Long postId,
-                           @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                           Model model,
-                           HttpServletRequest request) {
+    public String editPost(@PathVariable Long postId, Model model, HttpServletRequest request, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
         // 로그인되지 않은 경우 로그인 페이지로 리다이렉트하며, 원래 URL을 함께 전달
         if (loginMember == null) {
             String redirectURL = request.getRequestURI();
@@ -149,23 +140,18 @@ public class PostJpaController {
     // 게시글 수정 처리 (POST)
     @PostMapping("/{postId}/edit")
     public String editPost(@PathVariable Long postId,
-                           @SessionAttribute(value = "loginMember", required = false) Member loginMember,
                            @Validated @ModelAttribute("post") PostUpdateDto postUpdateDto,
-                           BindingResult bindingResult,
-                           Model model,
-                           RedirectAttributes redirectAttributes) {
+                           BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
         // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
         if (loginMember == null) {
             return "redirect:/login";
         }
 
-        // 게시글 조회
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
 
-        // 작성자가 아닌 경우 에러 페이지로 리다이렉트 (또는 예외 처리)
         if (!post.getLoginId().equals(loginMember.getLoginId())) {
             model.addAttribute("errorMessage", "해당 게시글을 수정할 권한이 없습니다.");
-            return "error/accessDenied";  // 접근 권한 없음을 알리는 페이지로 리다이렉트
+            return "error/accessDenied";
         }
 
         // 태그 중복 확인
@@ -189,32 +175,35 @@ public class PostJpaController {
         return "redirect:/post/jpa/postList/" + postId;
     }
 
-    // PostJpaController.java
+    // 포스트 삭제 처리 - GET 요청 방어 처리
+    @GetMapping("/{postId}/delete")
+    public String handleGetDeleteRequest(@PathVariable Long postId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트하며, 원래 URL을 함께 전달
+        if (loginMember == null) {
+            String redirectURL = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectURL;
+        }
 
+        // GET 요청으로 삭제 시도 방지: 기본 목록 페이지로 리다이렉트
+        return "redirect:/post/jpa/postList";
+    }
     // 포스트 삭제 처리
     @PostMapping("/{postId}/delete")
-    public String deletePost(@PathVariable Long postId,
-                             @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                             RedirectAttributes redirectAttributes,
-                             Model model) {
+    public String deletePost(@PathVariable Long postId, RedirectAttributes redirectAttributes, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
         // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
         if (loginMember == null) {
             return "redirect:/login";
         }
 
-        // 게시글 조회
         Post post = postJpaServiceV2.findById(postId).orElseThrow();
 
-        // 작성자가 아닌 경우 에러 페이지로 리다이렉트 (또는 예외 처리)
         if (!post.getLoginId().equals(loginMember.getLoginId())) {
             model.addAttribute("errorMessage", "해당 게시글을 삭제할 권한이 없습니다.");
-            return "error/accessDenied";  // 접근 권한 없음을 알리는 페이지로 리다이렉트
+            return "error/accessDenied";
         }
 
-        // 게시글 삭제
         postJpaServiceV2.delete(postId);
 
-        // 삭제 완료 메시지
         redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 삭제되었습니다.");
         return "redirect:/post/jpa/postList";
     }
