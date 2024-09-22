@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <link href="../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Summernote CSS 추가 -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
     <style>
         .container {
             max-width: 560px;
@@ -55,14 +57,14 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="/">Blog</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav ml-auto">
             <li class="nav-item" th:if="${loginMember == null}">
                 <a class="nav-link" href="/login">로그인</a>
             </li>
@@ -88,22 +90,19 @@
                    th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''">
             <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
         </div>
-
-        <div>
-            <label for="content">내용</label>
-            <input type="text" id="content" th:field="*{content}" class="form-control">
-        </div>
-
-        <div>
-            <label for="authorName">작성자</label>
-            <input type="text" id="authorName" th:field="*{authorName}" class="form-control" readonly>
-        </div>
-
         <div>
             <label for="tags">태그 (쉼표로 구분)</label>
             <input type="text" id="tags" th:field="*{tagsFormatted}" class="form-control"
                    th:classappend="${#fields.hasErrors('tagsFormatted')} ? 'is-invalid' : ''">
             <div class="text-danger" th:if="${#fields.hasErrors('tagsFormatted')}" th:errors="*{tagsFormatted}"></div>
+        </div>
+        <div>
+            <label for="authorName">작성자</label>
+            <input type="text" id="authorName" th:field="*{authorName}" class="form-control" readonly>
+        </div>
+        <div class="form-group">
+            <label for="content" class="form-header">내용</label>
+            <textarea id="content" th:field="*{content}" class="form-control"></textarea>
         </div>
 
         <hr class="my-4">
@@ -117,5 +116,22 @@
         </div>
     </form>
 </div>
+
+<!-- jQuery 및 Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Summernote JS 추가 -->
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+
+<!-- Summernote 초기화 -->
+<script>
+    $(document).ready(function() {
+        $('#content').summernote({
+            height: 300, // 에디터 높이 설정
+            placeholder: '내용을 입력하세요'
+        });
+    });
+</script>
 </body>
 </html>
