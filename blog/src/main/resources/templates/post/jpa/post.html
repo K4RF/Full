@@ -135,14 +135,14 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="/">Blog</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav ml-auto">
             <li class="nav-item" th:if="${loginMember == null}">
                 <a class="nav-link" href="/login">로그인</a>
             </li>
@@ -158,45 +158,28 @@
 </nav>
 <div class="container">
     <div class="py-5 text-center">
-        <h2>글 상세</h2>
+        <!-- 포스트 제목을 h2 크기로 표시 -->
+        <h2 th:text="${post.title}">글 상세</h2>
     </div>
-
     <h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
-
-    <div>
-        <label for="postId">포스트 ID</label>
-        <input type="text" id="postId" name="postId" class="form-control"
-               th:value="${post.id}" readonly>
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>작성자:</strong> <span th:text="${post.authorName}">tester</span></p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>등록 시간:</strong> <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">2024-09-22</span></p>
+        </div>
     </div>
-    <div>
-        <label for="title">제목</label>
-        <input type="text" id="title" name="title" class="form-control"
-               th:value="${post.title}" readonly>
-    </div>
-    <div>
-        <label for="content">내용</label>
-        <div class="form-control" th:utext="${post.content}"></div>
-    </div>
-    <div>
-        <label for="authorName">작성자</label>
-        <input type="text" id="authorName" name="authorName" class="form-control"
-               th:value="${post.authorName}" readonly>
-    </div>
-
-    <div>
-        <label for="createdAt">등록 시간</label>
-        <input type="text" id="createdAt" name="createdAt" class="form-control"
-               th:value="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}" readonly>
-    </div>
-
     <div>
         <label for="tags">태그</label>
         <input type="text" id="tags" name="tags" class="form-control"
                th:value="${post.tagsFormatted}" readonly>
     </div>
-
+    <div>
+        <label>내용</label>
+        <div class="form-control" th:utext="${post.content}"></div>
+    </div>
     <hr class="my-4">
-
     <!-- 댓글 목록 -->
     <h3>댓글</h3>
     <ul>
@@ -204,18 +187,14 @@
             <p>
                 <strong th:text="${comment.author}">작성자</strong>:
                 <span th:text="${comment.comet}">댓글 내용</span>
-
                 <span th:if="${loginMember != null and comment.author == loginMember.name}" style="float: right;">
                     <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.id})|">수정</a> |
                     <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.id}').submit();|">삭제</a>
                 </span>
-
             <form th:id="|delete-comment-${comment.id}|" th:action="@{'/post/jpa/postList/' + ${post.id} + '/comments/' + ${comment.id} + '/delete'}" method="post" style="display:none;">
                 <input type="hidden" name="_method" value="delete">
             </form>
             </p>
-
-            <!-- 댓글 수정 폼 -->
             <div th:id="'edit-comment-form-' + ${comment.id}" style="display: none; margin-top: 10px;">
                 <form th:action="@{'/post/jpa/postList/' + ${post.id} + '/comments/' + ${comment.id} + '/edit'}" method="post">
                     <div>
@@ -227,23 +206,10 @@
             </div>
         </li>
     </ul>
-
-    <script>
-        function toggleEditForm(commentId) {
-            var formElement = document.getElementById('edit-comment-form-' + commentId);
-            if (formElement.style.display === 'none' || formElement.style.display === '') {
-                formElement.style.display = 'block';
-            } else {
-                formElement.style.display = 'none';
-            }
-        }
-    </script>
-
     <h3 th:if="${loginMember != null}" th:onclick="toggleCommentForm()" class="comment-title">댓글 작성</h3>
     <h3 th:if="${loginMember == null}">
         <a th:href="'/login?redirectURL=/post/jpa/postList/' + ${post.id}">댓글 작성</a>
     </h3>
-
     <div th:if="${loginMember != null}" id="comment-form">
         <form th:action="@{'/post/jpa/postList/' + ${post.id} + '/comments'}" method="post">
             <div>
@@ -257,24 +223,10 @@
             <button class="w-100 btn btn-primary btn-lg mt-3" type="submit">댓글 작성</button>
         </form>
     </div>
-
-    <script>
-        function toggleCommentForm() {
-            var commentForm = document.getElementById('comment-form');
-            if (commentForm.style.display === 'none') {
-                commentForm.style.display = 'block';
-            } else {
-                commentForm.style.display = 'none';
-            }
-        }
-    </script>
-
     <hr class="my-4">
     <div class="row">
         <div class="col">
-            <button class="w-100 btn btn-primary btn-lg"
-                    th:onclick="|location.href='@{/post/jpa/postList/{postId}/edit(postId=${post.id})}'|"
-                    type="button">포스트 수정</button>
+            <button class="w-100 btn btn-primary btn-lg" th:onclick="|location.href='@{/post/jpa/postList/{postId}/edit(postId=${post.id})}'|" type="button">포스트 수정</button>
         </div>
         <div class="col">
             <form th:action="@{/post/jpa/postList/{postId}/delete(postId=${post.id})}" method="post" onsubmit="return confirm('정말로 삭제하시겠습니까?');">
@@ -282,11 +234,10 @@
             </form>
         </div>
         <div class="col">
-            <button class="w-100 btn btn-secondary btn-lg"
-                    th:onclick="|location.href='@{/post/jpa/postList}'|"
-                    type="button">목록으로</button>
+            <button class="w-100 btn btn-secondary btn-lg" th:onclick="|location.href='@{/post/jpa/postList}'|" type="button">목록으로</button>
         </div>
     </div>
 </div>
 </body>
 </html>
+
