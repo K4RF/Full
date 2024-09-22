@@ -175,8 +175,7 @@
     </div>
     <div>
         <label for="content">내용</label>
-        <input type="text" id="content" name="content" class="form-control"
-               th:value="${post.content}" readonly>
+        <div class="form-control" th:utext="${post.content}"></div>
     </div>
     <div>
         <label for="authorName">작성자</label>
@@ -207,20 +206,16 @@
                 <span th:text="${comment.comet}">댓글 내용</span>
 
                 <span th:if="${loginMember != null and comment.author == loginMember.name}" style="float: right;">
-                    <!-- 댓글 수정 -->
                     <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.id})|">수정</a> |
-
-                    <!-- 댓글 삭제 -->
                     <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.id}').submit();|">삭제</a>
                 </span>
 
-                <!-- 삭제 폼 (POST 메서드로 제출) - 블록 요소를 span 외부에 배치 -->
             <form th:id="|delete-comment-${comment.id}|" th:action="@{'/post/jpa/postList/' + ${post.id} + '/comments/' + ${comment.id} + '/delete'}" method="post" style="display:none;">
                 <input type="hidden" name="_method" value="delete">
             </form>
             </p>
 
-            <!-- 댓글 수정 폼 (숨김 처리되어 있으며 수정 링크 클릭 시 표시됨) -->
+            <!-- 댓글 수정 폼 -->
             <div th:id="'edit-comment-form-' + ${comment.id}" style="display: none; margin-top: 10px;">
                 <form th:action="@{'/post/jpa/postList/' + ${post.id} + '/comments/' + ${comment.id} + '/edit'}" method="post">
                     <div>
