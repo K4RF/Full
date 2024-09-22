@@ -66,9 +66,13 @@
     </div>
 
     <form th:action="@{/post/jpa/postList/{postId}/edit(postId=${post.id})}" th:object="${post}" method="post">
-        <div class="form-group">
-            <label for="id" class="form-header">포스트 ID</label>
-            <input type="text" id="id" th:field="*{id}" class="form-control" readonly>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>포스트 ID:</strong> <span th:text="${post.id}">0</span></p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>작성자:</strong> <span th:text="${post.authorName}">tester</span></p>
+            </div>
         </div>
         <div class="form-group">
             <label for="title" class="form-header">제목</label>
@@ -81,10 +85,6 @@
             <input type="text" id="tags" th:field="*{tagsFormatted}" class="form-control" th:classappend="${#fields.hasErrors('tags')} ? 'is-invalid' : ''">
             <!-- 태그 중복 오류 메시지 -->
             <div class="text-danger" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></div>
-        </div>
-        <div class="form-group">
-            <label for="authorName" class="form-header">작성자</label>
-            <input type="text" id="authorName" th:field="*{authorName}" class="form-control" readonly>
         </div>
         <div class="form-group">
             <label for="content" class="form-header">내용</label>
