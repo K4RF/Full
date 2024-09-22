@@ -80,9 +80,8 @@
 </nav>
 <div class="container">
     <div class="py-5 text-center">
-        <h2>포스트 등록 폼</h2>
+        <h2>포스트 등록</h2>
     </div>
-    <h4 class="mb-3">포스트 입력</h4>
     <form th:action="@{/post/jpa/postList/add}" th:object="${post}" method="post">
         <div class="col-md-6">
             <p><strong>작성자:</strong> <span th:text="${post.authorName}">tester</span></p>
