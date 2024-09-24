@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import solo.blog.repository.jpa.CommentJpaRepository;
 import solo.blog.repository.jpa.CommentJpaRepositoryV1;
 import solo.blog.repository.jpa.post.*;
@@ -23,6 +24,7 @@ public class MemberPostConfig {
     private final EntityManager em;
     private final JpaRepositoryV2 jpaRepositoryExt;  // Spring Data JPA
     private final TagJpaService tagJpaService;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public PostQueryRepository postQueryRepository(){
@@ -46,7 +48,7 @@ public class MemberPostConfig {
 
     @Bean(name = "memberJpaService")
     public MemberJpaService memberJpaService() {
-        return new MemberJpaServiceImpl(memberJpaRepository(), postJpaServiceV3Ext());
+        return new MemberJpaServiceImpl(memberJpaRepository(), postJpaServiceV3Ext(), passwordEncoder);
     }
 
     @Bean

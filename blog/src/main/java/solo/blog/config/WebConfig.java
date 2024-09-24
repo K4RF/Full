@@ -5,11 +5,15 @@ import jakarta.servlet.Filter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.CacheControl;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.VersionResourceResolver;
 import solo.blog.controller.login.LoginArgumentResolver;
 import solo.blog.controller.login.LoginCheckInterceptor;
 import solo.blog.controller.login.LoginInterceptor;
@@ -21,6 +25,11 @@ import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public FilterRegistrationBean<Filter> loginCheckFilter() {
@@ -43,8 +52,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error", "/error-page/**", "/post/jpa/postList/**");
-    }
 
+    }
     @Override
     public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
         resolvers.add(new MyHandlerExceptionResolver());
@@ -65,5 +74,14 @@ public class WebConfig implements WebMvcConfigurer {
         // 추가적인 정적 리소스 처리
         registry.addResourceHandler("/css/**")
                 .addResourceLocations("classpath:/static/css/");
+        // 정적 자원에 대한 캐싱 헤더 설정
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/")
+                .setCacheControl(CacheControl.noCache().cachePrivate());
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/", "classpath:/public/")
+                .setCachePeriod(0)
+                .resourceChain(true)
+                .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
     }
 }

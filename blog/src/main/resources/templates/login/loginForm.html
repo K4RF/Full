@@ -4,10 +4,6 @@
   <meta charset="utf-8">
   <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .container {
-      max-width: 560px;
-      margin-top: 40px;
-    }
     .field-error {
       color: #dc3545;
       font-size: 0.875rem;
@@ -26,10 +22,44 @@
       margin-top: 20px;
       margin-bottom: 20px;
     }
+    html, body {
+      height: 100%; /* Make sure the page height is at least the viewport height */
+      margin: 0; /* Remove default margin */
+      position: relative; /* Needed for footer positioning */
+    }
+
+    .footer {
+      background-color: #f8f9fa;
+      color: #333;
+      text-align: center;
+      padding: 20px 0;
+      position: absolute; /* Position it at the bottom */
+      bottom: 0; /* Anchor it to the bottom */
+      width: 100%; /* Full width */
+    }
+
+    .container {
+      max-width: 560px;
+
+      padding-bottom: 60px; /* Give some space for the footer */
+    }
   </style>
 </head>
 <body>
-
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/">Blog</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/login">로그인</a>
+      </li>
+    </ul>
+  </div>
+</nav>
 <div class="container">
   <div class="py-5 text-center">
     <h2>로그인</h2>
@@ -84,5 +114,9 @@
   </form>
 
 </div> <!-- /container -->
+<div class="footer">
+  <p>Created by Kaarf_o</p>
+  <a href="https://github.com/K4RF/Full/tree/main/blog" target="_blank">GitHub</a>
+</div>
 </body>
 </html>

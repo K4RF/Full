@@ -6,7 +6,8 @@
     <style>
         .container {
             max-width: 600px;
-            margin: 0 auto;
+            padding-bottom: 60px; /* 푸터와 겹치지 않도록 하단에 여유 공간 추가 */
+            min-height: calc(100vh - 120px); /* 뷰포트 높이에서 푸터 및 헤더 높이 제외 */
         }
 
         h2, h3 {
@@ -33,6 +34,11 @@
         hr {
             margin-top: 20px;
             margin-bottom: 20px;
+        }
+
+        .hr-spacing {
+            margin-top: 45px;
+            margin-bottom: 45px;
         }
 
         ul {
@@ -80,50 +86,70 @@
         h3.comment-title:hover {
             background-color: #e9ecef;
         }
+
+        html, body {
+            height: 100%; /* Make sure the page height is at least the viewport height */
+            margin: 0; /* Remove default margin */
+            position: relative; /* Needed for footer positioning */
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            padding: 20px 0;
+            position: absolute; /* Position it at the bottom */
+            bottom: 0; /* Anchor it to the bottom */
+            width: 100%; /* Full width */
+        }
     </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Blog</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item" th:if="${loginMember == null}">
+                <a class="nav-link" href="/login">로그인</a>
+            </li>
+            <li class="nav-item" th:if="${loginMember != null}">
+                <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
+                <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
+            </li>
+            <li class="nav-item" th:if="${loginMember != null}">
+                <a class="nav-link" href="/members/update">회원정보</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 <div class="container">
     <div class="py-5 text-center">
-        <h2>글 상세</h2>
+        <!-- 포스트 제목을 h2 크기로 표시 -->
+        <h2 th:text="${post.title}">글 상세</h2>
     </div>
-
     <h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
-
-    <div>
-        <label for="postId">포스트 ID</label>
-        <input type="text" id="postId" name="postId" class="form-control"
-               th:value="${post.id}" readonly>
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>작성자:</strong> <span th:text="${post.authorName}">tester</span></p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>등록 시간:</strong> <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">2024-09-22</span></p>
+        </div>
     </div>
-    <div>
-        <label for="title">제목</label>
-        <input type="text" id="title" name="title" class="form-control"
-               th:value="${post.title}" readonly>
-    </div>
-    <div>
-        <label for="content">내용</label>
-        <input type="text" id="content" name="content" class="form-control"
-               th:value="${post.content}" readonly>
-    </div>
-    <div>
-        <label for="authorName">작성자</label>
-        <input type="text" id="authorName" name="authorName" class="form-control"
-               th:value="${post.authorName}" readonly>
-    </div>
-
-    <div>
-        <label for="createdAt">등록 시간</label>
-        <input type="text" id="createdAt" name="createdAt" class="form-control"
-               th:value="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}" readonly>
-    </div>
-
     <div>
         <label for="tags">태그</label>
         <input type="text" id="tags" name="tags" class="form-control"
                th:value="${post.tagsFormatted}" readonly>
     </div>
-
-    <hr class="my-4">
+    <hr class="hr-spacing"> <!-- 내용 전의 구분선 -->
+    <div>
+        <p th:utext="${post.content}">여기에 포스트 내용이 출력됩니다.</p>
+    </div>
+    <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
 
     <!-- 댓글 목록 -->
     <h3>댓글</h3>
@@ -200,13 +226,10 @@
             }
         }
     </script>
-
     <hr class="my-4">
     <div class="row">
         <div class="col">
-            <button class="w-100 btn btn-primary btn-lg"
-                    th:onclick="|location.href='@{/post/jpa/postList/{postId}/edit(postId=${post.id})}'|"
-                    type="button">포스트 수정</button>
+            <button class="w-100 btn btn-primary btn-lg" th:onclick="|location.href='@{/post/jpa/postList/{postId}/edit(postId=${post.id})}'|" type="button">포스트 수정</button>
         </div>
         <div class="col">
             <form th:action="@{/post/jpa/postList/{postId}/delete(postId=${post.id})}" method="post" onsubmit="return confirm('정말로 삭제하시겠습니까?');">
@@ -214,11 +237,16 @@
             </form>
         </div>
         <div class="col">
-            <button class="w-100 btn btn-secondary btn-lg"
-                    th:onclick="|location.href='@{/post/jpa/postList}'|"
-                    type="button">목록으로</button>
+            <button class="w-100 btn btn-secondary btn-lg" th:onclick="|location.href='@{/post/jpa/postList}'|" type="button">목록으로</button>
         </div>
     </div>
 </div>
+
+</div>
+<div class="footer">
+    <p>Created by Kaarf_o</p>
+    <a href="https://github.com/K4RF/Full/tree/main/blog" target="_blank">GitHub</a>
+</div>
 </body>
 </html>
+

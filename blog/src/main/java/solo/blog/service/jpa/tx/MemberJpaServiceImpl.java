@@ -1,6 +1,7 @@
 package solo.blog.service.jpa.tx;
 
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,18 +22,24 @@ import java.util.Optional;
 public class MemberJpaServiceImpl implements MemberJpaService{
     private final MemberJpaRepository memberJpaRepository;
     private final PostJpaService postJpaService;
+    private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입
 
-    // MemberJpaServiceImpl 생성자에서 PostJpaService 인터페이스 사용
-    public MemberJpaServiceImpl(MemberJpaRepository memberJpaRepository, PostJpaService postJpaService) {
+    public MemberJpaServiceImpl(MemberJpaRepository memberJpaRepository,
+                                PostJpaService postJpaService,
+                                PasswordEncoder passwordEncoder) {
         this.memberJpaRepository = memberJpaRepository;
         this.postJpaService = postJpaService;
+        this.passwordEncoder = passwordEncoder; // 주입받은 PasswordEncoder 사용
     }
 
 
-    @Transactional(propagation = Propagation.REQUIRED)
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void join(Member member) {
+        // 비밀번호 해시화
+        String encodedPassword = passwordEncoder.encode(member.getPassword());
+        member.setPassword(encodedPassword);
         memberJpaRepository.save(member);
     }
 
@@ -52,9 +59,10 @@ public class MemberJpaServiceImpl implements MemberJpaService{
             member.setName(memberUpdateDto.getName());
         }
 
-        // 비밀번호가 비어 있지 않을 경우에만 업데이트
+        // 비밀번호가 비어 있지 않을 경우에만 해시화하여 업데이트
         if (StringUtils.hasText(memberUpdateDto.getPassword())) {
-            member.setPassword(memberUpdateDto.getPassword());
+            String encodedPassword = passwordEncoder.encode(memberUpdateDto.getPassword());
+            member.setPassword(encodedPassword);
         }
 
         // 게시글 작성자의 이름도 수정 (이름이 변경된 경우에만 업데이트)
