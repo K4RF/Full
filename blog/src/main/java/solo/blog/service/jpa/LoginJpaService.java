@@ -23,16 +23,16 @@ public class LoginJpaService {
      */
     public Member login(String loginId, String password) {
         try {
-            return memberJpaRepository.findByLoginId(loginId)
-                    .filter(m -> m.getPassword().equals(password))
+            Member member = memberJpaRepository.findByLoginId(loginId)
                     .orElse(null);
+
+            if (member != null && passwordEncoder.matches(password, member.getPassword())) {
+                return member; // 비밀번호가 일치하면 Member 객체 반환
+            }
+            return null; // 로그인 실패
         } catch (Exception e) {
             log.error("Login error: {}", e.getMessage());
             throw e;
         }
-    }
-
-    public boolean checkPassword(String rawPassword, String encodedPassword) {
-        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 }
