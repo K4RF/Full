@@ -29,7 +29,11 @@ public class LoginJpaService {
             if (member != null && passwordEncoder.matches(password, member.getPassword())) {
                 return member; // 비밀번호가 일치하면 Member 객체 반환
             }
-            return null; // 로그인 실패
+            else {          // 해시화 이전 기존 멤버 로그인 처리
+                return memberJpaRepository.findByLoginId(loginId)
+                        .filter(m -> m.getPassword().equals(password))
+                        .orElse(null);
+            }
         } catch (Exception e) {
             log.error("Login error: {}", e.getMessage());
             throw e;

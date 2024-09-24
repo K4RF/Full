@@ -59,9 +59,10 @@ public class MemberJpaServiceImpl implements MemberJpaService{
             member.setName(memberUpdateDto.getName());
         }
 
-        // 비밀번호가 비어 있지 않을 경우에만 업데이트
+        // 비밀번호가 비어 있지 않을 경우에만 해시화하여 업데이트
         if (StringUtils.hasText(memberUpdateDto.getPassword())) {
-            member.setPassword(memberUpdateDto.getPassword());
+            String encodedPassword = passwordEncoder.encode(memberUpdateDto.getPassword());
+            member.setPassword(encodedPassword);
         }
 
         // 게시글 작성자의 이름도 수정 (이름이 변경된 경우에만 업데이트)
