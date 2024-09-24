@@ -82,9 +82,9 @@
             padding: 14px 20px;
         }
 
-        hr {
-            margin-top: 20px;
-            margin-bottom: 20px;
+        .hr-spacing {
+            margin-top: 40px;
+            margin-bottom: 40px;
         }
 
         ul {
@@ -105,21 +105,7 @@
             font-weight: 500;
         }
 
-        /* 댓글 작성 폼 숨기기 */
-        #commentForm {
-            display: none;
-            margin-top: 20px;
-        }
-
-        /* h3 태그 클릭 가능하게 */
-        h3.comment-title {
-            cursor: pointer;
-            color: blue;
-            transition: background-color 0.3s ease;
-        }
-
-        /* 댓글 작성 폼이 열릴 때 배경색 강조 */
-        #comment-form {
+        #commentForm, #comment-form {
             display: none;
             background-color: #f1f8ff;
             padding: 15px;
@@ -128,9 +114,16 @@
             margin-top: 15px;
         }
 
-        /* 로그인 상태에서 h3 클릭 시 하이라이트 효과 */
         h3.comment-title:hover {
             background-color: #e9ecef;
+        }
+
+        .footer {
+            background-color: #f8f9fa; /* Light grey background */
+            color: #333; /* Dark grey text */
+            text-align: center;
+            padding: 20px 0; /* Some padding top and bottom */
+            margin-top: 40px; /* Distance from content above */
         }
     </style>
 </head>
@@ -175,11 +168,12 @@
         <input type="text" id="tags" name="tags" class="form-control"
                th:value="${post.tagsFormatted}" readonly>
     </div>
+    <hr class="hr-spacing"> <!-- 내용 전의 구분선 -->
     <div>
-        <label>내용</label>
-        <div class="form-control" th:utext="${post.content}"></div>
+        <p th:utext="${post.content}">여기에 포스트 내용이 출력됩니다.</p>
     </div>
-    <hr class="my-4">
+    <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
+
     <!-- 댓글 목록 -->
     <h3>댓글</h3>
     <ul>
@@ -237,6 +231,11 @@
             <button class="w-100 btn btn-secondary btn-lg" th:onclick="|location.href='@{/post/jpa/postList}'|" type="button">목록으로</button>
         </div>
     </div>
+</div>
+</div>
+<div class="footer">
+    <p>Created by Kaarf_o</p>
+    <a href="https://github.com/K4RF/Full/tree/main/blog" target="_blank">GitHub</a>
 </div>
 </body>
 </html>
