@@ -1,6 +1,7 @@
 package solo.blog.service.jpa.tx;
 
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,18 +22,24 @@ import java.util.Optional;
 public class MemberJpaServiceImpl implements MemberJpaService{
     private final MemberJpaRepository memberJpaRepository;
     private final PostJpaService postJpaService;
+    private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입
 
-    // MemberJpaServiceImpl 생성자에서 PostJpaService 인터페이스 사용
-    public MemberJpaServiceImpl(MemberJpaRepository memberJpaRepository, PostJpaService postJpaService) {
+    public MemberJpaServiceImpl(MemberJpaRepository memberJpaRepository,
+                                PostJpaService postJpaService,
+                                PasswordEncoder passwordEncoder) {
         this.memberJpaRepository = memberJpaRepository;
         this.postJpaService = postJpaService;
+        this.passwordEncoder = passwordEncoder; // 주입받은 PasswordEncoder 사용
     }
 
 
-    @Transactional(propagation = Propagation.REQUIRED)
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void join(Member member) {
+        // 비밀번호 해시화
+        String encodedPassword = passwordEncoder.encode(member.getPassword());
+        member.setPassword(encodedPassword);
         memberJpaRepository.save(member);
     }
 
