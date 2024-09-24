@@ -4,10 +4,6 @@
   <meta charset="utf-8">
   <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .container {
-      max-width: 560px;
-      margin-top: 40px;
-    }
     .field-error {
       color: #dc3545;
       font-size: 0.875rem;
@@ -25,6 +21,27 @@
     hr {
       margin-top: 20px;
       margin-bottom: 20px;
+    }
+    html, body {
+      height: 100%; /* Make sure the page height is at least the viewport height */
+      margin: 0; /* Remove default margin */
+      position: relative; /* Needed for footer positioning */
+    }
+
+    .footer {
+      background-color: #f8f9fa;
+      color: #333;
+      text-align: center;
+      padding: 20px 0;
+      position: absolute; /* Position it at the bottom */
+      bottom: 0; /* Anchor it to the bottom */
+      width: 100%; /* Full width */
+    }
+
+    .container {
+      max-width: 560px;
+
+      padding-bottom: 60px; /* Give some space for the footer */
     }
   </style>
 </head>
@@ -101,5 +118,9 @@
   </form>
 
 </div> <!-- /container -->
+<div class="footer">
+  <p>Created by Kaarf_o</p>
+  <a href="https://github.com/K4RF/Full/tree/main/blog" target="_blank">GitHub</a>
+</div>
 </body>
 </html>

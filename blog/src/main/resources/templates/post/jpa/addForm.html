@@ -6,9 +6,6 @@
     <!-- Summernote CSS 추가 -->
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
     <style>
-        .container {
-            max-width: 560px;
-        }
 
         .form-control {
             border-radius: 0.375rem;
@@ -53,6 +50,25 @@
 
         .row .col {
             margin-top: 1rem;
+        }
+        html, body {
+            height: 100%; /* 페이지 전체 높이를 브라우저 창 높이와 동일하게 설정 */
+            margin: 0; /* 기본 마진 제거 */
+        }
+
+        .container {
+            max-width: 560px;
+            padding-bottom: 60px; /* 푸터와 겹치지 않도록 하단에 여유 공간 추가 */
+            min-height: calc(100vh - 120px); /* 뷰포트 높이에서 푸터 및 헤더 높이 제외 */
+        }
+
+        .footer {
+            background-color: #f8f9fa; /* 연회색 배경 */
+            color: #333; /* 어두운 글씨 */
+            text-align: center;
+            padding: 20px 0; /* 상하 패딩 */
+            width: 100%; /* 전체 너비 */
+            position: relative; /* 절대 위치 대신 상대 위치 사용 */
         }
     </style>
 </head>
@@ -131,5 +147,9 @@
         });
     });
 </script>
+<div class="footer">
+    <p>Created by Kaarf_o</p>
+    <a href="https://github.com/K4RF/Full/tree/main/blog" target="_blank">GitHub</a>
+</div>
 </body>
 </html>
