@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import solo.blog.entity.database.tx.Member;
 import solo.blog.model.MemberUpdateDto;
 import solo.blog.repository.jpa.tx.MemberJpaRepository;
@@ -124,4 +125,29 @@ public class MemberJpaController {
 
         return "redirect:/post/jpa/postList";
     }
+
+    // 회원 탈퇴
+    @PostMapping("/delete/{memberId}")
+    public String deleteMember(@PathVariable Long memberId, HttpServletRequest request,
+                               RedirectAttributes redirectAttributes) {
+        Member loginMember = (Member) request.getSession().getAttribute("loginMember");
+
+        if (loginMember == null || !loginMember.getId().equals(memberId)) {
+            redirectAttributes.addFlashAttribute("error", "권한이 없습니다.");
+            return "redirect:/login";
+        }
+
+        try {
+            memberJpaService.deleteMember(memberId);
+            redirectAttributes.addFlashAttribute("message", "회원 탈퇴가 성공적으로 완료되었습니다.");
+            request.getSession().invalidate(); // 세션 무효화
+        } catch (Exception e) {
+            log.error("Error deleting member", e);
+            redirectAttributes.addFlashAttribute("error", "회원 탈퇴 중 오류가 발생했습니다.");
+            return "redirect:/members/update";
+        }
+
+        return "redirect:/";
+    }
+
 }

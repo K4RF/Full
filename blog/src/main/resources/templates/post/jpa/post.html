@@ -4,12 +4,6 @@
     <meta charset="utf-8">
     <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .container {
-            max-width: 600px;
-            padding-bottom: 60px; /* 푸터와 겹치지 않도록 하단에 여유 공간 추가 */
-            min-height: calc(100vh - 120px); /* 뷰포트 높이에서 푸터 및 헤더 높이 제외 */
-        }
-
         h2, h3 {
             margin-top: 20px;
             margin-bottom: 20px;
@@ -88,19 +82,23 @@
         }
 
         html, body {
-            height: 100%; /* Make sure the page height is at least the viewport height */
-            margin: 0; /* Remove default margin */
-            position: relative; /* Needed for footer positioning */
+            height: 100%; /* 페이지 전체 높이를 브라우저 창 높이와 동일하게 설정 */
+            margin: 0; /* 기본 마진 제거 */
+        }
+
+        .container {
+            max-width: 560px;
+            padding-bottom: 60px; /* 푸터와 겹치지 않도록 하단에 여유 공간 추가 */
+            min-height: calc(100vh - 120px); /* 뷰포트 높이에서 푸터 및 헤더 높이 제외 */
         }
 
         .footer {
-            background-color: #f8f9fa;
-            color: #333;
+            background-color: #f8f9fa; /* 연회색 배경 */
+            color: #333; /* 어두운 글씨 */
             text-align: center;
-            padding: 20px 0;
-            position: absolute; /* Position it at the bottom */
-            bottom: 0; /* Anchor it to the bottom */
-            width: 100%; /* Full width */
+            padding: 20px 0; /* 상하 패딩 */
+            width: 100%; /* 전체 너비 */
+            position: relative; /* 절대 위치 대신 상대 위치 사용 */
         }
     </style>
 </head>

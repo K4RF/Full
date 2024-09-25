@@ -97,4 +97,14 @@ public class MemberJpaRepositoryV1 implements MemberJpaRepository {
         }
     }
 
+    @Override
+    public void deleteById(Long id) {
+        Member member = em.find(Member.class, id);
+        if (member != null) {
+            em.remove(member);
+            log.info("Deleted member: {}", member);
+        } else {
+            log.warn("Member not found with ID: {}", id);
+        }
+    }
 }

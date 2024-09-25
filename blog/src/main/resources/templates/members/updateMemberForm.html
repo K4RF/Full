@@ -115,13 +115,25 @@
       </div>
     </div>
 
+
   </form>
+  <!-- 회원 탈퇴 버튼 -->
+  <button class="w-100 btn btn-danger btn-lg" type="button" onclick="confirmDelete()">회원 탈퇴</button>
+
+  <!-- 회원 탈퇴 처리 폼 -->
+  <form th:action="@{/members/delete/{memberId}(memberId=${member.memberId})}" method="post" id="delete-form" style="display: none;">
+    <input type="hidden" name="_method" value="delete">
+  </form>
+  <!-- 삭제 확인 스크립트 -->
+  <script>
+    function confirmDelete() {
+      if (confirm('정말로 회원을 탈퇴하시겠습니까?')) {
+        document.getElementById('delete-form').submit();
+      }
+    }
+  </script>
 
 </div> <!-- /container -->
-<div class="footer">
-  <p>Created by Kaarf_o</p>
-  <a href="https://github.com/K4RF/Full/tree/main/blog" target="_blank">GitHub</a>
-</div>
 <div class="footer">
   <p>Created by Kaarf_o</p>
   <a href="https://github.com/K4RF/Full/tree/main/blog" target="_blank">GitHub</a>

@@ -16,5 +16,7 @@ public interface MemberJpaRepository {
     boolean existsByName(String name);
 
     Optional<Member> findByName(String name);
+    void deleteById(Long id);
+
 
 }
