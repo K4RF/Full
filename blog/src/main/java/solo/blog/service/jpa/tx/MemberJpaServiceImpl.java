@@ -1,5 +1,6 @@
 package solo.blog.service.jpa.tx;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import solo.blog.entity.database.tx.Member;
 import solo.blog.model.MemberUpdateDto;
 import solo.blog.repository.jpa.tx.MemberJpaRepository;
 import solo.blog.service.jpa.post.PostJpaService;
+import solo.blog.service.jpa.post.PostJpaServiceV2;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +21,11 @@ import java.util.Optional;
 @Service
 @Primary
 @Transactional
+@Slf4j
 public class MemberJpaServiceImpl implements MemberJpaService{
     private final MemberJpaRepository memberJpaRepository;
     private final PostJpaService postJpaService;
     private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입
-
     public MemberJpaServiceImpl(MemberJpaRepository memberJpaRepository,
                                 PostJpaService postJpaService,
                                 PasswordEncoder passwordEncoder) {
@@ -79,5 +81,22 @@ public class MemberJpaServiceImpl implements MemberJpaService{
     @Override
     public boolean isNameDuplicate(String name) {
         return memberJpaRepository.existsByName(name);
+    }
+    @Override
+    public void deleteMember(Long memberId) {
+        Optional<Member> member = memberJpaRepository.findById(memberId);
+        if (member.isPresent()) {
+            // 해당 멤버의 모든 글의 작성자를 'deleteUser'로 변경
+            List<Post> postsByMember = postJpaService.findByLoginId(member.get().getLoginId());
+            for (Post post : postsByMember) {
+                post.setAuthorName("deletedUser"); // 'deleteUser'로 작성자 이름 변경
+            }
+
+            // 회원 삭제
+            memberJpaRepository.deleteById(memberId);
+            log.info("Successfully deleted member with ID: {} and updated their posts to 'deleteUser'", memberId);
+        } else {
+            log.warn("Failed to delete member. No member found with ID: {}", memberId);
+        }
     }
 }

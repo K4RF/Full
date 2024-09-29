@@ -13,4 +13,6 @@ public interface MemberJpaService {
 
     boolean isNameDuplicate(String name);
 
+    void deleteMember(Long memberId);
+
 }
