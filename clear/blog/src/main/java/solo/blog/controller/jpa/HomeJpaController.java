@@ -30,7 +30,7 @@ public class HomeJpaController {
         return "redirect:/post/jpa/postList";
     }
 
-    @GetMapping("/")
+   // @GetMapping("/")
     public String redirectUrl() {
         return "redirect:/post/jpa/postList";
     }

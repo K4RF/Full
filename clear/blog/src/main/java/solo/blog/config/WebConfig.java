@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -40,18 +41,24 @@ public class WebConfig implements WebMvcConfigurer {
         filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ERROR);
         return filterRegistrationBean;
     }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000") // 허용할 Origin 설정
+                .allowedMethods("GET", "POST", "PUT", "DELETE");
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor())
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**", "/post/jpa/postList/**");
+                .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**", "/post/jpa/postList/**", "/api/**");
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error", "/error-page/**", "/post/jpa/postList/**");
+                        "/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error", "/error-page/**", "/post/jpa/postList/**", "/api/**");
 
     }
     @Override
