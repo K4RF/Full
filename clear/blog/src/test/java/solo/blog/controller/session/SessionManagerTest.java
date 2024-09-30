@@ -3,10 +3,9 @@ package solo.blog.controller.session;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import solo.blog.entity.v2.Member;
+import solo.blog.entity.database.tx.Member;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class SessionManagerTest {
     SessionManager sessionManager = new SessionManager();
