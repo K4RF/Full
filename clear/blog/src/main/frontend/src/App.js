@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 function App() {
-  const [hidata, setHello] = useState('')
+  const [test, setHello] = useState('')
 
   useEffect(() => {
     axios.get('http://localhost:8080/api/hello')
@@ -12,7 +12,7 @@ function App() {
 
   return (
       <div>
-        백엔드 스프링 부트 데이터 : {hidata}
+        백엔드 스프링 부트 데이터 : {test}
       </div>
   );
 }
