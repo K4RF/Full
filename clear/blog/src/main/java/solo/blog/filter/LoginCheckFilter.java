@@ -14,7 +14,7 @@ import java.io.IOException;
 public class LoginCheckFilter implements Filter {
     // 화이트리스트에 정적 리소스 및 favicon 추가
     private static final String[] whiteList = {
-            "/", "/members/add", "/login", "/logout", "/css/*", "/post/jpa/postList", "/post/jpa/postList/**", "/favicon.ico", "/images/**", "/js/**", "/webjars/**"
+            "/", "/members/add", "/login", "/logout", "/css/*", "/api/**", "/post/jpa/postList", "/post/jpa/postList/**", "/favicon.ico", "/images/**", "/js/**", "/webjars/**"
     };
 
     @Override
