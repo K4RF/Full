@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        h2, h3 {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 0.375rem;
+            padding: 10px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            font-size: 1.125rem;
+            padding: 12px;
+            border-radius: 0.375rem;
+        }
+
+        .btn-lg {
+            padding: 14px 20px;
+        }
+
+        hr {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .hr-spacing {
+            margin-top: 45px;
+            margin-bottom: 45px;
+        }
+
+        ul {
+            padding-left: 0;
+        }
+
+        ul li {
+            list-style-type: none;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        label {
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        /* 댓글 작성 폼 숨기기 */
+        #commentForm {
+            display: none;
+            margin-top: 20px;
+        }
+
+        /* h3 태그 클릭 가능하게 */
+        h3.comment-title {
+            cursor: pointer;
+            color: blue;
+            transition: background-color 0.3s ease;
+        }
+
+        /* 댓글 작성 폼이 열릴 때 배경색 강조 */
+        #comment-form {
+            display: none;
+            background-color: #f1f8ff;
+            padding: 15px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        /* 로그인 상태에서 h3 클릭 시 하이라이트 효과 */
+        h3.comment-title:hover {
+            background-color: #e9ecef;
+        }
+
+        html, body {
+            height: 100%; /* 페이지 전체 높이를 브라우저 창 높이와 동일하게 설정 */
+            margin: 0; /* 기본 마진 제거 */
+        }
+
+        .container {
+            max-width: 560px;
+            padding-bottom: 60px; /* 푸터와 겹치지 않도록 하단에 여유 공간 추가 */
+            min-height: calc(100vh - 120px); /* 뷰포트 높이에서 푸터 및 헤더 높이 제외 */
+        }
+
+        .footer {
+            background-color: #f8f9fa; /* 연회색 배경 */
+            color: #333; /* 어두운 글씨 */
+            text-align: center;
+            padding: 20px 0; /* 상하 패딩 */
+            width: 100%; /* 전체 너비 */
+            position: relative; /* 절대 위치 대신 상대 위치 사용 */
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Blog</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item" th:if="${loginMember == null}">
+                <a class="nav-link" href="/login">로그인</a>
+            </li>
+            <li class="nav-item" th:if="${loginMember != null}">
+                <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
+                <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
+            </li>
+            <li class="nav-item" th:if="${loginMember != null}">
+                <a class="nav-link" href="/members/update">회원정보</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <div class="py-5 text-center">
+        <!-- 포스트 제목을 h2 크기로 표시 -->
+        <h2 th:text="${post.title}">글 상세</h2>
+    </div>
+    <h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>작성자:</strong> <span th:text="${post.authorName}">tester</span></p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>등록 시간:</strong> <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">2024-09-22</span></p>
+        </div>
+    </div>
+    <div>
+        <label for="tags">태그</label>
+        <input type="text" id="tags" name="tags" class="form-control"
+               th:value="${post.tagsFormatted}" readonly>
+    </div>
+    <hr class="hr-spacing"> <!-- 내용 전의 구분선 -->
+    <div>
+        <p th:utext="${post.content}">여기에 포스트 내용이 출력됩니다.</p>
+    </div>
+    <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
+
+    <!-- 댓글 목록 -->
+    <h3>댓글</h3>
+    <ul>
+        <li th:each="comment : ${comments}">
+            <p>
+                <strong th:text="${comment.author}">작성자</strong>:
+                <span th:text="${comment.comet}">댓글 내용</span>
+
+                <span th:if="${loginMember != null and comment.author == loginMember.name}" style="float: right;">
+    <!-- 댓글 수정 -->
+    <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.id})|">수정</a> |
+
+                    <!-- 댓글 삭제 -->
+    <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.id}').submit();|">삭제</a>
+                </span>
+
+                <!-- 삭제 폼 (POST 메서드로 제출) - 블록 요소를 span 외부에 배치 -->
+            <form th:id="|delete-comment-${comment.id}|" th:action="@{'/post/jpa/postList/' + ${post.id} + '/comments/' + ${comment.id} + '/delete'}" method="post" style="display:none;">
+                <input type="hidden" name="_method" value="delete">
+            </form>
+            </p>
+
+            <!-- 댓글 수정 폼 (숨김 처리되어 있으며 수정 링크 클릭 시 표시됨) -->
+            <div th:id="'edit-comment-form-' + ${comment.id}" style="display: none; margin-top: 10px;">
+                <form th:action="@{'/post/jpa/postList/' + ${post.id} + '/comments/' + ${comment.id} + '/edit'}" method="post">
+                    <div>
+                        <label th:for="'newComet-' + ${comment.id}">새 댓글 내용</label>
+                        <input type="text" th:id="'newComet-' + ${comment.id}" name="newComet" class="form-control" placeholder="새 댓글 내용" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">수정</button>
+                </form>
+            </div>
+        </li>
+    </ul>
+
+    <script>
+        function toggleEditForm(commentId) {
+            var formElement = document.getElementById('edit-comment-form-' + commentId);
+            if (formElement.style.display === 'none' || formElement.style.display === '') {
+                formElement.style.display = 'block';
+            } else {
+                formElement.style.display = 'none';
+            }
+        }
+    </script>
+
+    <h3 th:if="${loginMember != null}" th:onclick="toggleCommentForm()" class="comment-title">댓글 작성</h3>
+    <h3 th:if="${loginMember == null}">
+        <a th:href="'/login?redirectURL=/post/jpa/postList/' + ${post.id}">댓글 작성</a>
+    </h3>
+
+    <div th:if="${loginMember != null}" id="comment-form">
+        <form th:action="@{'/post/jpa/postList/' + ${post.id} + '/comments'}" method="post">
+            <div>
+                <label for="author">이름</label>
+                <input type="text" id="author" name="author" class="form-control" th:value="${loginMember.name}" readonly />
+            </div>
+            <div>
+                <label for="comet">댓글 내용</label>
+                <textarea id="comet" name="comet" class="form-control" required></textarea>
+            </div>
+            <button class="w-100 btn btn-primary btn-lg mt-3" type="submit">댓글 작성</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleCommentForm() {
+            var commentForm = document.getElementById('comment-form');
+            if (commentForm.style.display === 'none') {
+                commentForm.style.display = 'block';
+            } else {
+                commentForm.style.display = 'none';
+            }
+        }
+    </script>
+    <hr class="my-4">
+    <div class="row">
+        <div class="col">
+            <!-- 수정 버튼, 작성자가 로그인 사용자와 일치할 때만 표시 -->
+            <button class="w-100 btn btn-primary btn-lg" th:if="${loginMember != null and loginMember.name == post.authorName}"
+                    th:onclick="|location.href='@{/post/jpa/postList/{postId}/edit(postId=${post.id})}'|" type="button">포스트 수정</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" th:onclick="|location.href='@{/post/jpa/postList}'|" type="button">목록으로</button>
+        </div>
+        <div class="col">
+            <!-- 삭제 버튼, 작성자가 로그인 사용자와 일치할 때만 표시 -->
+            <form th:if="${loginMember != null and loginMember.name == post.authorName}"
+                  th:action="@{/post/jpa/postList/{postId}/delete(postId=${post.id})}" method="post" onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+                <button class="w-100 btn btn-danger btn-lg" type="submit">포스트 삭제</button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+</div>
+<div class="footer">
+    <p>Created by Kaarf_o</p>
+    <a href="https://github.com/K4RF/Full/tree/main/blog" target="_blank">GitHub</a>
+</div>
+</body>
+</html>
+
