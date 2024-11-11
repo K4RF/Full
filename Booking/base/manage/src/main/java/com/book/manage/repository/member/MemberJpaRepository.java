@@ -4,6 +4,7 @@ import com.book.manage.entity.Member;
 import com.book.manage.entity.QMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
@@ -12,14 +13,10 @@ import java.util.Optional;
 
 @Slf4j
 @Repository
+@RequiredArgsConstructor
 public class MemberJpaRepository implements MemberRepository{
     private final EntityManager em;
     private final JPAQueryFactory query;
-
-    public MemberJpaRepository(EntityManager em) {
-        this.em = em;
-        this.query = new JPAQueryFactory(em);
-    }
 
     @Override
     public Member save(Member member) {
