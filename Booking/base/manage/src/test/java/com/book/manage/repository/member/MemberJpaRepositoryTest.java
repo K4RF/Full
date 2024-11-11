@@ -9,7 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @Slf4j
@@ -42,4 +46,17 @@ class MemberJpaRepositoryTest {
         assertThat(findMember).isEqualTo(savedMember);
     }
 
+
+    @Test
+    void testFindMember(){
+//        given
+        Member member = memberJpaRepository.findByLoginId("testUser").orElseThrow();
+        Long memberId = member.getMemberId();
+//        when
+        Optional<Member> foundMember = memberJpaRepository.findById(memberId);
+//        then
+        assertTrue(foundMember.isPresent());
+        assertEquals("testUser", foundMember.get().getLoginId());
+        assertEquals("Test Name", foundMember.get().getNickname());
+    }
 }
