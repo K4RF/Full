@@ -13,10 +13,14 @@ import java.util.Optional;
 
 @Slf4j
 @Repository
-@RequiredArgsConstructor
 public class MemberJpaRepository implements MemberRepository{
     private final EntityManager em;
     private final JPAQueryFactory query;
+
+    public MemberJpaRepository(EntityManager em) {
+        this.em = em;
+        this.query = new JPAQueryFactory(em);
+    }
 
     @Override
     public Member save(Member member) {
