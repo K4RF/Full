@@ -11,7 +11,7 @@ import lombok.Data;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String memberId;
+    private Long memberId;
 
     private String loginId;
 
@@ -20,11 +20,9 @@ public class Member {
     private String nickname;
 
     public Member(){
-
     }
 
-    public Member(String memberId, String loginId, String nickname, String password){
-        this.memberId = memberId;
+    public Member(String loginId, String nickname, String password){
         this.loginId = loginId;
         this.nickname = nickname;
         this.password = password;
