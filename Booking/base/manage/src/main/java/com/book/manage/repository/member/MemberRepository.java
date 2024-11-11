@@ -1,4 +1,4 @@
-package com.book.manage.repository.Member;
+package com.book.manage.repository.member;
 
 import com.book.manage.entity.Member;
 

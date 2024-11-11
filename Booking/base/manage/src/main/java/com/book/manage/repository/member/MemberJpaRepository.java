@@ -1,4 +1,4 @@
-package com.book.manage.repository.Member;
+package com.book.manage.repository.member;
 
 import com.book.manage.entity.Member;
 import com.book.manage.entity.QMember;
@@ -71,6 +71,7 @@ public class MemberJpaRepository implements MemberRepository{
                 .selectFrom(member)
                 .where(member.nickname.eq(nickname))
                 .fetchCount();
+        return count > 0;
     }
 
     @Override
