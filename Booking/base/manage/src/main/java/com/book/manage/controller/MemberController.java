@@ -43,9 +43,9 @@ public class MemberController {
 
         // 이름 유효성 검사: 특수문자 제외 및 예약된 이름 차단
         if (!member.getNickname().matches("^[a-zA-Z가-힣 ]+$")) {
-            bindingResult.rejectValue("name", "invalidFormat", "이름에 특수 문자가 포함될 수 없습니다.");
+            bindingResult.rejectValue("nickname", "invalidFormat", "이름에 특수 문자가 포함될 수 없습니다.");
         } else if ("deletedUser".equalsIgnoreCase(member.getNickname())) {
-            bindingResult.rejectValue("name", "inappropriateName", "부적절한 이름입니다.");
+            bindingResult.rejectValue("nickname", "inappropriateName", "부적절한 이름입니다.");
         }
 
         // 중복 아이디 체크
