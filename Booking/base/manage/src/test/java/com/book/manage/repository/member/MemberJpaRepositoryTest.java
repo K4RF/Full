@@ -36,7 +36,7 @@ class MemberJpaRepositoryTest {
     @Test
     void save(){
         //given
-        Member member = new Member("아이디", "이름", "비밀번호");
+        Member member = new Member("saveT", "이름", "비밀번호1234");
         // when
         Member savedMember = memberJpaRepository.save(member);
 

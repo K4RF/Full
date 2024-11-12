@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .field-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+        }
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+        .btn {
+            font-size: 1.125rem;
+            padding: 10px 20px;
+        }
+        .btn-lg {
+            padding: 12px;
+        }
+        hr {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        /* 페이지 전체 높이를 최소 화면 높이로 설정 */
+        html, body {
+            height: 100%;
+            margin: 0;
+            position: relative;
+            overflow-x: hidden; /* 가로 스크롤 제거 */
+        }
+
+        /* .container에 최소 높이와 padding 설정 */
+        .container {
+            max-width: 560px;
+            min-height: calc(100vh - 100px); /* 화면 높이에서 footer 높이를 뺀 만큼 */
+            padding-bottom: 60px; /* Give some space for the footer */
+            box-sizing: border-box;
+        }
+
+        /* footer를 하단에 고정하되, 스크롤이 가능하도록 설정 */
+        .footer {
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            padding: 20px 0;
+            position: relative; /* absolute에서 relative로 변경 */
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2>회원 가입</h2>
+    </div>
+
+    <h4 class="mb-3">회원 정보 입력</h4>
+
+    <form th:action="@{/members/add}" th:object="${member}" method="post">
+
+        <!-- 글로벌 오류 메시지 표시 -->
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
+        </div>
+
+        <div class="mb-3">
+            <label for="loginId" class="form-label">로그인 ID</label>
+            <input type="text" id="loginId" th:field="*{loginId}" class="form-control"
+                   th:classappend="${#fields.hasErrors('loginId')} ? 'is-invalid' : ''">
+            <div class="field-error" th:errors="*{loginId}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">비밀번호</label>
+            <input type="password" id="password" th:field="*{password}" class="form-control"
+                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
+            <div class="field-error" th:errors="*{password}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="nickname" class="form-label">닉네임</label>
+            <input type="text" id="nickname" th:field="*{nickname}" class="form-control"
+                   th:classappend="${#fields.hasErrors('nickname')} ? 'is-invalid' : ''">
+            <div class="field-error" th:errors="*{nickname}"></div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="submit">회원 가입</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg" th:onclick="|location.href='@{/}'|"
+                        type="button">취소</button>
+            </div>
+        </div>
+
+    </form>
+
+</div> <!-- /container -->
+
+<!-- footer -->
+<div class="footer">
+    <p>Created by Kaarf_o</p>
+    <a href="https://github.com/K4RF/Full/tree/main/blog" target="_blank">GitHub</a>
+</div>
+</body>
+</html>
