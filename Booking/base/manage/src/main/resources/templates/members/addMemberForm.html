@@ -22,26 +22,31 @@
             margin-top: 20px;
             margin-bottom: 20px;
         }
+        /* 페이지 전체 높이를 최소 화면 높이로 설정 */
         html, body {
-            height: 100%; /* Make sure the page height is at least the viewport height */
-            margin: 0; /* Remove default margin */
-            position: relative; /* Needed for footer positioning */
+            height: 100%;
+            margin: 0;
+            position: relative;
+            overflow-x: hidden; /* 가로 스크롤 제거 */
         }
 
+        /* .container에 최소 높이와 padding 설정 */
+        .container {
+            max-width: 560px;
+            min-height: calc(100vh - 100px); /* 화면 높이에서 footer 높이를 뺀 만큼 */
+            padding-bottom: 60px; /* Give some space for the footer */
+            box-sizing: border-box;
+        }
+
+        /* footer를 하단에 고정하되, 스크롤이 가능하도록 설정 */
         .footer {
             background-color: #f8f9fa;
             color: #333;
             text-align: center;
             padding: 20px 0;
-            position: absolute; /* Position it at the bottom */
-            bottom: 0; /* Anchor it to the bottom */
-            width: 100%; /* Full width */
-        }
-
-        .container {
-            max-width: 560px;
-
-            padding-bottom: 60px; /* Give some space for the footer */
+            position: relative; /* absolute에서 relative로 변경 */
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
@@ -97,6 +102,8 @@
     </form>
 
 </div> <!-- /container -->
+
+<!-- footer -->
 <div class="footer">
     <p>Created by Kaarf_o</p>
     <a href="https://github.com/K4RF/Full/tree/main/blog" target="_blank">GitHub</a>
