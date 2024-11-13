@@ -52,7 +52,7 @@
   </div>
 
   <!-- 로그인 폼 -->
-  <form th:action="@{/login}" th:object="${login}" method="post">
+  <form th:action="@{/login}" th:object="${loginForm}" method="post">
 
     <!-- 전체 오류 메시지 -->
     <div th:if="${#fields.hasGlobalErrors()}">
