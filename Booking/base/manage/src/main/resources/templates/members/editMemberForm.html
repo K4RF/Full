@@ -61,7 +61,7 @@
 
   <h4 class="mb-3">회원 정보 입력</h4>
 
-  <form th:action="@{/members/update}" th:object="${member}" method="post">
+  <form th:action="@{/members/edit}" th:object="${member}" method="post">
     <input type="hidden" th:field="*{memberId}" />
 
     <!-- 글로벌 오류 메시지 표시 -->
