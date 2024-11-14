@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
-    @GetMapping("/")
+    //@GetMapping("/")
     public String homeLogin(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member loginMember, Model model) {
         // 세션에 회원 데이터가 없으면 false
         if (loginMember == null) {
@@ -26,4 +26,13 @@ public class HomeController {
         return "loginHome";
     }
 
+    @GetMapping("/")
+    public String home(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member loginMember, Model model) {
+        // 로그인 여부에 따라 다른 화면을 보여줍니다.
+        if (loginMember != null) {
+            // 로그인된 경우, 회원 정보를 넘겨줍니다.
+            model.addAttribute("loginMember", loginMember);
+        }
+        return "home"; // home.html을 그대로 반환
+    }
 }
