@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -119,6 +120,28 @@ public class MemberController {
             request.getSession().setAttribute("loginMember", loginMember);
         }
         return "redirect:/";
+    }
+
+    // 회원 탈퇴
+    @PostMapping("/delete/{memberId}")
+    public String deleteMember(@PathVariable Long memberId, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        Member loginMember = (Member) request.getSession().getAttribute("loginMember");
+
+        if (loginMember == null || !loginMember.getMemberId().equals(memberId)) {
+            redirectAttributes.addFlashAttribute("error", "권한이 없습니다.");
+            return "redirect:/login";
+        }
+
+        try {
+            memberService.deleteMember(memberId);  // 실제 회원 삭제 서비스 호출
+            request.getSession().invalidate();  // 세션 무효화
+            redirectAttributes.addFlashAttribute("message", "회원 탈퇴가 성공적으로 완료되었습니다.");
+            return "redirect:/";  // 홈 화면으로 리디렉션
+        } catch (Exception e) {
+            log.error("Error deleting member", e);
+            redirectAttributes.addFlashAttribute("error", "회원 탈퇴 중 오류가 발생했습니다.");
+            return "redirect:/members/edit";  // 에러 발생 시 수정 페이지로 리디렉션
+        }
     }
 }
 

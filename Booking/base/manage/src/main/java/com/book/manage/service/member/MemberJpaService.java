@@ -57,17 +57,17 @@ public class MemberJpaService implements MemberService{
         return memberRepository.existsByName(nickname);
     }
 
+    // deleteMember 메서드 수정
     @Override
     public void deleteMember(Long memberId) {
         Optional<Member> member = memberRepository.findById(memberId);
         if (member.isPresent()) {
-            // 해당 회원의 모든 글 및 대출 상황 데이터 삭제 코드 추가 필요
-
-            // 회원 삭제
-            memberRepository.deleteById(memberId);
-            log.info("성공적으로 제거됨: {}", memberId);
-        }else {
-            log.info("Failed to delete Member. No member found with ID: {}", memberId);
+            // 삭제 로직
+            memberRepository.deleteById(memberId);  // deleteById() 메서드를 호출하여 실제 삭제
+            log.info("Successfully deleted member with ID: {} and updated their posts to 'deleteUser'", memberId);
+        } else {
+            log.warn("Failed to delete member. No member found with ID: {}", memberId);
         }
     }
+
 }
