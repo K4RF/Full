@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -92,15 +93,16 @@ public class MemberJpaRepository implements MemberRepository{
     }
 
     @Override
-    public void deleteById(Long id) {
-        Member member = em.find(Member.class, id);
+    public void deleteById(Long memberId) {
+        log.info("Attempting to delete member with ID: {}", memberId);  // 삭제 시도 로그
+        Member member = em.find(Member.class, memberId);
         if (member != null) {
+            log.info("Found member with ID: {}. Proceeding with deletion.", memberId);
             em.remove(member);
-            log.info("Deleted member: {}", member);
-
-        }
-        else{
-            log.warn("Member not found with ID: {}", id);
+            log.info("Deleted member with ID: {}", memberId);  // 삭제 완료 로그
+        } else {
+            log.warn("No member found with ID: {}", memberId);  // 삭제 실패 로그
         }
     }
+
 }

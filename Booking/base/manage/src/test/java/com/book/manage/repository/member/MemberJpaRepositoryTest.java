@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -58,5 +59,35 @@ class MemberJpaRepositoryTest {
         assertTrue(foundMember.isPresent());
         assertEquals("testUser", foundMember.get().getLoginId());
         assertEquals("Test Name", foundMember.get().getNickname());
+    }
+
+    @Test
+    public void deleteMember_shouldDeleteMember() {
+        // Given
+        Member member = new Member("deleteUser", "nickname", "password");
+        memberJpaRepository.save(member);
+        Long memberId = member.getMemberId();
+
+        // When
+        memberJpaService.deleteMember(memberId);
+
+        // Then
+        Optional<Member> deletedMember = memberJpaRepository.findById(memberId);
+        assertThat(deletedMember).isEmpty();  // 삭제가 성공하면, findById는 비어 있어야 함
+    }
+    @Test
+    @Commit// 트랜잭션 커밋을 강제하여 실제 데이터베이스 반영을 확인
+    void deleteMember_shouldDeleteMemberCommit() {
+        // Given
+        Member member = new Member("deleteUser", "nickname", "password");
+        memberJpaRepository.save(member);
+        Long memberId = member.getMemberId();
+
+        // When
+        memberJpaService.deleteMember(memberId);
+
+        // Then
+        Optional<Member> deletedMember = memberJpaRepository.findById(memberId);
+        assertThat(deletedMember).isEmpty();  // 삭제가 성공하면, findById는 비어 있어야 함
     }
 }
