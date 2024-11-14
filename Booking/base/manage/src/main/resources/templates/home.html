@@ -47,66 +47,12 @@
         </ul>
     </div>
 </nav>
-<div class="container" style="max-width: 600px">
-    <div class="py-5 text-center">
-        <h2>글 목록</h2>
-    </div>
 
-    <!--
-    <form th:object="${postSearch}" method="get" class="form-inline">
-
-        <div class="row">
-            <div class="col">
-                <input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
-            </div>
-            <div class="col">
-                <input type="text" th:field="*{authorName}" class="form-control" placeholder="작성자"/>
-            </div>
-            <div class="col">
-                <button type="submit" class="btn btn-secondary mb-2">검색</button>
-            </div>
-            <div class="col">
-                <div class="col">
-
-                    <button class="btn btn-primary float-end"
-                            th:onclick="|location.href='@{/post/jpa/postList/add}'|"
-                            type="button">포스트 등록
-                    </button>
-                </div>
-            </div>
-        </div>
-    </form>
-    -->
-
-    <hr class="my-4">
-    <div>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>제목</th>
-                <th>작성자</th>
-                <th>조회수</th> <!-- 조회수 컬럼 추가 -->
-            </tr>
-            </thead>
-            <tbody>
-            <!--
-            <tr th:each="post : ${posts}">
-                <td><a th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.id}">포스트 id</a></td>
-                <td><a th:href="@{/post/jpa/postList/{postId}(postId=${post.id})}" th:text="${post.title}">제목</a></td>
-                <td th:text="${post.authorName}">작성자</td>
-                <td th:text="${post.viewCount}">0</td>
-
-            </tr>
-            -->
-            </tbody>
-        </table>
-    </div>
-</div>
 <div class="footer">
     <p>Created by Kaarf_o</p>
     <a href="https://github.com/K4RF/Full/tree/main/blog" target="_blank">GitHub</a>
 </div>
+
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
