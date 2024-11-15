@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
-class MemberJpaServiceTest {
+class MemberServiceImplTest {
     @Autowired
     MemberService memberService;
     @Autowired

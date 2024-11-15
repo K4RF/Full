@@ -1,7 +1,7 @@
 package com.book.manage.repository.member;
 
 import com.book.manage.entity.Member;
-import com.book.manage.service.member.MemberJpaService;
+import com.book.manage.service.member.MemberServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class MemberJpaRepositoryTest {
     private MemberRepository memberJpaRepository;
 
     @Autowired
-    private MemberJpaService memberJpaService;
+    private MemberServiceImpl memberServiceImpl;
 
     @BeforeEach
     void setUp(){
@@ -69,7 +69,7 @@ class MemberJpaRepositoryTest {
         Long memberId = member.getMemberId();
 
         // When
-        memberJpaService.deleteMember(memberId);
+        memberServiceImpl.deleteMember(memberId);
 
         // Then
         Optional<Member> deletedMember = memberJpaRepository.findById(memberId);
@@ -84,7 +84,7 @@ class MemberJpaRepositoryTest {
         Long memberId = member.getMemberId();
 
         // When
-        memberJpaService.deleteMember(memberId);
+        memberServiceImpl.deleteMember(memberId);
 
         // Then
         Optional<Member> deletedMember = memberJpaRepository.findById(memberId);

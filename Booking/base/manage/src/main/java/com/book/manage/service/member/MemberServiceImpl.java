@@ -9,17 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
 @Primary
 @Transactional
 @Slf4j
-public class MemberJpaService implements MemberService{
+public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
 
-    public MemberJpaService(MemberRepository memberRepository) {
+    public MemberServiceImpl(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
