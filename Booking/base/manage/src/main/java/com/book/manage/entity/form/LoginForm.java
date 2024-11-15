@@ -1,4 +1,4 @@
-package com.book.manage.entity;
+package com.book.manage.entity.form;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;

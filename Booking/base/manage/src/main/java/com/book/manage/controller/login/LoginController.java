@@ -1,17 +1,14 @@
 package com.book.manage.controller.login;
 
 import com.book.manage.controller.login.session.SessionConst;
-import com.book.manage.entity.LoginForm;
+import com.book.manage.entity.form.LoginForm;
 import com.book.manage.entity.Member;
 import com.book.manage.service.LoginService;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import jdk.jfr.Frequency;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
