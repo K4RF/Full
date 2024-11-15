@@ -4,101 +4,44 @@
     <meta charset="utf-8">
     <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
     <style>
-        h2, h3 {
-            margin-top: 20px;
-            margin-bottom: 20px;
+        .field-error {
+            color: #dc3545;
+            font-size: 0.875rem;
         }
-
-        .form-control {
-            border-radius: 0.375rem;
-            padding: 10px;
-            font-size: 1rem;
+        .form-control.is-invalid {
+            border-color: #dc3545;
         }
-
         .btn {
             font-size: 1.125rem;
-            padding: 12px;
-            border-radius: 0.375rem;
+            padding: 10px 20px;
         }
-
         .btn-lg {
-            padding: 14px 20px;
+            padding: 12px;
         }
-
         hr {
             margin-top: 20px;
             margin-bottom: 20px;
         }
-
-        .hr-spacing {
-            margin-top: 45px;
-            margin-bottom: 45px;
-        }
-
-        ul {
-            padding-left: 0;
-        }
-
-        ul li {
-            list-style-type: none;
-            margin-bottom: 10px;
-        }
-
-        p {
-            margin: 0;
-        }
-
-        label {
-            margin-top: 1rem;
-            font-weight: 500;
-        }
-
-        /* 댓글 작성 폼 숨기기 */
-        #commentForm {
-            display: none;
-            margin-top: 20px;
-        }
-
-        /* h3 태그 클릭 가능하게 */
-        h3.comment-title {
-            cursor: pointer;
-            color: blue;
-            transition: background-color 0.3s ease;
-        }
-
-        /* 댓글 작성 폼이 열릴 때 배경색 강조 */
-        #comment-form {
-            display: none;
-            background-color: #f1f8ff;
-            padding: 15px;
-            border: 1px solid #007bff;
-            border-radius: 5px;
-            margin-top: 15px;
-        }
-
-        /* 로그인 상태에서 h3 클릭 시 하이라이트 효과 */
-        h3.comment-title:hover {
-            background-color: #e9ecef;
-        }
-
         html, body {
-            height: 100%; /* 페이지 전체 높이를 브라우저 창 높이와 동일하게 설정 */
-            margin: 0; /* 기본 마진 제거 */
+            height: 100%; /* Make sure the page height is at least the viewport height */
+            margin: 0; /* Remove default margin */
+            position: relative; /* Needed for footer positioning */
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            padding: 20px 0;
+            position: absolute; /* Position it at the bottom */
+            bottom: 0; /* Anchor it to the bottom */
+            width: 100%; /* Full width */
         }
 
         .container {
             max-width: 560px;
-            padding-bottom: 60px; /* 푸터와 겹치지 않도록 하단에 여유 공간 추가 */
-            min-height: calc(100vh - 120px); /* 뷰포트 높이에서 푸터 및 헤더 높이 제외 */
-        }
 
-        .footer {
-            background-color: #f8f9fa; /* 연회색 배경 */
-            color: #333; /* 어두운 글씨 */
-            text-align: center;
-            padding: 20px 0; /* 상하 패딩 */
-            width: 100%; /* 전체 너비 */
-            position: relative; /* 절대 위치 대신 상대 위치 사용 */
+            padding-bottom: 60px; /* Give some space for the footer */
         }
     </style>
 </head>
@@ -140,8 +83,9 @@
             <p><strong>출판사:</strong> <span th:text="${book.publisher}">publisher</span></p>
         </div>
     </div>
+    <hr class="my-4">
     <div>
-        <p><strong>상세 정보</strong></p>
+        <h3><strong>상세 정보</strong></h3>
         <p th:utext="${book.details}">여기에 도서 내용이 출력됩니다.</p>
     </div>
     <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
