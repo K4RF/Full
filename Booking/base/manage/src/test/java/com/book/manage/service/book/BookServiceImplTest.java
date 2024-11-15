@@ -2,6 +2,7 @@ package com.book.manage.service.book;
 
 import com.book.manage.entity.Book;
 import com.book.manage.repository.book.BookRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 @SpringBootTest
 @Transactional
 class BookServiceImplTest {
@@ -53,6 +55,8 @@ class BookServiceImplTest {
         assertThat(savedBook.getAuthor()).isEqualTo("AuthorName");
         assertThat(savedBook.getPublisher()).isEqualTo("PublisherName");
         assertThat(savedBook.getDetails()).isEqualTo("Comprehensive guide on Spring Boot");
+        // Log savedBook 정보 출력
+        log.info("Saved Book Info: {}", savedBook);
     }
 
     @Test
