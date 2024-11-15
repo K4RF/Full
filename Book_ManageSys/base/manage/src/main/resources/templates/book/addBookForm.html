@@ -98,7 +98,7 @@
     <div class="py-5 text-center">
         <h2>도서 등록</h2>
     </div>
-    <form th:action="@{/books/add}" th:object="${book}" method="post">
+    <form th:action="@{/bookList/add}" th:object="${book}" method="post">
         <div>
             <label for="title">제목</label>
             <input type="text" id="title" th:field="*{title}" class="form-control">
@@ -122,7 +122,7 @@
                 <button class="w-100 btn btn-primary btn-lg" type="submit">등록</button>
             </div>
             <div class="col">
-                <button class="w-100 btn btn-secondary btn-lg" type="button" th:onclick="|location.href='@{/books}'|">취소</button>
+                <button class="w-100 btn btn-secondary btn-lg" type="button" th:onclick="|location.href='@{/bookList}'|">취소</button>
             </div>
         </div>
     </form>
@@ -146,7 +146,7 @@
 </script>
 <div class="footer">
     <p>Created by Kaarf_o</p>
-    <a href="https://github.com/K4RF/Full/tree/" target="_blank">GitHub</a>
+    <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
 </div>
 </body>
 </html>

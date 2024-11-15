@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/books")
+@RequestMapping("/bookList")
 public class BookController {
     private final BookService bookService;
 
@@ -44,6 +44,6 @@ public class BookController {
         Book savedBook = bookService.save(book);
         redirectAttributes.addAttribute("bookId", savedBook.getBookId());
         redirectAttributes.addAttribute("status", true);
-        return "redirect:/books/{bookId}";
+        return "redirect:/bookList/{bookId}";
     }
 }
