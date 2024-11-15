@@ -1,6 +1,6 @@
-package com.book.manage.controller.login;
+package com.book.manage.login;
 
-import com.book.manage.controller.login.session.SessionConst;
+import com.book.manage.login.session.SessionConst;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

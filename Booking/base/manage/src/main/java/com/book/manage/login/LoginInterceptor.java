@@ -1,4 +1,4 @@
-package com.book.manage.controller.login;
+package com.book.manage.login;
 
 import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.http.HttpServletRequest;

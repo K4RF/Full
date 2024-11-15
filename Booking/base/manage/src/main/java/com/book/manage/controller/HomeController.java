@@ -1,7 +1,6 @@
 package com.book.manage.controller;
 
-import com.book.manage.annotation.Login;
-import com.book.manage.controller.login.session.SessionConst;
+import com.book.manage.login.session.SessionConst;
 import com.book.manage.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

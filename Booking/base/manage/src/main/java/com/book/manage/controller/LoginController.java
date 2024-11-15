@@ -1,6 +1,6 @@
-package com.book.manage.controller.login;
+package com.book.manage.controller;
 
-import com.book.manage.controller.login.session.SessionConst;
+import com.book.manage.login.session.SessionConst;
 import com.book.manage.entity.form.LoginForm;
 import com.book.manage.entity.Member;
 import com.book.manage.service.LoginService;
