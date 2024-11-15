@@ -1,10 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .field-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+        }
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+        .btn {
+            font-size: 1.125rem;
+            padding: 10px 20px;
+        }
+        .btn-lg {
+            padding: 12px;
+        }
+        hr {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        html, body {
+            height: 100%; /* Make sure the page height is at least the viewport height */
+            margin: 0; /* Remove default margin */
+            position: relative; /* Needed for footer positioning */
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            padding: 20px 0;
+            position: absolute; /* Position it at the bottom */
+            bottom: 0; /* Anchor it to the bottom */
+            width: 100%; /* Full width */
+        }
+
+        .container {
+            max-width: 560px;
+
+            padding-bottom: 60px; /* Give some space for the footer */
+        }
+    </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Book Manage</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item" th:if="${loginMember == null}">
+                <a class="nav-link" href="/login">로그인</a>
+            </li>
+            <li class="nav-item" th:if="${loginMember != null}">
+                <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
+                <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
+            </li>
+            <li class="nav-item" th:if="${loginMember != null}">
+                <a class="nav-link" href="/members/edit">회원정보</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <div class="py-5 text-center">
+        <!-- 포스트 제목을 h2 크기로 표시 -->
+        <h2 th:text="${book.title}">도서 상세</h2>
+    </div>
+    <h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>저자:</strong> <span th:text="${book.author}">author</span></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>출판사:</strong> <span th:text="${book.publisher}">publisher</span></p>
+        </div>
+    </div>
+    <hr class="my-4">
+    <div>
+        <h3><strong>상세 정보</strong></h3>
+        <p th:utext="${book.details}">여기에 도서 내용이 출력됩니다.</p>
+    </div>
+    <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
+</div>
 
+<div class="footer">
+    <p>Created by Kaarf_o</p>
+    <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
+</div>
 </body>
 </html>
