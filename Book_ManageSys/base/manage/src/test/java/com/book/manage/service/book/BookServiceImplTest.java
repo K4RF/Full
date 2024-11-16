@@ -135,4 +135,33 @@ class BookServiceImplTest {
 
         assertThat(exception.getMessage()).isEqualTo("Book not found");
     }
+
+    @Test
+    void deleteById_shouldDeleteBookWhenBookExists() {
+        // Given: 삭제할 책이 존재함
+        Long bookId = defaultBook.getBookId();
+
+        // When: 삭제 요청
+        bookService.deleteById(bookId);
+
+        // Then: 삭제된 책을 조회하여 없어진 것을 확인
+        Optional<Book> deletedBook = bookRepository.findById(bookId);
+        assertThat(deletedBook).isEmpty(); // 삭제된 책은 더 이상 존재하지 않아야 함
+
+        // 로그 출력
+        log.info("Book with ID: {} has been successfully deleted", bookId);
+    }
+
+    @Test
+    void deleteById_shouldThrowExceptionWhenBookDoesNotExist() {
+        // Given: 존재하지 않는 책 ID
+        Long nonExistentBookId = 999L;
+
+        // When & Then: 삭제 시 예외 발생
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> bookService.deleteById(nonExistentBookId));
+
+        // Then: 예외 메시지 검증
+        assertThat(exception.getMessage()).isEqualTo("Book not found");
+    }
 }

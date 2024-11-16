@@ -81,4 +81,17 @@ public class BookController {
         return "redirect:/bookList/" + bookId;
     }
 
+
+    @PostMapping("/{bookId}/delete")
+    public String deleteBook(@PathVariable Long bookId, RedirectAttributes redirectAttributes, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        if(loginMember == null) {
+            return "redirect:/login";
+        }
+        Book book = bookService.findById(bookId).orElseThrow();
+        // 추후에 사용자가 삭제 권한이 있는지 검증 로직 추가
+        bookService.deleteById(bookId);
+
+        redirectAttributes.addFlashAttribute("message", "도서가 성공적으로 삭제되었습니다");
+        return "redirect:/bookList";
+    }
 }
