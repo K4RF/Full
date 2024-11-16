@@ -89,6 +89,22 @@
         <p th:utext="${book.details}">여기에 도서 내용이 출력됩니다.</p>
     </div>
     <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
+    <div class="row">
+        <div class="col">
+            <!-- 수정 버튼, 작성자가 로그인 사용자와 일치할 때만 표시 -->
+            <button class="w-100 btn btn-primary btn-lg" th:onclick="|location.href='@{/bookList/{bookId}/edit(bookId=${book.bookId})}'|" type="button">도서 수정</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" th:onclick="|location.href='@{/bookList}'|" type="button">목록으로</button>
+        </div>
+        <div class="col">
+            <!-- 삭제 버튼, 작성자가 로그인 사용자와 일치할 때만 표시 -->
+            <form th:action="@{/bookList/{bookId}/delete(bookId=${book.bookId})}" method="post" onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+                <button class="w-100 btn btn-danger btn-lg" type="submit">도서 삭제</button>
+            </form>
+        </div>
+
+    </div>
 </div>
 
 <div class="footer">
