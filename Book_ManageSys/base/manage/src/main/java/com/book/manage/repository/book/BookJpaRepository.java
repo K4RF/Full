@@ -1,6 +1,7 @@
 package com.book.manage.repository.book;
 
 import com.book.manage.entity.Book;
+import com.book.manage.entity.dto.BookEditDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -29,5 +30,14 @@ public class BookJpaRepository implements BookRepository{
     public Optional<Book> findById(Long bookId) {
         Book book = em.find(Book.class, bookId);
         return Optional.ofNullable(book);
+    }
+
+    @Override
+    public void edit(Long bookId, BookEditDto editParam) {
+        Book findBook = findById(bookId).orElseThrow();
+        findBook.setTitle(editParam.getTitle());
+        findBook.setAuthor(editParam.getAuthor());
+        findBook.setPublisher(editParam.getPublisher());
+        findBook.setDetails(editParam.getDetails());
     }
 }
