@@ -10,6 +10,7 @@ public class BookEditDto {
     private String publisher;
     private String details;
 
+    public BookEditDto() {}
     // 생성자
     public BookEditDto(Long bookId, String title, String author, String publisher, String details) {
         this.bookId = bookId;

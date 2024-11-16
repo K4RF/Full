@@ -1,6 +1,7 @@
 package com.book.manage.service.book;
 
 import com.book.manage.entity.Book;
+import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.repository.book.BookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,5 +30,20 @@ public class BookServiceImpl implements BookService {
     public Optional<Book> findById(Long bookId) {
         // 도서 조회
         return bookRepository.findById(bookId);
+    }
+
+    @Override
+    public Book edit(Long bookId, BookEditDto editParam) {
+        // 도서 조회
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
+
+        // 도서 정보 업데이트
+        book.setTitle(editParam.getTitle());
+        book.setAuthor(editParam.getAuthor());
+        book.setPublisher(editParam.getPublisher());
+        book.setDetails(editParam.getDetails());
+
+        // 도서 저장
+        return bookRepository.save(book);
     }
 }
