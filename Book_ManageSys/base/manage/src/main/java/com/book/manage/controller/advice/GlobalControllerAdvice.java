@@ -1,4 +1,4 @@
-package com.book.manage.controller;
+package com.book.manage.controller.advice;
 
 import com.book.manage.entity.Member;
 import org.springframework.web.bind.annotation.ControllerAdvice;

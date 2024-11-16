@@ -21,6 +21,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class BookController {
     private final BookService bookService;
 
+    @GetMapping
+    public String books(){
+        return "/book/bookList";
+    }
+
     @GetMapping("/{bookId}")
     public String book(@PathVariable long bookId, Model model) {
         Book book = bookService.findById(bookId).orElseThrow();
