@@ -1,6 +1,7 @@
 package com.book.manage.service.book;
 
 import com.book.manage.entity.Book;
+import com.book.manage.entity.Member;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.repository.book.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,5 +46,18 @@ public class BookServiceImpl implements BookService {
 
         // 도서 저장
         return bookRepository.save(book);
+    }
+
+    @Override
+    public void deleteById(Long bookId) {
+        Optional<Book> book = bookRepository.findById(bookId);
+        if (book.isPresent()) {
+            // 삭제 로직
+            bookRepository.deleteById(bookId);
+            log.info("Successfully deleted member with ID: {} and updated their posts to 'deleteUser'", bookId);
+        } else {
+            log.warn("Failed to delete member. No member found with ID: {}", bookId);
+
+        }
     }
 }

@@ -10,4 +10,5 @@ public interface BookService {
 
     Optional<Book> findById(Long bookId);
     Book edit(Long bookId, BookEditDto editParam);
+    void deleteById(Long bookId);
 }

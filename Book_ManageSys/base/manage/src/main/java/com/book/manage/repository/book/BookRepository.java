@@ -10,4 +10,5 @@ public interface BookRepository {
     Book save(Book book);
     Optional<Book> findById(Long bookId);
     void edit(Long bookId, BookEditDto editParam);
+    void deleteById(Long bookId);
 }
