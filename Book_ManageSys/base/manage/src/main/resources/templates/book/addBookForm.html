@@ -81,15 +81,22 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
+            <!-- 로그인 버튼 -->
             <li class="nav-item" th:if="${loginMember == null}">
-                <a class="nav-link" href="/login">로그인</a>
+                <a class="nav-link" th:href="@{/login(redirectURL=${redirectURL})}">로그인</a>
             </li>
+            <!-- 로그아웃 버튼 -->
             <li class="nav-item" th:if="${loginMember != null}">
                 <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
                 <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
             </li>
+            <!-- 회원정보 -->
             <li class="nav-item" th:if="${loginMember != null}">
                 <a class="nav-link" href="/members/edit">회원정보</a>
+            </li>
+            <!-- 도서 목록 -->
+            <li class="nav-item">
+                <a class="nav-link" href="/bookList">도서 목록</a>
             </li>
         </ul>
     </div>

@@ -34,25 +34,81 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ml-auto">
+      <!-- 로그인 버튼 -->
       <li class="nav-item" th:if="${loginMember == null}">
-        <a class="nav-link" href="/login">로그인</a>
+        <a class="nav-link" th:href="@{/login(redirectURL=${redirectURL})}">로그인</a>
       </li>
+      <!-- 로그아웃 버튼 -->
       <li class="nav-item" th:if="${loginMember != null}">
         <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
         <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
       </li>
+      <!-- 회원정보 -->
       <li class="nav-item" th:if="${loginMember != null}">
         <a class="nav-link" href="/members/edit">회원정보</a>
+      </li>
+      <!-- 도서 목록 -->
+      <li class="nav-item">
+        <a class="nav-link" href="/bookList">도서 목록</a>
       </li>
     </ul>
   </div>
 </nav>
+  <div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+      <h2>도서 목록</h2>
+    </div>
 
-<div class="footer">
-  <p>Created by Kaarf_o</p>
-  <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
-</div>
+    <form th:object="${bookSearch}" method="get" class="form-inline">
+      <!-- 검색 폼 -->
+      <div class="row">
+        <div class="col">
+          <input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
+        </div>
+        <div class="col">
+          <input type="text" th:field="*{author}" class="form-control" placeholder="저자"/>
+        </div>
+        <div class="col">
+          <button type="submit" class="btn btn-secondary mb-2">검색</button>
+        </div>
+        <div class="col">
+          <div class="col">
+            <!-- 로그인 여부와 상관없이 포스트 등록 버튼 표시 -->
+            <button class="btn btn-primary float-end"
+                    th:onclick="|location.href='@{/bookList/add}'|"
+                    type="button">도서 등록
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
 
-<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <hr class="my-4">
+    <div>
+      <table class="table">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>제목</th>
+          <th>저자</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+          <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.bookId}">포스트 id</a></td>
+          <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.title}">제목</a></td>
+          <td th:text="${book.author}">저자</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Created by Kaarf_o</p>
+    <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
+  </div>
+
+  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
