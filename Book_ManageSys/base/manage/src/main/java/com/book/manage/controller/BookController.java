@@ -3,6 +3,7 @@ package com.book.manage.controller;
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.dto.BookEditDto;
+import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.service.book.BookService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -22,7 +25,9 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public String books(){
+    public String books(@ModelAttribute("bookSearch") BookSearchDto bookSearch, Model model) {
+        List<Book> books = bookService.findBooks(bookSearch);
+        model.addAttribute("books", books);
         return "/book/bookList";
     }
 
