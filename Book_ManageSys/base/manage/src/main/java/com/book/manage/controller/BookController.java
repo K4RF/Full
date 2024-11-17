@@ -23,6 +23,11 @@ import java.util.List;
 @RequestMapping("/bookList")
 public class BookController {
     private final BookService bookService;
+    // 모든 요청에서 loginMember 모델을 추가
+    @ModelAttribute
+    public void addLoginMemberToModel(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model) {
+        model.addAttribute("loginMember", loginMember);
+    }
 
     @GetMapping
     public String books(@ModelAttribute("bookSearch") BookSearchDto bookSearch, Model model) {
