@@ -3,12 +3,14 @@ package com.book.manage.service.book;
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.dto.BookEditDto;
+import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.repository.book.BookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -59,5 +61,10 @@ public class BookServiceImpl implements BookService {
             log.warn("Failed to delete member. No member found with ID: {}", bookId);
 
         }
+    }
+
+    @Override
+    public List<Book> findBooks(BookSearchDto searchParam) {
+        return bookRepository.findAll(searchParam);
     }
 }
