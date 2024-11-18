@@ -7,6 +7,7 @@ import com.book.manage.repository.book.BookRepository;
 import com.book.manage.repository.book.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@Slf4j  // 클래스에 @Slf4j 추가
 @SpringBootTest
 @Transactional
 class RentalServiceImplTest {
@@ -59,9 +60,12 @@ class RentalServiceImplTest {
         // Given
         assertNotNull(book);
         assertNotNull(member);
+        log.info("Book created with ID: {}, Title: {}", book.getBookId(), book.getTitle());  // 로그 추가
+        log.info("Member created with ID: {}, Nickname: {}", member.getMemberId(), member.getNickname());  // 로그 추가
 
         // When
         Rental rental = rentalService.createRental(book.getBookId(), member.getMemberId());
+        log.info("Rental created with ID: {}, Status: {}", rental.getRentalId(), rental.getRentalStatus());  // 로그 추가
 
         // Then
         assertNotNull(rental);
@@ -70,20 +74,24 @@ class RentalServiceImplTest {
         assertEquals("대출중", rental.getRentalStatus());
     }
 
+
     @Test
     void testReturnBook() {
         // Given
         Rental rental = rentalService.createRental(book.getBookId(), member.getMemberId());
         assertNotNull(rental);
         assertEquals("대출중", rental.getRentalStatus());
+        log.info("Rental created with ID: {}. Initial Status: {}", rental.getRentalId(), rental.getRentalStatus());
 
         // When
         Rental updatedRental = rentalService.returnBook(rental.getRentalId());
+        log.info("Rental returned with ID: {}. Updated Status: {}, Return Date: {}", updatedRental.getRentalId(), updatedRental.getRentalStatus(), updatedRental.getReturnDate());
 
         // Then
         assertEquals("반납완료", updatedRental.getRentalStatus());
         assertNotNull(updatedRental.getReturnDate());
     }
+
 
     @Test
     void testUpdateRentalStatus() {
@@ -94,9 +102,11 @@ class RentalServiceImplTest {
         rental.setMember(member);
         rental.setRentalStatus("대출중");
         rentalRepository.save(rental);
+        log.info("Rental created with ID: {}, Status: {}", rental.getRentalId(), rental.getRentalStatus());
 
         // When
         rentalService.updateRentalStatus();
+        log.info("Rental status updated for ID: {}. New Status: {}", rental.getRentalId(), rental.getRentalStatus());  // 상태 변경 후 로그
 
         // Then
         Rental updatedRental = rentalRepository.findById(rental.getRentalId()).orElseThrow();
@@ -136,6 +146,7 @@ class RentalServiceImplTest {
             rentalService.createRental(999L, member.getMemberId());  // 존재하지 않는 bookId
         });
 
+        log.error("Error occurred: {}", exception.getMessage());  // 에러 발생 시 로그
         assertEquals("책을 찾을 수 없습니다.", exception.getMessage());
     }
 
@@ -146,6 +157,8 @@ class RentalServiceImplTest {
             rentalService.createRental(book.getBookId(), 999L);  // 존재하지 않는 memberId
         });
 
+        log.error("Error occurred: {}", exception.getMessage());  // 에러 발생 시 로그
         assertEquals("유저를 찾을 수 없습니다.", exception.getMessage());
     }
+
 }
