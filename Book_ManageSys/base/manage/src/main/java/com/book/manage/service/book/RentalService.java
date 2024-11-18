@@ -11,5 +11,8 @@ public interface RentalService {
 
     List<Rental> getRentalByBook(Long bookId);
     Rental createRental(Long bookId, Long userId);
-    Rental returnBook(Long rentalId);
+    Rental returnBook(Long rentalId, Long bookId);
+    String getRentalStatusByBookId(Long bookId);
+    Rental findActiveRentalByBookId(Long bookId);
+    void deleteRentalsByBookId(Long bookId);
 }

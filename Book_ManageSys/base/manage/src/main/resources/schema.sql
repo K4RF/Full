@@ -27,7 +27,7 @@ CREATE TABLE rental (
                         member_id BIGINT NOT NULL,
                         rental_status VARCHAR(20) NOT NULL,
                         rental_date DATE NOT NULL,
-                        return_date DATE NOT NULL,
+                        return_date DATE, -- NULL 허용
                         FOREIGN KEY (book_id) REFERENCES book(book_id),
                         FOREIGN KEY (member_id) REFERENCES member(member_id)
 );

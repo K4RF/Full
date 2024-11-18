@@ -2,9 +2,11 @@ package com.book.manage.controller;
 
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;
+import com.book.manage.entity.Rental;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.service.book.BookService;
+import com.book.manage.service.book.RentalService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import java.util.List;
 @RequestMapping("/bookList")
 public class BookController {
     private final BookService bookService;
+    private final RentalService rentalService;
 
     // 모든 요청에서 loginMember 모델을 추가
     @ModelAttribute
@@ -40,7 +43,14 @@ public class BookController {
     @GetMapping("/{bookId}")
     public String book(@PathVariable long bookId, Model model) {
         Book book = bookService.findById(bookId).orElseThrow();
+        String rentalStatus = rentalService.getRentalStatusByBookId(bookId); // 대출 상태 가져오기
+        Rental rental = rentalService.findActiveRentalByBookId(bookId);  // 대출 중인 경우 해당 대출 기록을 가져오는 서비스 메서드
+
+        Long rentalId = rental != null ? rental.getRentalId() : null;  // 대출 기록이 있으면 rentalId를, 없으면 null
+
         model.addAttribute("book", book);
+        model.addAttribute("rentalStatus", rentalStatus); // 대출 상태 추가
+        model.addAttribute("rentalId", rentalId);  // rentalId 추가
         return "/book/bookInfo";
     }
 
@@ -60,14 +70,23 @@ public class BookController {
 
     @PostMapping("/add")
     public String addBookRes(@ModelAttribute @Validated Book book, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
+        // 로그인 상태 확인
         if (loginMember == null) {
             String redirectUrl = request.getRequestURI();
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
 
+        // 책 저장
         Book savedBook = bookService.save(book);
+
+        // 책 ID로 렌탈 상태 가져오기 (렌탈 서비스에서 상태 조회)
+        String rentalStatus = rentalService.getRentalStatusByBookId(savedBook.getBookId()); // bookId를 기반으로 렌탈 상태를 확인
+
+        // 리다이렉트할 때 책 ID와 렌탈 상태를 파라미터로 전달
         redirectAttributes.addAttribute("bookId", savedBook.getBookId());
         redirectAttributes.addAttribute("status", true);
+        redirectAttributes.addAttribute("rentalStatus", rentalStatus); // 렌탈 상태 추가
+
         return "redirect:/bookList/{bookId}";
     }
 
@@ -112,9 +131,61 @@ public class BookController {
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
 
+        // 해당 도서에 대한 대출 기록 삭제
+        rentalService.deleteRentalsByBookId(bookId);
+
+        // 도서 삭제
         bookService.deleteById(bookId);
 
-        redirectAttributes.addFlashAttribute("message", "도서가 성공적으로 삭제되었습니다");
+        redirectAttributes.addFlashAttribute("message", "도서와 관련된 대출 데이터가 성공적으로 삭제되었습니다");
         return "redirect:/bookList";
     }
+
+    // 도서 대출 요청
+    @PostMapping("/{bookId}/rental")
+    public String rental(@PathVariable Long bookId,
+                         @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                         RedirectAttributes redirectAttributes,
+                         HttpServletRequest request) {
+        if (loginMember == null) {
+            String redirectUrl = "/bookList/" + bookId;
+            return "redirect:/login?redirectURL=" + redirectUrl;
+        }
+
+        try {
+            rentalService.createRental(bookId, loginMember.getMemberId());
+            redirectAttributes.addFlashAttribute("status", "대출 성공!");
+            redirectAttributes.addFlashAttribute("message", "도서 대출이 성공적으로 완료되었습니다.");
+        } catch (Exception e) {
+            log.error("Rental error: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "도서 대출에 실패했습니다. 사유: " + e.getMessage());
+        }
+
+        return "redirect:/bookList/" + bookId;  // 대출 성공 후 도서 상세 페이지로 리다이렉트
+    }
+
+    @PostMapping("/{bookId}/return")
+    public String returnBook(@PathVariable Long bookId,
+                             @RequestParam Long rentalId,
+                             @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                             RedirectAttributes redirectAttributes,
+                             HttpServletRequest request) {
+        if (loginMember == null) {
+            String redirectUrl = "/bookList/" + bookId;
+            return "redirect:/login?redirectURL=" + redirectUrl;
+        }
+
+        try {
+            // 책 ID와 대출 ID를 이용해 반납 처리
+            rentalService.returnBook(rentalId, bookId);
+            redirectAttributes.addFlashAttribute("status", "반납 성공!");
+            redirectAttributes.addFlashAttribute("message", "도서 반납이 성공적으로 완료되었습니다.");
+        } catch (Exception e) {
+            log.error("Return error: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "도서 반납에 실패했습니다. 사유: " + e.getMessage());
+        }
+
+        return "redirect:/bookList/" + bookId;
+    }
+
 }

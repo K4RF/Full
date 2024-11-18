@@ -79,12 +79,19 @@ class RentalServiceImplTest {
     void testReturnBook() {
         // Given
         Rental rental = rentalService.createRental(book.getBookId(), member.getMemberId());
+        Long rentalId = rental.getRentalId();
+        Long bookId = rental.getBook().getBookId(); // rental의 bookId를 가져옵니다.
         assertNotNull(rental);
         assertEquals("대출중", rental.getRentalStatus());
         log.info("Rental created with ID: {}. Initial Status: {}", rental.getRentalId(), rental.getRentalStatus());
 
         // When
-        Rental updatedRental = rentalService.returnBook(rental.getRentalId());
+        // 실제 반납 처리 호출
+        rentalService.returnBook(rentalId, bookId);
+        // 반납된 대출 기록을 확인
+        Rental updatedRental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new EntityNotFoundException("대출 기록을 찾을 수 없습니다."));
+
         log.info("Rental returned with ID: {}. Updated Status: {}, Return Date: {}", updatedRental.getRentalId(), updatedRental.getRentalStatus(), updatedRental.getReturnDate());
 
         // Then
@@ -159,6 +166,20 @@ class RentalServiceImplTest {
 
         log.error("Error occurred: {}", exception.getMessage());  // 에러 발생 시 로그
         assertEquals("유저를 찾을 수 없습니다.", exception.getMessage());
+    }
+
+    @Test
+    void testRental() {
+        // Given
+        Rental rental = rentalService.createRental(book.getBookId(), member.getMemberId());
+        assertNotNull(rental);
+        assertEquals("대출중", rental.getRentalStatus());
+
+        // When
+        String rentalStatus = rentalService.getRentalStatusByBookId(book.getBookId());
+
+        // Then
+        assertEquals("대출중", rentalStatus);
     }
 
 }
