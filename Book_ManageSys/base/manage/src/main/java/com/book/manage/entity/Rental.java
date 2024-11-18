@@ -20,7 +20,7 @@ public class Rental {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Book book;
+    private Member member;
 
     @Column(name = "rental_status", nullable = false, length = 20)
     private String rentalStatus;
