@@ -124,7 +124,7 @@ public class BookController {
     }
 
     // 도서 대출 요청
-    @GetMapping("/{bookId}/rental")
+    @PostMapping("/{bookId}/rental")
     public String rental(@PathVariable Long bookId,
                          @SessionAttribute(value = "loginMember", required = false) Member loginMember,
                          RedirectAttributes redirectAttributes,

@@ -90,7 +90,7 @@
             <p><strong>출판사:</strong> <span th:text="${book.publisher}">publisher</span></p>
         </div>
     </div>
-    <p>대출 상태: <strong>${rentalStatus}</strong></p>
+    <p>대출 상태: <span th:text="${rentalStatus}">대출상황</span></p>
     <hr class="my-4">
     <div>
         <h3><strong>상세 정보</strong></h3>
@@ -119,7 +119,7 @@
         <div class="col">
             <!-- 대출하기 버튼 -->
             <form th:if="${rentalStatus == '대출 가능'}" th:action="@{/bookList/{bookId}/rental(bookId=${book.bookId})}" method="post">
-                <button class="w-100 btn btn-success btn-lg" type="submit">대출하기</button>
+                <button class="btn btn-primary" type="submit">대출하기</button>
             </form>
             <!-- 반납하기 버튼 -->
             <form th:if="${rentalStatus == '대출중'}" th:action="@{/bookList/{bookId}/return(bookId=${book.bookId})}" method="post">

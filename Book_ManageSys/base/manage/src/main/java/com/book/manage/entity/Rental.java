@@ -24,7 +24,7 @@ public class Rental {
     @Column(name = "rental_status", nullable = false, length = 20)
     private String rentalStatus;
 
-    @Column(name = "retnal_date", nullable = false)
+    @Column(name = "rental_date", nullable = false)
     private LocalDate rentalDate;
 
     @Column(name = "return_date")

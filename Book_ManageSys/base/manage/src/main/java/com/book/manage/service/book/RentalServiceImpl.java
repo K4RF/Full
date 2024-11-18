@@ -7,6 +7,7 @@ import com.book.manage.repository.book.BookRepository;
 import com.book.manage.repository.book.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RentalServiceImpl implements RentalService {
 
     private final RentalRepository rentalRepository;
