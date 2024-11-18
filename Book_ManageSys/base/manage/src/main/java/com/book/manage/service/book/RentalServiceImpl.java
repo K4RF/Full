@@ -59,4 +59,14 @@ public class RentalServiceImpl implements RentalService {
 
         return rentalRepository.save(rental);  // QueryDSL을 통한 저장
     }
+
+    public String getRentalStatusByBookId(Long bookId) {
+        return rentalRepository.findByBookBookId(bookId).stream()
+                .sorted((r1, r2) -> r2.getRentalDate().compareTo(r1.getRentalDate())) // 최신순 정렬
+                .findFirst() // 최신 대출 기록 가져오기
+                .map(Rental::getRentalStatus)
+                .orElse("대출 가능");
+    }
+
+
 }

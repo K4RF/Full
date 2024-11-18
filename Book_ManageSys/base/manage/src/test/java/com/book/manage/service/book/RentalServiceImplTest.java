@@ -161,4 +161,18 @@ class RentalServiceImplTest {
         assertEquals("유저를 찾을 수 없습니다.", exception.getMessage());
     }
 
+    @Test
+    void testRental() {
+        // Given
+        Rental rental = rentalService.createRental(book.getBookId(), member.getMemberId());
+        assertNotNull(rental);
+        assertEquals("대출중", rental.getRentalStatus());
+
+        // When
+        String rentalStatus = rentalService.getRentalStatusByBookId(book.getBookId());
+
+        // Then
+        assertEquals("대출중", rentalStatus);
+    }
+
 }

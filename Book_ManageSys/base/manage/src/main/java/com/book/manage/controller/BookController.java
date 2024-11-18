@@ -5,6 +5,7 @@ import com.book.manage.entity.Member;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.service.book.BookService;
+import com.book.manage.service.book.RentalService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequestMapping("/bookList")
 public class BookController {
     private final BookService bookService;
+    private final RentalService rentalService;
 
     // 모든 요청에서 loginMember 모델을 추가
     @ModelAttribute
@@ -40,7 +42,10 @@ public class BookController {
     @GetMapping("/{bookId}")
     public String book(@PathVariable long bookId, Model model) {
         Book book = bookService.findById(bookId).orElseThrow();
+        String rentalStatus = rentalService.getRentalStatusByBookId(bookId); // 대출 상태 가져오기
+
         model.addAttribute("book", book);
+        model.addAttribute("rentalStatus", rentalStatus); // 대출 상태 추가
         return "/book/bookInfo";
     }
 
@@ -116,5 +121,27 @@ public class BookController {
 
         redirectAttributes.addFlashAttribute("message", "도서가 성공적으로 삭제되었습니다");
         return "redirect:/bookList";
+    }
+
+    // 도서 대출 요청
+    @GetMapping("/{bookId}/rental")
+    public String rental(@PathVariable Long bookId,
+                         @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                         RedirectAttributes redirectAttributes,
+                         HttpServletRequest request) {
+        if (loginMember == null) {
+            String redirectUrl = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectUrl;
+        }
+
+        try {
+            rentalService.createRental(bookId, loginMember.getMemberId());
+            redirectAttributes.addFlashAttribute("message", "도서 대출이 성공적으로 완료되었습니다.");
+        } catch (Exception e) {
+            log.error("Rental error: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "도서 대출에 실패했습니다. 사유: " + e.getMessage());
+        }
+
+        return "redirect:/bookList/" + bookId;
     }
 }
