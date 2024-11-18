@@ -47,7 +47,7 @@ public class RentalServiceImpl implements RentalService{
     }
 
     // 대출 생성
-    public Rental createLoan(Long bookId, Long userId) {
+    public Rental createRental(Long bookId, Long userId) {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new EntityNotFoundException("책을 찾을 수 없습니다."));
         Member member = memberRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
 

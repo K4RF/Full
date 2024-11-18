@@ -18,3 +18,16 @@ CREATE TABLE book (
                       publisher VARCHAR(255) NOT NULL,
                       details TEXT NOT NULL
 );
+
+DROP TABLE IF EXISTS rental CASCADE;
+
+CREATE TABLE rental (
+                        rental_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        book_id BIGINT NOT NULL,
+                        member_id BIGINT NOT NULL,
+                        rental_status VARCHAR(20) NOT NULL,
+                        rental_date DATE NOT NULL,
+                        return_date DATE NOT NULL,
+                        FOREIGN KEY (book_id) REFERENCES book(book_id),
+                        FOREIGN KEY (member_id) REFERENCES member(member_id)
+);
