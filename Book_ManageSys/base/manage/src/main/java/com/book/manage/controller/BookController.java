@@ -130,18 +130,19 @@ public class BookController {
                          RedirectAttributes redirectAttributes,
                          HttpServletRequest request) {
         if (loginMember == null) {
-            String redirectUrl = request.getRequestURI();
+            String redirectUrl = "/bookList/" + bookId;
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
 
         try {
             rentalService.createRental(bookId, loginMember.getMemberId());
+            redirectAttributes.addFlashAttribute("status", "대출 성공!");
             redirectAttributes.addFlashAttribute("message", "도서 대출이 성공적으로 완료되었습니다.");
         } catch (Exception e) {
             log.error("Rental error: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("error", "도서 대출에 실패했습니다. 사유: " + e.getMessage());
         }
 
-        return "redirect:/bookList/" + bookId;
+        return "redirect:/bookList/" + bookId;  // 대출 성공 후 도서 상세 페이지로 리다이렉트
     }
 }
