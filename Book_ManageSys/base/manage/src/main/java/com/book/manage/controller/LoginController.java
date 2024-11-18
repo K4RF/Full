@@ -32,6 +32,9 @@ public class LoginController {
             // 이미 로그인된 경우 홈으로 리다이렉트
             return "redirect:/";
         }
+        /**
+         * 취소 버튼 클릭 시에도 이전 URL로 리다이렉트 기능 추가
+         */
 
         // redirectURL 설정: 파라미터 우선, 없으면 Referer
         if (redirectURL == null) {

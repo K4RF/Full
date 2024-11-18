@@ -133,6 +133,9 @@ public class MemberController {
         }
 
         try {
+            /*
+                * 회원 탈퇴 시에 등록한 도서, 렌탈 정보 등도 삭제 로직 추가 필요
+             */
             memberService.deleteMember(memberId);  // 실제 회원 삭제 서비스 호출
             request.getSession().invalidate();  // 세션 무효화
             redirectAttributes.addFlashAttribute("message", "회원 탈퇴가 성공적으로 완료되었습니다.");
