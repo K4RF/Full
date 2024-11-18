@@ -95,4 +95,11 @@ public class RentalJpaRepository implements RentalRepository {
         return Optional.ofNullable(foundRental);
     }
 
+    @Override
+    // 대출 기록 삭제
+    public void delete(Rental rental) {
+        if (rental != null) {
+            em.remove(rental); // 대출 기록 삭제
+        }
+    }
 }

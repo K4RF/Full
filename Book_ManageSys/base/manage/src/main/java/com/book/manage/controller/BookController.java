@@ -131,9 +131,13 @@ public class BookController {
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
 
+        // 해당 도서에 대한 대출 기록 삭제
+        rentalService.deleteRentalsByBookId(bookId);
+
+        // 도서 삭제
         bookService.deleteById(bookId);
 
-        redirectAttributes.addFlashAttribute("message", "도서가 성공적으로 삭제되었습니다");
+        redirectAttributes.addFlashAttribute("message", "도서와 관련된 대출 데이터가 성공적으로 삭제되었습니다");
         return "redirect:/bookList";
     }
 

@@ -18,5 +18,5 @@ public interface RentalRepository {
     List<Rental> findAll();
     void updateRentalStatus();
     Optional<Rental> findByBookIdAndRentalStatus(@Param("bookId") Long bookId, String status);
-
+    void delete(Rental rental);
 }

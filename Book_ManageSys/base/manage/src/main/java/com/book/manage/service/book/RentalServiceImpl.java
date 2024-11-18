@@ -85,4 +85,12 @@ public class RentalServiceImpl implements RentalService {
                 .orElse(null);  // 대출 중인 기록이 없으면 null 반환
     }
 
+
+    // 도서와 관련된 대출 데이터 삭제
+    public void deleteRentalsByBookId(Long bookId) {
+        List<Rental> rentals = rentalRepository.findByBookBookId(bookId); // 책 ID로 대출 목록 조회
+        for (Rental rental : rentals) {
+            rentalRepository.delete(rental); // 대출 기록 삭제
+        }
+    }
 }

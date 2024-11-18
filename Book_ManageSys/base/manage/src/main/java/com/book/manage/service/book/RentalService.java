@@ -14,4 +14,5 @@ public interface RentalService {
     Rental returnBook(Long rentalId, Long bookId);
     String getRentalStatusByBookId(Long bookId);
     Rental findActiveRentalByBookId(Long bookId);
+    void deleteRentalsByBookId(Long bookId);
 }
