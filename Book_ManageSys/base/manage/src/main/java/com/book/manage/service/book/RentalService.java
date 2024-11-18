@@ -10,4 +10,6 @@ public interface RentalService {
     List<Rental> getRentalByMember(Long memberId);
 
     List<Rental> getRentalByBook(Long bookId);
+    Rental createLoan(Long bookId, Long userId);
+    Rental returnBook(Long rentalId);
 }
