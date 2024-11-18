@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,23 +53,36 @@ public class RentalServiceImpl implements RentalService {
         return rentalRepository.save(rental);  // QueryDSL을 통한 저장
     }
 
-    // 반납 처리
-    public Rental returnBook(Long rentalId) {
-        Rental rental = rentalRepository.findById(rentalId).orElseThrow(() -> new EntityNotFoundException("대출 기록을 찾을 수 없습니다."));
+    // 반납 처리 메서드
+    public Rental returnBook(Long rentalId, Long bookId) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new EntityNotFoundException("대출 기록을 찾을 수 없습니다."));
+
+        // 대출 중인 책인지 확인
+        if (!rental.getBook().getBookId().equals(bookId)) {
+            throw new IllegalArgumentException("책 ID가 일치하지 않습니다.");
+        }
 
         rental.setReturnDate(LocalDate.now());
-        rental.setRentalStatus("반납완료");
+        rental.setRentalStatus("대출 가능");  // 반납 상태로 업데이트
 
-        return rentalRepository.save(rental);  // QueryDSL을 통한 저장
+        return rentalRepository.save(rental);  // 반납된 정보 저장
     }
 
+    // 책 ID를 기반으로 렌탈 상태 가져오기
     public String getRentalStatusByBookId(Long bookId) {
-        return rentalRepository.findByBookBookId(bookId).stream()
-                .sorted((r1, r2) -> r2.getRentalDate().compareTo(r1.getRentalDate())) // 최신순 정렬
-                .findFirst() // 최신 대출 기록 가져오기
-                .map(Rental::getRentalStatus)
-                .orElse("대출 가능");
+        // "대출중" 상태로 대출 중인 책을 확인
+        Optional<Rental> rental = rentalRepository.findByBookIdAndRentalStatus(bookId, "대출중");
+
+        // 대출 중인 책이 있으면 "대출중" 상태, 없으면 "대출 가능" 상태 반환
+        return rental.isPresent() ? "대출중" : "대출 가능";
     }
 
+    // 대출 중인 도서에 대한 대출 기록을 가져오는 메서드
+    public Rental findActiveRentalByBookId(Long bookId) {
+        // "대출중" 상태인 대출 기록을 조회
+        return rentalRepository.findByBookIdAndRentalStatus(bookId, "대출중")
+                .orElse(null);  // 대출 중인 기록이 없으면 null 반환
+    }
 
 }

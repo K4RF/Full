@@ -81,4 +81,18 @@ public class RentalJpaRepository implements RentalRepository {
             save(rental);  // 상태 갱신
         }
     }
+
+    @Override
+    public Optional<Rental> findByBookIdAndRentalStatus(Long bookId, String rentalStatus) {
+        // QueryDSL을 사용하여 특정 bookId와 rentalStatus에 맞는 대출 기록을 조회
+        QRental qRental = QRental.rental;
+
+        Rental foundRental = query.selectFrom(qRental)
+                .where(qRental.book.bookId.eq(bookId)
+                        .and(qRental.rentalStatus.eq(rentalStatus)))
+                .fetchOne(); // 조건에 맞는 단일 결과 조회
+
+        return Optional.ofNullable(foundRental);
+    }
+
 }
