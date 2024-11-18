@@ -27,6 +27,6 @@ public class Rental {
     @Column(name = "retnal_date", nullable = false)
     private LocalDate rentalDate;
 
-    @Column(name = "return_date", nullable = false)
+    @Column(name = "return_date")
     private LocalDate returnDate;
 }
