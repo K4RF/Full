@@ -15,35 +15,25 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class RentalServiceImpl implements RentalService{
+public class RentalServiceImpl implements RentalService {
+
     private final RentalRepository rentalRepository;
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
 
     @Override
     public void updateRentalStatus() {
-        List<Rental> rentals = rentalRepository.findAll();
-
-        for (Rental rental : rentals) {
-            if (rental.getReturnDate() != null) {
-                rental.setRentalStatus("반납완료");
-            } else if (LocalDate.now().isAfter(rental.getRentalDate().plusDays(14))) { // 2주후 연체 처리
-                rental.setRentalStatus("연체");
-            }else{
-                rental.setRentalStatus("대출");
-            }
-            rentalRepository.save(rental);  // 상태 갱신
-        }
+        rentalRepository.updateRentalStatus(); // QueryDSL로 상태 갱신
     }
 
     @Override
     public List<Rental> getRentalByMember(Long memberId) {
-        return rentalRepository.findByMemberId(memberId);
+        return rentalRepository.findByMemberMemberId(memberId); // QueryDSL 사용
     }
 
     @Override
     public List<Rental> getRentalByBook(Long bookId) {
-        return rentalRepository.findByBookId(bookId);
+        return rentalRepository.findByBookBookId(bookId); // QueryDSL 사용
     }
 
     // 대출 생성
@@ -57,7 +47,7 @@ public class RentalServiceImpl implements RentalService{
         rental.setRentalDate(LocalDate.now());
         rental.setRentalStatus("대출중");
 
-        return rentalRepository.save(rental);
+        return rentalRepository.save(rental);  // QueryDSL을 통한 저장
     }
 
     // 반납 처리
@@ -67,6 +57,6 @@ public class RentalServiceImpl implements RentalService{
         rental.setReturnDate(LocalDate.now());
         rental.setRentalStatus("반납완료");
 
-        return rentalRepository.save(rental);
+        return rentalRepository.save(rental);  // QueryDSL을 통한 저장
     }
 }

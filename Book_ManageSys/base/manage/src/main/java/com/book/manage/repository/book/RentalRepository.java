@@ -1,17 +1,19 @@
 package com.book.manage.repository.book;
 
 import com.book.manage.entity.Rental;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface RentalRepository extends JpaRepository<Rental, Long> {
-    // 특정 유저의 대출 상태 검색
-    List<Rental> findByMemberId(Long memberId);
+public interface RentalRepository {
+    Rental save(Rental rental);
 
-    // 특정 도서의 대출 상태 검색
-    List<Rental> findByBookId(Long bookId);
+    Optional<Rental> findById(Long rentalId);
 
-    //특정 상태의 대출 검색
-    List<Rental> findByRentalStatus(String rentalStatus);
+    List<Rental> findByMemberMemberId(Long memberId);
+
+    List<Rental> findByBookBookId(Long bookId);
+
+    List<Rental> findAll();
+    void updateRentalStatus();
 }
