@@ -2,7 +2,6 @@ package com.book.manage.repository.book;
 
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.QRental;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +75,7 @@ public class RentalJpaRepository implements RentalRepository {
             } else if (rental.getRentalDate().plusDays(14).isBefore(LocalDate.now())) { // 2주 후 연체 처리
                 rental.setRentalStatus("연체");
             } else {
-                rental.setRentalStatus("대출");
+                rental.setRentalStatus("대출중");
             }
             save(rental);  // 상태 갱신
         }
@@ -84,7 +83,6 @@ public class RentalJpaRepository implements RentalRepository {
 
     @Override
     public Optional<Rental> findByBookIdAndRentalStatus(Long bookId, String rentalStatus) {
-        // QueryDSL을 사용하여 특정 bookId와 rentalStatus에 맞는 대출 기록을 조회
         QRental qRental = QRental.rental;
 
         Rental foundRental = query.selectFrom(qRental)
@@ -96,7 +94,6 @@ public class RentalJpaRepository implements RentalRepository {
     }
 
     @Override
-    // 대출 기록 삭제
     public void delete(Rental rental) {
         if (rental != null) {
             em.remove(rental); // 대출 기록 삭제

@@ -97,7 +97,7 @@
             <p><strong>출판사:</strong> <span th:text="${book.publisher}">publisher</span></p>
         </div>
     </div>
-    <p>대출 상태: <span th:text="${rentalStatus}">대출상황</span></p>
+    <p>대출 상태: <span th:text="${rentalAbleBook ? '대출 가능' : '대출 불가'}">대출상황</span></p>
     <hr class="my-4">
     <div>
         <h3><strong>상세 정보</strong></h3>
