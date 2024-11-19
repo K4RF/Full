@@ -5,6 +5,7 @@ import com.book.manage.entity.dto.MemberEditDto;
 import com.book.manage.repository.member.MemberRepository;
 import com.book.manage.service.member.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -37,29 +38,24 @@ public class MemberController {
 
     @PostMapping("/add")
     public String save(@Validated @ModelAttribute Member member, BindingResult bindingResult) {
-        // 로그인 ID 유효성 검사: 영어로 16자 이내
         if (!member.getLoginId().matches("^[a-zA-Z0-9]{1,16}$")) {
             bindingResult.rejectValue("loginId", "invalidFormat", "로그인 ID는 영어로 16자 이내여야 합니다.");
         }
 
-        // 비밀번호 유효성 검사: 8~16글자
         if (!member.getPassword().matches("^[a-zA-Z0-9]{8,16}$")) {
             bindingResult.rejectValue("password", "invalidLength", "비밀번호는 8자에서 16자 사이여야 합니다.");
         }
 
-        // 이름 유효성 검사: 특수문자 제외 및 예약된 이름 차단
         if (!member.getNickname().matches("^[a-zA-Z가-힣 ]+$")) {
             bindingResult.rejectValue("nickname", "invalidFormat", "이름에 특수 문자가 포함될 수 없습니다.");
         } else if ("deletedUser".equalsIgnoreCase(member.getNickname())) {
             bindingResult.rejectValue("nickname", "inappropriateName", "부적절한 이름입니다.");
         }
 
-        // 중복 아이디 체크
         if (memberRepository.findByLoginId(member.getLoginId()).isPresent()) {
             bindingResult.rejectValue("loginId", "duplicate", "이미 존재하는 로그인 ID입니다.");
         }
 
-        // 오류가 있을 경우 다시 폼으로 이동
         if (bindingResult.hasErrors()) {
             return "members/addMemberForm";
         }
@@ -86,7 +82,6 @@ public class MemberController {
         return "/members/editMemberForm";
     }
 
-
     @PostMapping("/edit")
     public String editMember(@ModelAttribute("member") @Validated MemberEditDto editDto, BindingResult bindingResult,
                              @SessionAttribute(value = "loginMember", required = false) Member loginMember,
@@ -97,28 +92,51 @@ public class MemberController {
             return "redirect:/login?redirectURL=" + redirectURL;
         }
 
-        // 이름과 비밀번호에 대한 검증 로직 유지
         if (bindingResult.hasErrors()) {
             return "/members/editMemberForm";
         }
 
         memberService.editMember(editDto);
 
-        // 세션 정보 업데이트
         if (StringUtils.hasText(editDto.getNickname())) {
             loginMember.setNickname(editDto.getNickname());
             request.getSession().setAttribute("loginMember", loginMember);
         }
 
-        // redirectURL 사용
         if (StringUtils.hasText(redirectURL)) {
             return "redirect:" + redirectURL;
         }
         return "redirect:/";
     }
 
+    @GetMapping("/edit/cancel")
+    public String cancelEdit(@RequestParam(value = "redirectURL", required = false) String redirectURL,
+                             HttpServletRequest request) {
+        // 로그: 요청 파라미터로 넘어온 redirectURL 값 확인
+        log.info("Received redirectURL: {}", redirectURL);
 
-    // 회원 탈퇴
+        // 세션에서 redirectURL을 가져오기
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            String sessionRedirectURL = (String) session.getAttribute("redirectURL");
+            log.info("Session contains redirectURL: {}", sessionRedirectURL);
+
+            // redirectURL 값이 세션에 있으면 제거
+            if (StringUtils.hasText(sessionRedirectURL)) {
+                session.removeAttribute("redirectURL");
+                log.info("Removed redirectURL from session");
+            }
+        } else {
+            log.info("Session is null, no redirectURL to remove");
+        }
+
+        // 최종적으로 리다이렉트할 URL 로그 출력
+        String finalRedirectURL = StringUtils.hasText(redirectURL) ? redirectURL : "/";
+        log.info("Redirecting to: {}", finalRedirectURL);
+
+        return "redirect:" + finalRedirectURL;
+    }
+
     @PostMapping("/delete/{memberId}")
     public String deleteMember(@PathVariable Long memberId, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         Member loginMember = (Member) request.getSession().getAttribute("loginMember");
@@ -129,18 +147,14 @@ public class MemberController {
         }
 
         try {
-            /*
-                * 회원 탈퇴 시에 등록한 도서, 렌탈 정보 등도 삭제 로직 추가 필요
-             */
-            memberService.deleteMember(memberId);  // 실제 회원 삭제 서비스 호출
-            request.getSession().invalidate();  // 세션 무효화
+            memberService.deleteMember(memberId);
+            request.getSession().invalidate();
             redirectAttributes.addFlashAttribute("message", "회원 탈퇴가 성공적으로 완료되었습니다.");
-            return "redirect:/";  // 홈 화면으로 리디렉션
+            return "redirect:/";
         } catch (Exception e) {
             log.error("Error deleting member", e);
             redirectAttributes.addFlashAttribute("error", "회원 탈퇴 중 오류가 발생했습니다.");
-            return "redirect:/members/edit";  // 에러 발생 시 수정 페이지로 리디렉션
+            return "redirect:/members/edit";
         }
     }
 }
-

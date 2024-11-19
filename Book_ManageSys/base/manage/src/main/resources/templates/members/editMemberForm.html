@@ -119,7 +119,10 @@
         <button class="w-100 btn btn-primary btn-lg" type="submit">회원 정보 수정</button>
       </div>
       <div class="col">
-        <button class="w-100 btn btn-secondary btn-lg" type="button" th:onclick="|location.href='@{/}'|">취소</button>
+        <button class="w-100 btn btn-secondary btn-lg" type="button"
+                th:onclick="|location.href='@{/members/edit/cancel(redirectURL=${param.redirectURL != null ? param.redirectURL : ''})}'|">
+          취소
+        </button>
       </div>
     </div>
     <!-- 회원 탈퇴 버튼, 추가된 margin-top 클래스 -->
