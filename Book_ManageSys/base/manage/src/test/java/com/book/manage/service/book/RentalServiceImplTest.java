@@ -6,11 +6,13 @@ import com.book.manage.entity.Rental;
 import com.book.manage.repository.book.BookRepository;
 import com.book.manage.repository.book.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
+import com.book.manage.service.member.MemberService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,9 @@ class RentalServiceImplTest {
 
     private Book book;
     private Member member;
+    @Qualifier("memberService")
+    @Autowired
+    private MemberService memberService;
 
     @BeforeEach
     void setUp() {
@@ -182,4 +187,22 @@ class RentalServiceImplTest {
         assertEquals("대출중", rentalStatus);
     }
 
+    @Test
+    void testDeleteMemberAndRentals() {
+        // Given
+        Rental rental = rentalService.createRental(book.getBookId(), member.getMemberId());
+        assertNotNull(rental);
+        log.info("Rental created with ID: {}, Status: {}", rental.getRentalId(), rental.getRentalStatus());
+
+        // When
+        memberService.deleteMember(member.getMemberId()); // 멤버 탈퇴 및 대출 기록 삭제
+
+        // Then
+        // 멤버가 삭제되었는지 확인
+        assertFalse(memberRepository.findById(member.getMemberId()).isPresent(), "Member should be deleted");
+
+        // 해당 멤버의 대출 기록이 삭제되었는지 확인
+        List<Rental> rentals = rentalRepository.findByMemberMemberId(member.getMemberId());
+        assertTrue(rentals.isEmpty(), "Rentals should be deleted");
+    }
 }
