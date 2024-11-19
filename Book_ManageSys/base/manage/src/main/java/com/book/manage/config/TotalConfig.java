@@ -30,7 +30,7 @@ public class TotalConfig {
 
     @Bean(name = "memberService")
     public MemberService memberService() {
-        return new MemberServiceImpl(memberRepository());
+        return new MemberServiceImpl(memberRepository(),rentalRepository());
     }
 
     @Bean

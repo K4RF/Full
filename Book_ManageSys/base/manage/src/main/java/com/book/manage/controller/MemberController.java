@@ -137,6 +137,19 @@ public class MemberController {
         return "redirect:" + finalRedirectURL;
     }
 
+    @GetMapping("/delete/{memberId}")
+    public String deleteMemberShield(@PathVariable Long memberId,
+                                     @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                                     HttpServletRequest request) {
+        if (loginMember == null) {
+            String redirectUrl = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectUrl;
+        }
+
+        log.warn("잘못된 접근: GET 요청은 허용되지 않습니다. POST 요청을 사용하세요.");
+        return "redirect:/login";
+    }
+
     @PostMapping("/delete/{memberId}")
     public String deleteMember(@PathVariable Long memberId, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         Member loginMember = (Member) request.getSession().getAttribute("loginMember");
@@ -147,14 +160,16 @@ public class MemberController {
         }
 
         try {
+            // 회원 삭제 시 도서와 대출 정보도 함께 삭제
             memberService.deleteMember(memberId);
-            request.getSession().invalidate();
+            request.getSession().invalidate(); // 세션 무효화
             redirectAttributes.addFlashAttribute("message", "회원 탈퇴가 성공적으로 완료되었습니다.");
             return "redirect:/";
         } catch (Exception e) {
             log.error("Error deleting member", e);
             redirectAttributes.addFlashAttribute("error", "회원 탈퇴 중 오류가 발생했습니다.");
-            return "redirect:/members/edit";
+            return "redirect:/members/edit";  // 에러 발생 시 수정 페이지로 리디렉션
         }
     }
+
 }
