@@ -77,4 +77,10 @@ public class LoginController {
         String referer = request.getHeader("Referer");
         return "redirect:" + (referer != null ? referer : "/");
     }
+
+    @GetMapping("/login/cancel")
+    public String cancelLogin(@RequestParam(required = false) String redirectURL) {
+        // 취소 버튼 클릭 시 전달받은 redirectURL로 이동 (없으면 홈으로 이동)
+        return "redirect:" + (redirectURL != null && !redirectURL.isBlank() ? redirectURL : "/");
+    }
 }
