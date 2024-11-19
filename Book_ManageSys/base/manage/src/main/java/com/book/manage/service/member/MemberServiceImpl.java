@@ -1,7 +1,11 @@
 package com.book.manage.service.member;
 
+import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;
+import com.book.manage.entity.Rental;
 import com.book.manage.entity.dto.MemberEditDto;
+import com.book.manage.repository.book.BookRepository;
+import com.book.manage.repository.book.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -9,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,10 +22,13 @@ import java.util.Optional;
 @Slf4j
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
+    private final RentalRepository rentalRepository;
 
-    public MemberServiceImpl(MemberRepository memberRepository) {
+    public MemberServiceImpl(MemberRepository memberRepository, RentalRepository rentalRepository) {
         this.memberRepository = memberRepository;
+        this.rentalRepository = rentalRepository;
     }
+
 
     @Override
     public void join(Member member) {
@@ -58,15 +66,18 @@ public class MemberServiceImpl implements MemberService{
 
     // deleteMember 메서드 수정
     @Override
+    @Transactional
     public void deleteMember(Long memberId) {
-        Optional<Member> member = memberRepository.findById(memberId);
-        if (member.isPresent()) {
-            // 삭제 로직
-            memberRepository.deleteById(memberId);  // deleteById() 메서드를 호출하여 실제 삭제
-            log.info("Successfully deleted member with ID: {} and updated their posts to 'deleteUser'", memberId);
-        } else {
-            log.warn("Failed to delete member. No member found with ID: {}", memberId);
+        // 해당 회원의 대출 정보를 삭제
+        List<Rental> Rentals = rentalRepository.findByMemberMemberId(memberId);
+        for (Rental Rental : Rentals) {
+            rentalRepository.delete(Rental);
         }
+
+        // 최종적으로 회원 삭제
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다"));
+        memberRepository.deleteById(member.getMemberId());
     }
 
 }
