@@ -72,7 +72,7 @@
       </li>
       <!-- 회원정보 -->
       <li class="nav-item" th:if="${loginMember != null}">
-        <a class="nav-link" href="/members/edit">회원정보</a>
+        <a class="nav-link" th:href="@{/members/edit(redirectURL=${redirectURL})}">회원정보</a>
       </li>
       <!-- 도서 목록 -->
       <li class="nav-item">
@@ -110,7 +110,8 @@
              th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
       <div class="field-error" th:errors="*{password}">비밀번호는 8자에서 16자 사이여야 합니다.</div>
     </div>
-
+    <!-- redirectURL 히든 필드 -->
+    <input type="hidden" name="redirectURL" th:value="${param.redirectURL != null ? param.redirectURL : ''}" />
     <hr class="my-4">
 
     <div class="row">

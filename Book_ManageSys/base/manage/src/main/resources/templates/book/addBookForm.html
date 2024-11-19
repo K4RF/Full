@@ -92,7 +92,7 @@
             </li>
             <!-- 회원정보 -->
             <li class="nav-item" th:if="${loginMember != null}">
-                <a class="nav-link" href="/members/edit">회원정보</a>
+                <a class="nav-link" th:href="@{/members/edit(redirectURL=${redirectURL})}">회원정보</a>
             </li>
             <!-- 도서 목록 -->
             <li class="nav-item">

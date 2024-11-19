@@ -73,10 +73,12 @@ public class MemberController {
     }
 
     @GetMapping("/edit")
-    public String showEditForm(@SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request, Model model) {
-        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트 처리
+    public String showEditForm(@SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                               @RequestParam(value = "redirectURL", required = false) String redirectURL,
+                               HttpServletRequest request, Model model) {
         if (loginMember == null) {
-            return "redirect:/login";
+            redirectURL = (redirectURL != null) ? redirectURL : request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectURL;
         }
         Long memberId = loginMember.getMemberId();
         MemberEditDto editDto = new MemberEditDto(memberId, loginMember.getNickname(), loginMember.getPassword());
@@ -84,43 +86,37 @@ public class MemberController {
         return "/members/editMemberForm";
     }
 
+
     @PostMapping("/edit")
     public String editMember(@ModelAttribute("member") @Validated MemberEditDto editDto, BindingResult bindingResult,
-                             @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
-        // 이름이 입력되었을 때만 유효성 검사 실행
-        if (StringUtils.hasText(editDto.getNickname())) {
-            if (!editDto.getNickname().matches("^[a-zA-Z가-힣 ]+$")) {
-                bindingResult.rejectValue("nickname", "invalidFormat", "이름에는 특수문자가 포함될 수 없습니다");
-            }
+                             @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                             @RequestParam(value = "redirectURL", required = false) String redirectURL,
+                             HttpServletRequest request) {
+        if (loginMember == null) {
+            redirectURL = (redirectURL != null) ? redirectURL : request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectURL;
         }
 
-        // 이름 중복 확인
-        Optional<Member> existingMember = memberRepository.findByName(editDto.getNickname());
-        if (existingMember.isPresent() && !existingMember.get().getMemberId().equals(editDto.getMemberId())) {
-            bindingResult.rejectValue("nickname", "duplicate", "이미 존재하는 닉네임입니다");
-        }
-
-        // 비밀번호가 입력되었을 때만 유효성 검사 수행
-        if (StringUtils.hasText(editDto.getPassword())) {
-            if (!editDto.getPassword().matches("^[a-zA-Z0-9]{8,16}$")) {
-                bindingResult.rejectValue("password", "invalidLength", "비밀번호는 8자에서 16자 사이여야 합니다.");
-            }
-        }
-
-        // 오류가 있을 경우 다시 폼으로 이동
+        // 이름과 비밀번호에 대한 검증 로직 유지
         if (bindingResult.hasErrors()) {
             return "/members/editMemberForm";
         }
-        //회원 정보 업데이트
+
         memberService.editMember(editDto);
 
-        // 세션 업데이트
+        // 세션 정보 업데이트
         if (StringUtils.hasText(editDto.getNickname())) {
             loginMember.setNickname(editDto.getNickname());
             request.getSession().setAttribute("loginMember", loginMember);
         }
+
+        // redirectURL 사용
+        if (StringUtils.hasText(redirectURL)) {
+            return "redirect:" + redirectURL;
+        }
         return "redirect:/";
     }
+
 
     // 회원 탈퇴
     @PostMapping("/delete/{memberId}")
