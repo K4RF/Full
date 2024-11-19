@@ -41,16 +41,30 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}")
-    public String book(@PathVariable long bookId, Model model) {
-        Book book = bookService.findById(bookId).orElseThrow();
-        String rentalStatus = rentalService.getRentalStatusByBookId(bookId); // 대출 상태 가져오기
-        Rental rental = rentalService.findActiveRentalByBookId(bookId);  // 대출 중인 경우 해당 대출 기록을 가져오는 서비스 메서드
+    public String book(
+            @PathVariable long bookId,
+            Model model,
+            @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        // 도서 정보 가져오기
+        Book book = bookService.findById(bookId).orElseThrow(() -> new IllegalArgumentException("도서를 찾을 수 없습니다."));
 
-        Long rentalId = rental != null ? rental.getRentalId() : null;  // 대출 기록이 있으면 rentalId를, 없으면 null
+        // 대출 상태 및 대출 기록 가져오기
+        String rentalStatus = rentalService.getRentalStatusByBookId(bookId);
+        Rental rental = rentalService.findActiveRentalByBookId(bookId);
 
+        // 로그인된 사용자의 memberId 가져오기
+        Long loginMemberId = (loginMember != null) ? loginMember.getMemberId() : null;
+
+        // 대출 기록의 memberId 확인
+        Long rentalMemberId = (rental != null) ? rental.getMember().getMemberId() : null;
+
+        // 모델에 데이터 추가
         model.addAttribute("book", book);
-        model.addAttribute("rentalStatus", rentalStatus); // 대출 상태 추가
-        model.addAttribute("rentalId", rentalId);  // rentalId 추가
+        model.addAttribute("rentalStatus", rentalStatus);
+        model.addAttribute("rentalId", (rental != null) ? rental.getRentalId() : null);
+        model.addAttribute("rentalMemberId", rentalMemberId);
+        model.addAttribute("loginMemberId", loginMemberId); // 로그인된 사용자 ID 추가
+
         return "/book/bookInfo";
     }
 
@@ -143,26 +157,30 @@ public class BookController {
 
     // 도서 대출 요청
     @PostMapping("/{bookId}/rental")
-    public String rental(@PathVariable Long bookId,
-                         @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                         RedirectAttributes redirectAttributes,
-                         HttpServletRequest request) {
+    public String rentBook(@PathVariable Long bookId,
+                           @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                           RedirectAttributes redirectAttributes) {
         if (loginMember == null) {
             String redirectUrl = "/bookList/" + bookId;
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
 
         try {
+            // 대출 로직 수행
             rentalService.createRental(bookId, loginMember.getMemberId());
             redirectAttributes.addFlashAttribute("status", "대출 성공!");
-            redirectAttributes.addFlashAttribute("message", "도서 대출이 성공적으로 완료되었습니다.");
+            redirectAttributes.addFlashAttribute("message", "도서를 성공적으로 대출했습니다.");
+        } catch (IllegalStateException e) {
+            // 이미 대출 중인 경우
+            redirectAttributes.addFlashAttribute("error", "이미 대출 중입니다.");
         } catch (Exception e) {
-            log.error("Rental error: {}", e.getMessage());
+            // 기타 에러 처리
             redirectAttributes.addFlashAttribute("error", "도서 대출에 실패했습니다. 사유: " + e.getMessage());
         }
 
-        return "redirect:/bookList/" + bookId;  // 대출 성공 후 도서 상세 페이지로 리다이렉트
+        return "redirect:/bookList/" + bookId;
     }
+
 
     @PostMapping("/{bookId}/return")
     public String returnBook(@PathVariable Long bookId,
@@ -176,7 +194,16 @@ public class BookController {
         }
 
         try {
-            // 책 ID와 대출 ID를 이용해 반납 처리
+            // 대출 기록 조회
+            Rental rental = rentalService.findActiveRentalByBookId(bookId);
+
+            // 대출 기록이 존재하지 않거나 대출자가 로그인한 사용자가 아닌 경우 처리
+            if (rental == null || !rental.getMember().getMemberId().equals(loginMember.getMemberId())) {
+                redirectAttributes.addFlashAttribute("error", "본인이 대출한 도서만 반납할 수 있습니다.");
+                return "redirect:/bookList/" + bookId;
+            }
+
+            // 반납 처리
             rentalService.returnBook(rentalId, bookId);
             redirectAttributes.addFlashAttribute("status", "반납 성공!");
             redirectAttributes.addFlashAttribute("message", "도서 반납이 성공적으로 완료되었습니다.");
@@ -187,5 +214,6 @@ public class BookController {
 
         return "redirect:/bookList/" + bookId;
     }
+
 
 }

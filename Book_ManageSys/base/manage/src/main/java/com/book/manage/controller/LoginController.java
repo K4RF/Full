@@ -28,10 +28,6 @@ public class LoginController {
         HttpSession session = request.getSession(false);
         Member loginMember = (Member) (session != null ? session.getAttribute(SessionConst.LOGIN_MEMBER) : null);
 
-        if (loginMember != null) {
-            // 이미 로그인된 경우 홈으로 리다이렉트
-            return "redirect:/";
-        }
         /**
          * 취소 버튼 클릭 시에도 이전 URL로 리다이렉트 기능 추가
          */
@@ -80,5 +76,11 @@ public class LoginController {
         // 로그아웃 후 이전 페이지로 리다이렉트 (없으면 홈으로 이동)
         String referer = request.getHeader("Referer");
         return "redirect:" + (referer != null ? referer : "/");
+    }
+
+    @GetMapping("/login/cancel")
+    public String cancelLogin(@RequestParam(required = false) String redirectURL) {
+        // 취소 버튼 클릭 시 전달받은 redirectURL로 이동 (없으면 홈으로 이동)
+        return "redirect:" + (redirectURL != null && !redirectURL.isBlank() ? redirectURL : "/");
     }
 }

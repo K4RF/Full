@@ -104,7 +104,7 @@
     </div>
 
     <!-- redirectURL 히든 필드 -->
-    <input type="hidden" name="redirectURL" th:value="${param.redirectURL != null ? param.redirectURL : ''}" />
+    <input type="hidden" name="redirectURL" th:value="${param.redirectURL != null ? param.redirectURL : '/'}" />
     <hr class="my-4">
 
     <!-- 로그인 및 취소 버튼 -->
@@ -113,7 +113,8 @@
         <button class="w-100 btn btn-primary btn-lg" type="submit">로그인</button>
       </div>
       <div class="col">
-        <button class="w-100 btn btn-secondary btn-lg" type="button" th:onclick="|location.href='@{/}'|">취소</button>
+        <button class="w-100 btn btn-secondary btn-lg" type="button"
+                th:onclick="|location.href='@{/login/cancel(redirectURL=${redirectURL})}'|">취소</button>
       </div>
     </div>
 
