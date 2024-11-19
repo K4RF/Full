@@ -138,6 +138,20 @@ public class BookController {
         return "redirect:/bookList/" + bookId;
     }
 
+    // 도서 삭제 요청 (GET 요청 처리 추가)
+    @GetMapping("/{bookId}/delete")
+    public String deleteBookGet(@PathVariable Long bookId,
+                                @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                                HttpServletRequest request) {
+        if (loginMember == null) {
+            String redirectUrl = "/bookList/" + bookId;
+            return "redirect:/login?redirectURL=" + redirectUrl;
+        }
+
+        log.warn("잘못된 접근: GET 요청은 허용되지 않습니다. POST 요청을 사용하세요.");
+        return "redirect:/bookList/" + bookId;
+    }
+
     @PostMapping("/{bookId}/delete")
     public String deleteBook(@PathVariable Long bookId, RedirectAttributes redirectAttributes, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
         if (loginMember == null) {
@@ -155,6 +169,19 @@ public class BookController {
         return "redirect:/bookList";
     }
 
+    // 도서 대출 요청 (GET 요청 처리 추가)
+    @GetMapping("/{bookId}/rental")
+    public String rentBookGet(@PathVariable Long bookId,
+                              @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                              HttpServletRequest request) {
+        if (loginMember == null) {
+            String redirectUrl = "/bookList/" + bookId;
+            return "redirect:/login?redirectURL=" + redirectUrl;
+        }
+
+        log.warn("잘못된 접근: GET 요청은 허용되지 않습니다. POST 요청을 사용하세요.");
+        return "redirect:/bookList/" + bookId;
+    }
     // 도서 대출 요청
     @PostMapping("/{bookId}/rental")
     public String rentBook(@PathVariable Long bookId,
@@ -181,6 +208,20 @@ public class BookController {
         return "redirect:/bookList/" + bookId;
     }
 
+    // 도서 반납 요청 (GET 요청 처리 추가)
+    @GetMapping("/{bookId}/return")
+    public String returnBookGet(@PathVariable Long bookId,
+                                @RequestParam(required = false) Long rentalId,
+                                @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                                HttpServletRequest request) {
+        if (loginMember == null) {
+            String redirectUrl = "/bookList/" + bookId;
+            return "redirect:/login?redirectURL=" + redirectUrl;
+        }
+
+        log.warn("잘못된 접근: GET 요청은 허용되지 않습니다. POST 요청을 사용하세요.");
+        return "redirect:/bookList/" + bookId;
+    }
 
     @PostMapping("/{bookId}/return")
     public String returnBook(@PathVariable Long bookId,
