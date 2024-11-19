@@ -8,6 +8,7 @@ CREATE TABLE member (
                         PASSWORD VARCHAR(255) NOT NULL
 );
 
+-- 기존 테이블 삭제
 DROP TABLE IF EXISTS book CASCADE;
 
 -- book 테이블 생성
@@ -16,7 +17,8 @@ CREATE TABLE book (
                       title VARCHAR(50) NOT NULL,
                       author VARCHAR(255) NOT NULL,
                       publisher VARCHAR(255) NOT NULL,
-                      details TEXT NOT NULL
+                      details TEXT NOT NULL,
+                      RENTAL_ABLE_BOOK BOOLEAN DEFAULT TRUE -- 대출 가능 여부 필드 추가
 );
 
 DROP TABLE IF EXISTS rental CASCADE;
