@@ -39,7 +39,6 @@ public class LoginController {
         }
         HttpSession newSession = request.getSession();
         newSession.setAttribute("redirectURL", redirectURL);
-        
         return "login/loginForm";
     }
 

@@ -107,7 +107,7 @@ public class BookController {
     @GetMapping("/{bookId}/edit")
     public String editBookReq(@PathVariable Long bookId, Model model, HttpServletRequest request, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
         if (loginMember == null) {
-            String redirectUrl = request.getRequestURI();
+            String redirectUrl = "/bookList/" + bookId;
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
 
@@ -141,7 +141,7 @@ public class BookController {
     @PostMapping("/{bookId}/delete")
     public String deleteBook(@PathVariable Long bookId, RedirectAttributes redirectAttributes, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
         if (loginMember == null) {
-            String redirectUrl = request.getRequestURI();
+            String redirectUrl = "/bookList/" + bookId;
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
 
