@@ -26,18 +26,20 @@ public class LoginController {
             HttpServletRequest request) {
         // 로그인된 사용자인지 확인
         HttpSession session = request.getSession(false);
-        Member loginMember = (Member) (session != null ? session.getAttribute(SessionConst.LOGIN_MEMBER) : null);
+        Member loginMember = (session != null) ? (Member) session.getAttribute(SessionConst.LOGIN_MEMBER) : null;
 
-        /**
-         * 취소 버튼 클릭 시에도 이전 URL로 리다이렉트 기능 추가
-         */
+        if (loginMember != null) {
+            // 이미 로그인된 경우 홈으로 리다이렉트
+            return "redirect:/";
+        }
 
-        // redirectURL 설정: 파라미터 우선, 없으면 Referer
-        if (redirectURL == null) {
+        // redirectURL 설정 및 세션에 저장
+        if (redirectURL == null || redirectURL.isBlank()) {
             redirectURL = request.getHeader("Referer");
         }
-        request.setAttribute("redirectURL", redirectURL);
-
+        HttpSession newSession = request.getSession();
+        newSession.setAttribute("redirectURL", redirectURL);
+        
         return "login/loginForm";
     }
 
@@ -45,8 +47,7 @@ public class LoginController {
     public String loginFilter(
             @Valid @ModelAttribute LoginForm form,
             BindingResult bindingResult,
-            HttpServletRequest request,
-            @RequestParam(required = false) String redirectURL) {
+            HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             return "login/loginForm";
         }
@@ -62,7 +63,10 @@ public class LoginController {
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, member);
 
-        // 로그인 성공 후 원래 URL로 리다이렉트 (없으면 홈으로 이동)
+        // 로그인 성공 후 원래 URL로 리다이렉트
+        String redirectURL = (String) session.getAttribute("redirectURL");
+        session.removeAttribute("redirectURL"); // 세션에서 값 제거
+
         return "redirect:" + (redirectURL != null ? redirectURL : "/");
     }
 
@@ -79,8 +83,14 @@ public class LoginController {
     }
 
     @GetMapping("/login/cancel")
-    public String cancelLogin(@RequestParam(required = false) String redirectURL) {
-        // 취소 버튼 클릭 시 전달받은 redirectURL로 이동 (없으면 홈으로 이동)
-        return "redirect:" + (redirectURL != null && !redirectURL.isBlank() ? redirectURL : "/");
+    public String cancelLogin(HttpServletRequest request) {
+        // 세션에서 redirectURL 가져오기
+        HttpSession session = request.getSession(false);
+        String redirectURL = (session != null) ? (String) session.getAttribute("redirectURL") : null;
+
+        // 리다이렉트 대상 URL 설정
+        String targetURL = (redirectURL != null && !redirectURL.isBlank()) ? redirectURL : "/";
+
+        return "redirect:" + targetURL;
     }
 }
