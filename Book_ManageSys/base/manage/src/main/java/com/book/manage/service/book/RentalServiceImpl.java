@@ -39,18 +39,30 @@ public class RentalServiceImpl implements RentalService {
         return rentalRepository.findByBookBookId(bookId); // QueryDSL 사용
     }
 
+
     // 대출 생성
     public Rental createRental(Long bookId, Long userId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new EntityNotFoundException("책을 찾을 수 없습니다."));
-        Member member = memberRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
+        // 대출 중인 도서인지 확인
+        Rental activeRental = findActiveRentalByBookId(bookId);
+        if (activeRental != null) {
+            throw new IllegalStateException("이미 대출 중인 도서입니다.");
+        }
 
+        // 책과 유저 확인
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("책을 찾을 수 없습니다."));
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
+
+        // 새로운 대출 기록 생성
         Rental rental = new Rental();
         rental.setBook(book);
         rental.setMember(member);
         rental.setRentalDate(LocalDate.now());
         rental.setRentalStatus("대출중");
 
-        return rentalRepository.save(rental);  // QueryDSL을 통한 저장
+        // 대출 기록 저장
+        return rentalRepository.save(rental);
     }
 
     // 반납 처리 메서드

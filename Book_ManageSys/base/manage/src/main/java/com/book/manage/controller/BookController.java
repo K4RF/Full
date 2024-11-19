@@ -157,26 +157,30 @@ public class BookController {
 
     // 도서 대출 요청
     @PostMapping("/{bookId}/rental")
-    public String rental(@PathVariable Long bookId,
-                         @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                         RedirectAttributes redirectAttributes,
-                         HttpServletRequest request) {
+    public String rentBook(@PathVariable Long bookId,
+                           @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                           RedirectAttributes redirectAttributes) {
         if (loginMember == null) {
             String redirectUrl = "/bookList/" + bookId;
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
 
         try {
+            // 대출 로직 수행
             rentalService.createRental(bookId, loginMember.getMemberId());
             redirectAttributes.addFlashAttribute("status", "대출 성공!");
-            redirectAttributes.addFlashAttribute("message", "도서 대출이 성공적으로 완료되었습니다.");
+            redirectAttributes.addFlashAttribute("message", "도서를 성공적으로 대출했습니다.");
+        } catch (IllegalStateException e) {
+            // 이미 대출 중인 경우
+            redirectAttributes.addFlashAttribute("error", "이미 대출 중입니다.");
         } catch (Exception e) {
-            log.error("Rental error: {}", e.getMessage());
+            // 기타 에러 처리
             redirectAttributes.addFlashAttribute("error", "도서 대출에 실패했습니다. 사유: " + e.getMessage());
         }
 
-        return "redirect:/bookList/" + bookId;  // 대출 성공 후 도서 상세 페이지로 리다이렉트
+        return "redirect:/bookList/" + bookId;
     }
+
 
     @PostMapping("/{bookId}/return")
     public String returnBook(@PathVariable Long bookId,
