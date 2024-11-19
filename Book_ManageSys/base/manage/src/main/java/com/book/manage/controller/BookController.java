@@ -76,10 +76,6 @@ public class BookController {
         return "/book/bookInfo";
     }
 
-
-
-
-
     @GetMapping("/add")
     public String addBookReq(Model model,
                              @SessionAttribute(value = "loginMember", required = false) Member loginMember,
@@ -101,6 +97,8 @@ public class BookController {
             String redirectUrl = request.getRequestURI();
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
+        // 도서 대출 가능 상태: 기본값
+        book.setRentalAbleBook(true); // 기본값을 true로 설정
 
         // 책 저장
         Book savedBook = bookService.save(book);
