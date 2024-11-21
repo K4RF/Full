@@ -29,8 +29,8 @@ public class LoginController {
         Member loginMember = (session != null) ? (Member) session.getAttribute(SessionConst.LOGIN_MEMBER) : null;
 
         if (loginMember != null) {
-            // 이미 로그인된 경우 홈으로 리다이렉트
-            return "redirect:/";
+            // 이미 로그인된 경우 비정상 접근 페이지로 이동
+            return "returnHome";
         }
 
         // redirectURL 설정 및 세션에 저장
