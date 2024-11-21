@@ -38,33 +38,42 @@ public class MemberController {
 
     @PostMapping("/add")
     public String save(@Validated @ModelAttribute Member member, BindingResult bindingResult) {
+        // 로그인 ID 검증
         if (!member.getLoginId().matches("^[a-zA-Z0-9]{1,16}$")) {
-            bindingResult.rejectValue("loginId", "invalidFormat", "로그인 ID는 영어로 16자 이내여야 합니다.");
+            bindingResult.rejectValue("loginId", "invalidFormat", "로그인 ID는 영어와 숫자로 1~16자 이내여야 합니다.");
         }
 
+        // 비밀번호 검증
         if (!member.getPassword().matches("^[a-zA-Z0-9]{8,16}$")) {
             bindingResult.rejectValue("password", "invalidLength", "비밀번호는 8자에서 16자 사이여야 합니다.");
         }
 
-        if (!member.getNickname().matches("^[a-zA-Z가-힣 ]+$")) {
-            bindingResult.rejectValue("nickname", "invalidFormat", "이름에 특수 문자가 포함될 수 없습니다.");
+        // 닉네임 검증
+        if (!member.getNickname().matches("^[a-zA-Z가-힣0-9 ]+$")) {
+            bindingResult.rejectValue("nickname", "invalidFormat", "닉네임에는 특수 문자를 사용할 수 없습니다.");
         } else if ("deletedUser".equalsIgnoreCase(member.getNickname())) {
             bindingResult.rejectValue("nickname", "inappropriateName", "부적절한 이름입니다.");
         }
 
+        // 중복 로그인 ID 확인
         if (memberRepository.findByLoginId(member.getLoginId()).isPresent()) {
             bindingResult.rejectValue("loginId", "duplicate", "이미 존재하는 로그인 ID입니다.");
         }
 
+        // 검증 오류가 있으면 회원 가입 폼으로 되돌림
         if (bindingResult.hasErrors()) {
             return "members/addMemberForm";
         }
+
+        // 회원 등록
         try {
             memberService.join(member);
         } catch (Exception e) {
             log.error("Error occurred during member registration", e);
             return "members/addMemberForm";
         }
+
+        // 성공 시 홈으로 리다이렉트
         return "redirect:/";
     }
 
