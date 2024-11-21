@@ -9,6 +9,7 @@ import com.book.manage.repository.book.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -23,15 +24,20 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final RentalRepository rentalRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public MemberServiceImpl(MemberRepository memberRepository, RentalRepository rentalRepository) {
+    public MemberServiceImpl(MemberRepository memberRepository, RentalRepository rentalRepository, PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
         this.rentalRepository = rentalRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
     @Override
     public void join(Member member) {
+        //비밀번호 해시화
+        String encodedPassword = passwordEncoder.encode(member.getPassword());
+        member.setPassword(encodedPassword);
         memberRepository.save(member);
     }
 
@@ -50,9 +56,10 @@ public class MemberServiceImpl implements MemberService{
         if (StringUtils.hasText(editDto.getNickname())) {
             member.setNickname(editDto.getNickname());
         }
-        // 비밀번호가 비어 있지 않을 경우에만 해시화하여 업데이트
+        // 비밀번호가 비어 있지 않을 경우에만 업데이트
         if (StringUtils.hasText(editDto.getPassword())) {
-            member.setPassword(editDto.getPassword());
+            String encodedPassword = passwordEncoder.encode(editDto.getPassword());
+            member.setPassword(encodedPassword);
         }
 
         return memberRepository.save(member);

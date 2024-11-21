@@ -17,12 +17,16 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
 public class TotalConfig {
 
     private final EntityManager em;
+    private final PasswordEncoder passwordEncoder;
+
     @Bean
     public MemberRepository memberRepository() {
         return new MemberJpaRepository(em);
@@ -30,7 +34,7 @@ public class TotalConfig {
 
     @Bean(name = "memberService")
     public MemberService memberService() {
-        return new MemberServiceImpl(memberRepository(),rentalRepository());
+        return new MemberServiceImpl(memberRepository(),rentalRepository(), passwordEncoder);
     }
 
     @Bean

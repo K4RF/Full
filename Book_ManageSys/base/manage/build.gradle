@@ -49,6 +49,8 @@ dependencies {
 	// Lombok dependency for test source
 	testCompileOnly 'org.projectlombok:lombok:1.18.28'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+	// 암호화를 위한 BCryptPasswordEncoder를 사용하려면 이 라이브러리도 포함되어야 합니다.
+	implementation 'org.springframework.security:spring-security-crypto'
 }
 
 tasks.named('test') {
