@@ -32,6 +32,16 @@ public class BookController {
     public void addLoginMemberToModel(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model) {
         model.addAttribute("loginMember", loginMember);
     }
+    private String handleLoginBookRedirect(Member loginMember, Long bookId) {
+        if (loginMember == null) {
+            String redirectUrl = "/bookList";
+            if (bookId != null) {
+                redirectUrl = "/bookList/" + bookId;
+            }
+            return "redirect:/login?redirectURL=" + redirectUrl;
+        }
+        return null; // 로그인된 경우 null 반환
+    }
 
     @GetMapping
     public String books(@ModelAttribute("bookSearch") BookSearchDto bookSearch, Model model) {
@@ -116,10 +126,11 @@ public class BookController {
 
     @GetMapping("/{bookId}/edit")
     public String editBookReq(@PathVariable Long bookId, Model model, HttpServletRequest request, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
-        if (loginMember == null) {
-            String redirectUrl = "/bookList/" + bookId;
-            return "redirect:/login?redirectURL=" + redirectUrl;
+        String redirect = handleLoginBookRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
         }
+
 
         Book book = bookService.findById(bookId).orElseThrow();
 
@@ -152,10 +163,11 @@ public class BookController {
     public String deleteBookGet(@PathVariable Long bookId,
                                 @SessionAttribute(value = "loginMember", required = false) Member loginMember,
                                 HttpServletRequest request) {
-        if (loginMember == null) {
-            String redirectUrl = "/bookList/" + bookId;
-            return "redirect:/login?redirectURL=" + redirectUrl;
+        String redirect = handleLoginBookRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
         }
+
 
         log.warn("잘못된 접근: GET 요청은 허용되지 않습니다. POST 요청을 사용하세요.");
         return "redirect:/bookList/" + bookId;
@@ -163,10 +175,11 @@ public class BookController {
 
     @PostMapping("/{bookId}/delete")
     public String deleteBook(@PathVariable Long bookId, RedirectAttributes redirectAttributes, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
-        if (loginMember == null) {
-            String redirectUrl = "/bookList/" + bookId;
-            return "redirect:/login?redirectURL=" + redirectUrl;
+        String redirect = handleLoginBookRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
         }
+
 
         // 해당 도서에 대한 대출 기록 삭제
         rentalService.deleteRentalsByBookId(bookId);
@@ -182,10 +195,11 @@ public class BookController {
     public String rentBookGet(@PathVariable Long bookId,
                               @SessionAttribute(value = "loginMember", required = false) Member loginMember,
                               HttpServletRequest request) {
-        if (loginMember == null) {
-            String redirectUrl = "/bookList/" + bookId;
-            return "redirect:/login?redirectURL=" + redirectUrl;
+        String redirect = handleLoginBookRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
         }
+
 
         log.warn("잘못된 접근: GET 요청은 허용되지 않습니다. POST 요청을 사용하세요.");
         return "redirect:/bookList/" + bookId;
@@ -195,10 +209,11 @@ public class BookController {
     public String rentBook(@PathVariable Long bookId,
                            @SessionAttribute(value = "loginMember", required = false) Member loginMember,
                            RedirectAttributes redirectAttributes) {
-        if (loginMember == null) {
-            String redirectUrl = "/bookList/" + bookId;
-            return "redirect:/login?redirectURL=" + redirectUrl;
+        String redirect = handleLoginBookRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
         }
+
 
         try {
             // 대출 로직 수행
@@ -214,10 +229,11 @@ public class BookController {
 
     @GetMapping("/{bookId}/return")
     public String returnBookGet(@PathVariable Long bookId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
-        if (loginMember == null) {
-            String redirectUrl = "/bookList/" + bookId;
-            return "redirect:/login?redirectURL=" + redirectUrl;
+        String redirect = handleLoginBookRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
         }
+
 
         log.warn("잘못된 접근: GET 요청은 허용되지 않습니다. POST 요청을 사용하세요.");
         return "redirect:/bookList/" + bookId;
@@ -227,10 +243,11 @@ public class BookController {
     public String returnBook(@PathVariable Long bookId,
                              @SessionAttribute(value = "loginMember", required = false) Member loginMember,
                              RedirectAttributes redirectAttributes) {
-        if (loginMember == null) {
-            String redirectUrl = "/bookList/" + bookId;
-            return "redirect:/login?redirectURL=" + redirectUrl;
+        String redirect = handleLoginBookRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
         }
+
 
         try {
             // 반납 처리 로직 수행
