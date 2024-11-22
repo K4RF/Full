@@ -38,6 +38,9 @@ public class RentalController {
             return "redirect:/login?redirectURL=/rentalList";
         }
 
+        // 로그인한 사용자 ID로 검색 조건 설정
+        searchDto.setMemberId(loginMember.getMemberId());
+
         // 검색 조건에 따른 대출 목록 조회
         List<Rental> rentals = rentalService.findRentals(searchDto);
         model.addAttribute("rentals", rentals);

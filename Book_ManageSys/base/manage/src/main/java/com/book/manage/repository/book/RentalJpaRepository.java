@@ -121,16 +121,30 @@ public class RentalJpaRepository implements RentalRepository {
     @Override
     public List<Rental> findAll(RentalSearchDto searchParam) {
         String title = searchParam.getTitle();
+        Long memberId = searchParam.getMemberId();  // memberId 추가
 
         return query
                 .selectFrom(QRental.rental)
-                .where(likeTitle(title))
+                .where(
+                        likeTitle(title)  // 제목 필터
+                                .and(likeMemberId(memberId))  // 회원 ID 필터
+                )
                 .fetch();
     }
 
+    // 제목 필터링
     private BooleanExpression likeTitle(String title) {
-        return title != null && !title.trim().isEmpty()
-                ? QRental.rental.book.title.like("%" + title + "%")
+        if (title != null && !title.trim().isEmpty()) {
+            return QRental.rental.book.title.like("%" + title + "%");
+        }
+        return QRental.rental.book.title.isNotNull(); // 제목이 없으면 모두 포함되도록 처리
+    }
+
+    // 회원 ID 필터링
+    private BooleanExpression likeMemberId(Long memberId) {
+        return memberId != null
+                ? QRental.rental.member.memberId.eq(memberId)  // 회원 ID가 일치하는 대출 기록만 조회
                 : null;
     }
+
 }
