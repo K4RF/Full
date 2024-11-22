@@ -32,10 +32,14 @@ public class MemberController {
     }
 
     @GetMapping("/add")
-    public String addForm(@ModelAttribute("member") Member member) {
+    public String addForm(@ModelAttribute("member") Member member,
+                          @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        // 이미 로그인된 경우, 비정상적인 접근을 방지하고 홈으로 리디렉션
+        if (loginMember != null) {
+            return "redirect:/";  // 이미 로그인된 경우 홈으로 이동
+        }
         return "members/addMemberForm";
     }
-
     @PostMapping("/add")
     public String save(@Validated @ModelAttribute Member member, BindingResult bindingResult) {
         // 로그인 ID 검증
