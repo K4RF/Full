@@ -38,6 +38,22 @@ public class RentalJpaRepository implements RentalRepository {
     }
 
     @Override
+    public Optional<Rental> findLatestRental(Long bookId, Long memberId) {
+        QRental rental = QRental.rental;
+
+        // 같은 책과 같은 멤버에 대해, 반납되지 않은 최신 대출 기록을 찾음
+        Rental latestRental = query.selectFrom(rental)
+                .where(rental.book.bookId.eq(bookId)
+                        .and(rental.member.memberId.eq(memberId))
+                        .and(rental.returnDate.isNull())) // 반납되지 않은 대출만
+                .orderBy(rental.rentalDate.desc()) // 최신 대출을 우선적으로 정렬
+                .fetchFirst(); // 가장 최신 대출 1개만 가져옴
+
+        return Optional.ofNullable(latestRental);
+    }
+
+
+    @Override
     public Optional<Rental> findById(Long rentalId) {
         Rental rental = em.find(Rental.class, rentalId);
         return Optional.ofNullable(rental);

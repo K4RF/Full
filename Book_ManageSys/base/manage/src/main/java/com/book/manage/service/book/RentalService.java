@@ -12,7 +12,7 @@ public interface RentalService {
 
     List<Rental> getRentalByBook(Long bookId);
     Rental createRental(Long bookId, Long userId);
-    Rental returnBook(Long rentalId, Long bookId);
+    Rental returnBook(Long bookId, Long memberId);
     String getRentalStatusByBookId(Long bookId);
     Rental findActiveRentalByBookId(Long bookId);
     void deleteRentalsByBookId(Long bookId);
