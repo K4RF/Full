@@ -59,6 +59,31 @@
     </div>
 </nav>
 
+<div class="container mt-5">
+    <h2 class="mb-4">대출 목록</h2>
+
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>도서 제목</th>
+            <th>대출 날짜</th>
+            <th>반납 날짜</th>
+            <th>대출 상태</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="rental, iterStat : ${rentals}">
+            <td th:text="${iterStat.index + 1}"></td>
+            <td th:text="${rental.book.title}"></td>
+            <td th:text="${rental.rentalDate}"></td>
+            <td th:text="${rental.returnDate != null ? rental.returnDate : '미반납'}"></td>
+            <td th:text="${rental.rentalStatus}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
 <div class="footer">
     <p>Created by Kaarf_o</p>
     <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
