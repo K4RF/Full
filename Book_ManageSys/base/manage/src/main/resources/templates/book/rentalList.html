@@ -59,8 +59,22 @@
     </div>
 </nav>
 
+
 <div class="container mt-5">
     <h2 class="mb-4">대출 목록</h2>
+
+    <!-- 검색 폼 -->
+    <form th:action="@{/rentalList}" method="get" class="form-inline mb-4">
+        <!-- 검색 폼 -->
+        <div class="row">
+            <div class="col">
+                <input type="text" th:field="*{rentalSearch.title}" class="form-control" placeholder="제목"/>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-secondary mb-2">검색</button>
+            </div>
+        </div>
+    </form>
 
     <table class="table table-bordered">
         <thead class="thead-dark">

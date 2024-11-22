@@ -3,6 +3,7 @@ package com.book.manage.service.book;
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.Rental;
+import com.book.manage.entity.dto.RentalSearchDto;
 import com.book.manage.repository.book.BookRepository;
 import com.book.manage.repository.book.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
@@ -124,5 +125,12 @@ public class RentalServiceImpl implements RentalService {
     // 연체 상태 갱신 메서드
     public void updateOverdueRentals() {
         rentalRepository.updateRentalStatus();  // 연체 상태를 포함한 모든 대출 상태 갱신
+    }
+
+
+    // 검색 조건에 따른 대출 목록 조회
+    @Override
+    public List<Rental> findRentals(RentalSearchDto searchParam) {
+        return rentalRepository.findAll(searchParam);
     }
 }

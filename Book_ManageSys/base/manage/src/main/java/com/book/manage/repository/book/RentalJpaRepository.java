@@ -2,6 +2,8 @@ package com.book.manage.repository.book;
 
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.QRental;
+import com.book.manage.entity.dto.RentalSearchDto;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -98,5 +100,21 @@ public class RentalJpaRepository implements RentalRepository {
         if (rental != null) {
             em.remove(rental); // 대출 기록 삭제
         }
+    }
+
+    @Override
+    public List<Rental> findAll(RentalSearchDto searchParam) {
+        String title = searchParam.getTitle();
+
+        return query
+                .selectFrom(QRental.rental)
+                .where(likeTitle(title))
+                .fetch();
+    }
+
+    private BooleanExpression likeTitle(String title) {
+        return title != null && !title.trim().isEmpty()
+                ? QRental.rental.book.title.like("%" + title + "%")
+                : null;
     }
 }

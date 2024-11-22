@@ -1,6 +1,7 @@
 package com.book.manage.service.book;
 
 import com.book.manage.entity.Rental;
+import com.book.manage.entity.dto.RentalSearchDto;
 
 import java.util.List;
 
@@ -15,4 +16,5 @@ public interface RentalService {
     String getRentalStatusByBookId(Long bookId);
     Rental findActiveRentalByBookId(Long bookId);
     void deleteRentalsByBookId(Long bookId);
+    List<Rental> findRentals(RentalSearchDto searchParam);
 }
