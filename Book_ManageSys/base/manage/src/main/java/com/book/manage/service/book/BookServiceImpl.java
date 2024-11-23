@@ -55,7 +55,7 @@ public class BookServiceImpl implements BookService {
         book.setDetails(editParam.getDetails());
 
         // 카테고리 정보 업데이트
-        List<Category> updatedCategories = categoryService.updateCategories(editParam.getTags(), book);
+        List<Category> updatedCategories = categoryService.updateCategories(editParam.getCategories(), book);
 
         // 기존 카테고리와 비교해 사라진 카테고리 삭제
         categoryService.changeDelete(book, updatedCategories);
