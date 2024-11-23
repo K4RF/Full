@@ -50,6 +50,7 @@
         .row .col {
             margin-top: 1rem;
         }
+
         html, body {
             height: 100%; /* 페이지 전체 높이를 브라우저 창 높이와 동일하게 설정 */
             margin: 0; /* 기본 마진 제거 */
@@ -75,6 +76,10 @@
             margin-top: 10px;
             padding: 8px 16px;
             cursor: pointer;
+        }
+
+        .active-category {
+            background-color: #17a2b8; /* 버튼 클릭 시 색상 변경 */
         }
     </style>
 </head>
@@ -132,12 +137,12 @@
             <label for="category">카테고리</label>
             <div id="categoryBtns">
                 <!-- 카테고리 버튼 -->
-                <button type="button" class="category-btn btn btn-info" th:onclick="|setCategory('소설')|">소설</button>
-                <button type="button" class="category-btn btn btn-info" th:onclick="|setCategory('과학')|">과학</button>
-                <button type="button" class="category-btn btn btn-info" th:onclick="|setCategory('잡지')|">잡지</button>
-                <button type="button" class="category-btn btn btn-info" th:onclick="|setCategory('기타')|">기타</button>
+                <button type="button" class="category-btn btn btn-info" th:onclick="|toggleCategory('소설')|">소설</button>
+                <button type="button" class="category-btn btn btn-info" th:onclick="|toggleCategory('과학')|">과학</button>
+                <button type="button" class="category-btn btn btn-info" th:onclick="|toggleCategory('잡지')|">잡지</button>
+                <button type="button" class="category-btn btn btn-info" th:onclick="|toggleCategory('기타')|">기타</button>
             </div>
-            <input type="hidden" id="category" th:field="*{category}" value="기타">
+            <input type="hidden" id="category" th:field="*{category}">
         </div>
         <div class="form-group">
             <label for="details" class="form-header">내용</label>
@@ -173,8 +178,36 @@
     });
 
     // 카테고리 버튼 클릭 시 hidden input의 값을 설정하는 함수
-    function setCategory(category) {
-        document.getElementById("category").value = category;
+    function toggleCategory(category) {
+        let categoryInput = document.getElementById("category");
+        let currentCategories = categoryInput.value ? categoryInput.value.split(' ') : [];
+
+        // 카테고리가 이미 선택된 경우 삭제
+        if (currentCategories.includes(category)) {
+            currentCategories = currentCategories.filter(cat => cat !== category);
+        } else {
+            currentCategories.push(category); // 카테고리 추가
+        }
+
+        // 선택된 카테고리 값으로 업데이트
+        categoryInput.value = currentCategories.join(' ');
+
+        // 버튼 활성화/비활성화
+        updateCategoryButtonState(category);
+    }
+
+    // 버튼 활성화/비활성화 상태 업데이트
+    function updateCategoryButtonState(category) {
+        const buttons = document.querySelectorAll('.category-btn');
+        buttons.forEach(button => {
+            if (button.innerText === category) {
+                if (button.classList.contains('active-category')) {
+                    button.classList.remove('active-category');
+                } else {
+                    button.classList.add('active-category');
+                }
+            }
+        });
     }
 </script>
 
