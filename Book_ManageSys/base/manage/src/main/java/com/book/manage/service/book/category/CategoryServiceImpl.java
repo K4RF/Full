@@ -56,4 +56,8 @@ public class CategoryServiceImpl implements CategoryService{
         // 삭제할 태그 처리
         categoryRepository.updateDelete(book.getBookId(), updatedTagNames);
     }
+
+    public void delete(Long bookId) {
+        categoryRepository.deleteByBookId(bookId);
+    }
 }

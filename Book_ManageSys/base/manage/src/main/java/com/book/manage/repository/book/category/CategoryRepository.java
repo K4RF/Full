@@ -9,4 +9,5 @@ public interface CategoryRepository {
     Category save(Category category);
     Optional<Category> findByTagAndBookId(String tag, Long bookId);
     void updateDelete(Long bookId, List<String> tagNames);
+    void deleteByBookId(Long bookId);
 }

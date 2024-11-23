@@ -10,4 +10,5 @@ public interface CategoryService {
     List<Category> createCategories(Set<String> tags, Book book);
     List<Category> updateCategories(List<Category> tagsToUpdate, Book book);
     void changeDelete(Book book, List<Category> updatedTags);
+    void delete(Long bookId);
 }

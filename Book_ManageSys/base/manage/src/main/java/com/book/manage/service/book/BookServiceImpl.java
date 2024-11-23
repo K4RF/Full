@@ -7,6 +7,7 @@ import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.repository.book.BookRepository;
 import com.book.manage.service.book.category.CategoryService;
+import com.book.manage.service.book.category.CategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -68,6 +69,10 @@ public class BookServiceImpl implements BookService {
         Optional<Book> book = bookRepository.findById(bookId);
         if (book.isPresent()) {
             // 삭제 로직
+
+            // 카테고리 삭제
+            categoryService.delete(bookId);
+            // 도서 삭제
             bookRepository.deleteById(bookId);
             log.info("Successfully deleted member with ID: {} and updated their posts to 'deleteUser'", bookId);
         } else {
