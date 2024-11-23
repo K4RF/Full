@@ -2,7 +2,6 @@ package com.book.manage.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Generated;
 import lombok.ToString;
 
 import java.util.HashSet;

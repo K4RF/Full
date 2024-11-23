@@ -30,6 +30,8 @@ public class Book {
     @Column(name = "RENTAL_ABLE_BOOK", columnDefinition = "boolean default true")
     private Boolean rentalAbleBook;
 
+    private String category;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "book_category",
