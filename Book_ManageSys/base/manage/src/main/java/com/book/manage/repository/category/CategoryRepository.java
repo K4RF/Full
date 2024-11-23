@@ -1,4 +1,4 @@
-package com.book.manage.repository.book;
+package com.book.manage.repository.category;
 
 import com.book.manage.entity.Category;
 import com.book.manage.entity.QCategory;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public class CategoryRepository {
+public class CategoryRepository implements CategoryInterface{
     @PersistenceContext
     private EntityManager em;
     private final JPAQueryFactory query;
@@ -21,6 +21,7 @@ public class CategoryRepository {
     }
 
 
+    @Override
     public Category save(Category category) {
         if(category.getId() == null) {
             // 중복 체크
@@ -33,6 +34,7 @@ public class CategoryRepository {
             em.merge(category);
         }return category;
     }
+
     public Optional<Category> findByTagAndBookId(String tag, Long bookId) {
         QCategory category = QCategory.category;
         Category foundTag = query

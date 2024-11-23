@@ -4,6 +4,8 @@ import com.book.manage.repository.book.BookJpaRepository;
 import com.book.manage.repository.book.BookRepository;
 import com.book.manage.repository.book.RentalJpaRepository;
 import com.book.manage.repository.book.RentalRepository;
+import com.book.manage.repository.category.CategoryInterface;
+import com.book.manage.repository.category.CategoryRepository;
 import com.book.manage.repository.member.MemberJpaRepository;
 import com.book.manage.repository.member.MemberRepository;
 
@@ -55,5 +57,9 @@ public class TotalConfig {
     @Bean
     public RentalService rentalService() {
         return new RentalServiceImpl(rentalRepository(), bookRepository(), memberRepository());
+    }
+    @Bean
+    public CategoryInterface categoryInterface() {
+        return new CategoryRepository(em);
     }
 }
