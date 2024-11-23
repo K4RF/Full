@@ -63,6 +63,23 @@
       <h2>도서 목록</h2>
     </div>
 
+    <div class="mb-3">
+      <!-- 전체 보기 버튼 -->
+      <a class="btn btn-outline-primary"
+         th:classappend="${selectedCategory == null} ? 'active' : ''"
+         th:href="@{/bookList}">전체</a>
+
+      <!-- 카테고리 버튼 -->
+      <a class="btn btn-outline-secondary"
+         th:classappend="${selectedCategory == '소설'} ? 'active' : ''"
+         th:href="@{/bookList(category='소설')}">소설</a>
+      <a class="btn btn-outline-secondary"
+         th:classappend="${selectedCategory == '과학'} ? 'active' : ''"
+         th:href="@{/bookList(category='과학')}">과학</a>
+      <a class="btn btn-outline-secondary"
+         th:classappend="${selectedCategory == '잡지'} ? 'active' : ''"
+         th:href="@{/bookList(category='잡지')}">잡지</a>
+    </div>
     <form th:object="${bookSearch}" method="get" class="form-inline">
       <!-- 검색 폼 -->
       <div class="row">

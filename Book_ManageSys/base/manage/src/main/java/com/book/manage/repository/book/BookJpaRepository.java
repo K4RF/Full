@@ -17,9 +17,9 @@ import java.util.Optional;
 
 import static com.book.manage.entity.QBook.book;
 
-@Slf4j
 @Repository
-public class BookJpaRepository implements BookRepository{
+@Slf4j
+public class BookJpaRepository implements BookRepository {
     private final EntityManager em;
     private final JPAQueryFactory query;
 
@@ -54,11 +54,11 @@ public class BookJpaRepository implements BookRepository{
         log.info("Attempting to delete book with ID: {}", bookId);  // 삭제 시도 로그
         Book book = em.find(Book.class, bookId);
         if (book != null) {
-            log.info("Found member with ID: {}. Proceeding with deletion.", bookId);
+            log.info("Found book with ID: {}. Proceeding with deletion.", bookId);
             em.remove(book);
-            log.info("Deleted member with ID: {}", bookId);  // 삭제 완료 로그
+            log.info("Deleted book with ID: {}", bookId);  // 삭제 완료 로그
         } else {
-            log.warn("No member found with ID: {}", bookId);  // 삭제 실패 로그
+            log.warn("No book found with ID: {}", bookId);  // 삭제 실패 로그
         }
     }
 
@@ -66,17 +66,29 @@ public class BookJpaRepository implements BookRepository{
     public List<Book> findAll(BookSearchDto searchParam) {
         String author = searchParam.getAuthor();
         String title = searchParam.getTitle();
+        String category = searchParam.getCategory();
 
         List<Book> result = query
                 .select(book)
                 .from(book)
                 .where(
                         likeTitle(title),
-                        likeAuthor(author)
+                        likeAuthor(author),
+                        eqCategory(category) // 추가된 카테고리 조건
                 )
                 .fetch();
+
         log.info("Generated Query Result: {}", result);
         return result;
+    }
+
+    @Override
+    public List<String> findDistinctCategories() {
+        return query
+                .select(book.category)
+                .distinct()
+                .from(book)
+                .fetch();
     }
 
     private BooleanExpression likeTitle(String title) {
@@ -87,10 +99,7 @@ public class BookJpaRepository implements BookRepository{
         return StringUtils.hasText(author) ? book.author.like("%" + author + "%") : null;
     }
 
-    @Override
-    public List<Book> findByCategory(String category) {
-        return query.selectFrom(book)
-                .where(book.category.eq(category))
-                .fetch();
+    private BooleanExpression eqCategory(String category) {
+        return StringUtils.hasText(category) ? book.category.eq(category) : null;
     }
 }

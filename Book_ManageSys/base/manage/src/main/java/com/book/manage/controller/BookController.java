@@ -44,9 +44,24 @@ public class BookController {
     }
 
     @GetMapping
-    public String books(@ModelAttribute("bookSearch") BookSearchDto bookSearch, Model model) {
+    public String books(
+            @ModelAttribute("bookSearch") BookSearchDto bookSearch,
+            @RequestParam(value = "category", required = false) String category,
+            Model model) {
+        // 카테고리 값이 요청 파라미터로 전달된 경우 검색 조건에 추가
+        if (category != null && !category.isEmpty()) {
+            bookSearch.setCategory(category); // 검색 DTO에 카테고리 설정
+        }
+
+        // 검색 결과 및 사용 가능한 카테고리 목록 조회
         List<Book> books = bookService.findBooks(bookSearch);
-        model.addAttribute("books", books);
+        List<String> categories = bookService.getAvailableCategories();
+
+        // 모델에 데이터 추가
+        model.addAttribute("books", books); // 검색된 도서 목록
+        model.addAttribute("categories", categories); // 사용 가능한 카테고리 목록
+        model.addAttribute("selectedCategory", category); // 현재 선택된 카테고리
+
         return "/book/bookList";
     }
 

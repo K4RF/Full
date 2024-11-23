@@ -18,7 +18,9 @@ CREATE TABLE book (
                       author VARCHAR(255) NOT NULL,
                       publisher VARCHAR(255) NOT NULL,
                       details TEXT NOT NULL,
-                      RENTAL_ABLE_BOOK BOOLEAN DEFAULT TRUE -- 대출 가능 여부 필드 추가
+                      RENTAL_ABLE_BOOK BOOLEAN DEFAULT TRUE, -- 대출 가능 여부 필드 추가
+                      category VARCHAR(30) NOT NULL
+
 );
 
 DROP TABLE IF EXISTS rental CASCADE;
