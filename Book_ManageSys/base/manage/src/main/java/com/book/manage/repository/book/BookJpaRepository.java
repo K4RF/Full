@@ -1,6 +1,7 @@
 package com.book.manage.repository.book;
 
 import com.book.manage.entity.Book;
+import com.book.manage.entity.QBook;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -84,5 +85,12 @@ public class BookJpaRepository implements BookRepository{
 
     private BooleanExpression likeAuthor(String author) {
         return StringUtils.hasText(author) ? book.author.like("%" + author + "%") : null;
+    }
+
+    @Override
+    public List<Book> findByCategory(String category) {
+        return query.selectFrom(book)
+                .where(book.category.eq(category))
+                .fetch();
     }
 }

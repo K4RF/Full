@@ -14,4 +14,5 @@ public interface BookService {
     Book edit(Long bookId, BookEditDto editParam);
     void deleteById(Long bookId);
     List<Book> findBooks(BookSearchDto searchParam);
+    List<Book> getBooksByCategory(String category);
 }

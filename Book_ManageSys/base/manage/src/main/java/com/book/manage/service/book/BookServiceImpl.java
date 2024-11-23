@@ -67,4 +67,9 @@ public class BookServiceImpl implements BookService {
     public List<Book> findBooks(BookSearchDto searchParam) {
         return bookRepository.findAll(searchParam);
     }
+
+    @Override
+    public List<Book> getBooksByCategory(String category) {
+        return bookRepository.findByCategory(category);
+    }
 }

@@ -24,4 +24,6 @@ public class Book {
     @Column(name = "RENTAL_ABLE_BOOK", columnDefinition = "boolean default true")
     private Boolean rentalAbleBook;
 
+    @Column(nullable = false, length = 30)
+    private String category;
 }
