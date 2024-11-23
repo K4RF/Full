@@ -1,10 +1,12 @@
 package com.book.manage.service.book;
 
 import com.book.manage.entity.Book;
+import com.book.manage.entity.Category;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.repository.book.BookRepository;
+import com.book.manage.service.book.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -19,13 +22,18 @@ import java.util.Optional;
 @Transactional
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+    private final CategoryService categoryService;
 
     @Override
-    public Book save(Book book) {
+    public Book save(Book book, Set<String> tagNames) {
         // 1. 추후 카테고리 적용을 위해 먼저 저장 시도
         Book savedBook = bookRepository.save(book);
 
-        // x. 카테고리 설정 후 저장 추후에 추가 예정
+        // 2. Category 생성 후 저장
+        List<Category> categories = categoryService.createCategories(tagNames, savedBook);
+        savedBook.setTags(categories);
+
+        // 3. Category 포함하여 업데이트
         return bookRepository.save(savedBook);
     }
 
@@ -46,6 +54,11 @@ public class BookServiceImpl implements BookService {
         book.setPublisher(editParam.getPublisher());
         book.setDetails(editParam.getDetails());
 
+        // 카테고리 정보 업데이트
+        List<Category> updatedCategories = categoryService.updateCategories(editParam.getTags(), book);
+
+        // 기존 카테고리와 비교해 사라진 카테고리 삭제
+        categoryService.changeDelete(book, updatedCategories);
         // 도서 저장
         return bookRepository.save(book);
     }

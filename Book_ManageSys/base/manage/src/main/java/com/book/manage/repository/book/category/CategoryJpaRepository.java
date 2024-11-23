@@ -1,4 +1,4 @@
-package com.book.manage.repository.category;
+package com.book.manage.repository.book.category;
 
 import com.book.manage.entity.Category;
 import com.book.manage.entity.QCategory;
@@ -7,15 +7,16 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class CategoryRepository implements CategoryInterface{
+public class CategoryJpaRepository implements CategoryRepository {
     @PersistenceContext
     private EntityManager em;
     private final JPAQueryFactory query;
 
-    public CategoryRepository(EntityManager em) {
+    public CategoryJpaRepository(EntityManager em) {
         this.em = em;
         this.query = new JPAQueryFactory(em);
     }
@@ -44,4 +45,26 @@ public class CategoryRepository implements CategoryInterface{
                 .fetchOne();
         return Optional.ofNullable(foundTag);
     }
+
+    public void updateDelete(Long bookId, List<String> tagNames) {
+        QCategory category = QCategory.category;
+
+        List<Category> tags = query
+                .selectFrom(category)
+                .where(category.book.bookId.eq(bookId)
+                        .and(category.tag.notIn(tagNames))) // 업데이트된 태그 목록에 없는 태그들만 찾음
+                .fetch();
+
+        for (Category tagEntity : tags) {
+            if (em.contains(tagEntity)) {
+                em.remove(tagEntity);
+            } else {
+                Category managedTag = em.find(Category.class, tagEntity.getId());
+                if (managedTag != null) {
+                    em.remove(managedTag);
+                }
+            }
+        }
+    }
+
 }
