@@ -1,6 +1,7 @@
 package com.book.manage.controller;
 
 import com.book.manage.entity.Book;
+import com.book.manage.entity.Category;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.dto.BookEditDto;
@@ -17,7 +18,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -123,8 +127,13 @@ public class BookController {
         // 도서 대출 가능 상태: 기본값
         book.setRentalAbleBook(true); // 기본값을 true로 설정
 
+        // 카테고리 처리
+        List<String> categories = Arrays.stream(book.getCategoriesFormatted().split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+
         // 책 저장
-        Book savedBook = bookService.save(book);
+        Book savedBook = bookService.save(book, new HashSet<>(categories));
 
         // 책 ID로 렌탈 상태 가져오기 (렌탈 서비스에서 상태 조회)
         String rentalStatus = rentalService.getRentalStatusByBookId(savedBook.getBookId()); // bookId를 기반으로 렌탈 상태를 확인
@@ -148,7 +157,7 @@ public class BookController {
         Book book = bookService.findById(bookId).orElseThrow();
 
         // 로그인한 사용자가 도서 편집 권한 있는지 검증 로직 추가 필요
-        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails());
+        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getTags());
         model.addAttribute("book", bookEditDto);
 
         return "book/editBookForm";
@@ -166,6 +175,11 @@ public class BookController {
             model.addAttribute("book", bookEditDto);
             return "book/editBookForm";
         }
+
+        // 태그 중복 확인
+        List<String> categories = bookEditDto.getCategories().stream()
+                .map(Category::getTag)
+                .collect(Collectors.toList());
 
         bookService.edit(bookId, bookEditDto);
         redirectAttributes.addFlashAttribute("message", "도서가 성공적으로 수정되었습니다");
