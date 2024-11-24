@@ -102,7 +102,7 @@
         </div>
     </div>
     <p>대출 상태: <span th:text="${rentalAbleBook ? '대출 가능' : '대출중'}">대출상황</span></p>
-    <div>
+    <div class="col-md-6">
         <label for="tags">카테고리</label>
         <input type="text" id="tags" name="tags" class="form-control"
                th:value="${book.categoriesFormatted}" readonly>

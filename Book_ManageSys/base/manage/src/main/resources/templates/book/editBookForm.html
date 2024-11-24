@@ -125,10 +125,11 @@
       <input type="text" id="publisher" th:field="*{publisher}" class="form-control">
     </div>
     <div class="form-group">
-      <label for="tags" class="form-header">카테고리</label>
-      <input type="text" id="tags" th:field="*{categoryFormatted}" class="form-control" th:classappend="${#fields.hasErrors('categories')} ? 'is-invalid' : ''">
-      <!-- 태그 중복 오류 메시지 -->
-      <div class="text-danger" th:if="${#fields.hasErrors('categoires')}" th:errors="*{categories}"></div>
+      <label for="categoryFormatted" class="form-header">카테고리</label>
+      <input type="text" id="categoryFormatted" th:field="*{categoryFormatted}" class="form-control"
+             th:classappend="${#fields.hasErrors('categoryFormatted')} ? 'is-invalid' : ''">
+      <!-- 카테고리 오류 메시지 -->
+      <div class="text-danger" th:if="${#fields.hasErrors('categoryFormatted')}" th:errors="*{categoryFormatted}"></div>
     </div>
     <div class="form-group">
       <label for="details" class="form-header">내용</label>

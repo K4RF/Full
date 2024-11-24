@@ -157,7 +157,14 @@ public class BookController {
     }
 
     @PostMapping("/{bookId}/edit")
-    public String editBookRes(@PathVariable Long bookId, @Validated @ModelAttribute("book") BookEditDto bookEditDto, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+    public String editBookRes(@PathVariable Long bookId,
+                              @Validated @ModelAttribute("book") BookEditDto bookEditDto,
+                              @RequestParam("categoryFormatted") String categoryFormatted,
+                              Model model,
+                              BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes,
+                              @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        // 로그인 체크 및 리디렉션 처리
         String redirect = handleLoginRedirect(loginMember, bookId);
         if (redirect != null) {
             return redirect;
@@ -167,19 +174,36 @@ public class BookController {
             return "book/editBookForm";
         }
 
+        // 카테고리 입력값을 쉼표로 구분하여 Set<String>으로 변환
+        Set<String> categories = new HashSet<>();
+        String[] categoryNames = categoryFormatted.split(",");
+        for (String categoryName : categoryNames) {
+            categories.add(categoryName.trim());  // 각 카테고리명을 Set에 추가
+        }
+
         // 카테고리 중복 검증
-        List<String> categories = bookEditDto.getCategories().stream()
+        List<String> categoryList = bookEditDto.getCategories().stream()
                 .map(Category::getCate)
                 .collect(Collectors.toList());
-        if (categoryService.hasDuplicateCates(categories)) {
-            bindingResult.rejectValue("categoriesFormatted", "duplicateCates", "중복된 카테고리가 있습니다.");
+        if (categoryService.hasDuplicateCates(categoryList)) {
+            bindingResult.rejectValue("categoryFormatted", "duplicateCates", "중복된 카테고리가 있습니다.");
         }
 
         if (bindingResult.hasErrors()) {
             return "book/editBookForm";
         }
 
+        // Book 객체로 변환하여 저장
+        Book book = new Book();
+        book.setBookId(bookId);
+        book.setTitle(bookEditDto.getTitle());
+        book.setAuthor(bookEditDto.getAuthor());
+        book.setPublisher(bookEditDto.getPublisher());
+        book.setDetails(bookEditDto.getDetails());
+
+        // 카테고리 처리
         bookService.edit(bookId, bookEditDto);
+
         redirectAttributes.addFlashAttribute("message", "도서가 성공적으로 수정되었습니다.");
         return "redirect:/bookList/{bookId}";
     }
