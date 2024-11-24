@@ -1,5 +1,6 @@
 package com.book.manage.repository.book.category;
 
+import com.book.manage.entity.Book;
 import com.book.manage.entity.Category;
 import com.book.manage.entity.QCategory;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public class CategoryJpaRepository implements CategoryRepository {
+
     @PersistenceContext
     private EntityManager em;
     private final JPAQueryFactory query;
@@ -21,19 +23,19 @@ public class CategoryJpaRepository implements CategoryRepository {
         this.query = new JPAQueryFactory(em);
     }
 
-
     @Override
     public Category save(Category category) {
-        if(category.getId() == null) {
+        if (category.getId() == null) {
             // 중복 체크
             Optional<Category> existingCat = findByTagAndBookId(category.getCate(), category.getBook().getBookId());
-            if(existingCat.isPresent()) {
+            if (existingCat.isPresent()) {
                 return existingCat.get();
             }
             em.persist(category);
-        }else{
+        } else {
             em.merge(category);
-        }return category;
+        }
+        return category;
     }
 
     public Optional<Category> findByTagAndBookId(String cate, Long bookId) {
@@ -44,6 +46,23 @@ public class CategoryJpaRepository implements CategoryRepository {
                         .and(category.book.bookId.eq(bookId)))
                 .fetchOne();
         return Optional.ofNullable(foundCate);
+    }
+
+    public Optional<Category> findByCate(String cate) {
+        QCategory category = QCategory.category;
+        Category foundCategory = query
+                .selectFrom(category)
+                .where(category.cate.eq(cate))
+                .fetchOne();
+        return Optional.ofNullable(foundCategory);
+    }
+
+    public List<Category> findByBook(Book book) {
+        QCategory category = QCategory.category;
+        return query
+                .selectFrom(category)
+                .where(category.book.eq(book)) // 책과 연결된 카테고리 검색
+                .fetch();
     }
 
     public void updateDelete(Long bookId, List<String> cateNames) {
@@ -90,11 +109,19 @@ public class CategoryJpaRepository implements CategoryRepository {
             if (em.contains(cateEntity)) {
                 em.remove(cateEntity);
             } else {
-                Category managedCate = em.find(Category.class,cateEntity.getId());
+                Category managedCate = em.find(Category.class, cateEntity.getId());
                 if (managedCate != null) {
                     em.remove(managedCate);
                 }
             }
         }
+    }
+
+    public List<Category> findAll() {
+        QCategory category = QCategory.category;
+
+        return query
+                .selectFrom(category)
+                .fetch();
     }
 }

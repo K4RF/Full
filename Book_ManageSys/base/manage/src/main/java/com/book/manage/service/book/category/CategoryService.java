@@ -11,4 +11,5 @@ public interface CategoryService {
     List<Category> updateCategories(List<Category> tagsToUpdate, Book book);
     void changeDelete(Book book, List<Category> updatedCategories);
     void delete(Long bookId);
+    boolean hasDuplicateCates(List<String> cateNames);
 }

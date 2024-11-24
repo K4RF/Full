@@ -6,13 +6,16 @@ import com.book.manage.entity.Member;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.repository.book.BookRepository;
+import com.book.manage.repository.book.category.CategoryRepository;
 import com.book.manage.service.book.category.CategoryService;
 import com.book.manage.service.book.category.CategoryServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -24,19 +27,31 @@ import java.util.Set;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
 
     @Override
-    public Book save(Book book, Set<String> cateNames) {
-        // 1. 추후 카테고리 적용을 위해 먼저 저장 시도
-        Book savedBook = bookRepository.save(book);
+    public Book save(Book book, Set<String> categories) {
+        // 책 저장
+        book = bookRepository.save(book);
 
-        // 2. Category 생성 후 저장
-        List<Category> categories = categoryService.createCategories(cateNames, savedBook);
-        savedBook.setCategories(categories);
+        // 카테고리 처리
+        Set<Category> categorySet = new HashSet<>();
+        for (final String categoryName : categories) {
+            Book finalBook = book;
+            Category category = categoryRepository.findByCate(categoryName)
+                    .orElseGet(() -> new Category(categoryName, finalBook));  // 이미 존재하는 카테고리면 가져오고, 없으면 새로 생성
+            category.setBook(book); // 책과 카테고리 연결
+            categoryRepository.save(category);
 
-        // 3. Category 포함하여 업데이트
-        return bookRepository.save(savedBook);
+            // Set<Category>에 카테고리 추가
+            categorySet.add(category);
+        }
+
+        // 책과 카테고리 연관 업데이트 후 리턴
+        book.setCategories(categorySet);  // Set<Category> 타입으로 설정
+        return book;
     }
+
 
     @Override
     public Optional<Book> findById(Long bookId) {
@@ -44,25 +59,36 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findById(bookId);
     }
 
-    @Override
-    public Book edit(Long bookId, BookEditDto editParam) {
-        // 도서 조회
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
+    public Book edit(Long bookId, BookEditDto bookEditDto) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found"));
 
-        // 도서 정보 업데이트
-        book.setTitle(editParam.getTitle());
-        book.setAuthor(editParam.getAuthor());
-        book.setPublisher(editParam.getPublisher());
-        book.setDetails(editParam.getDetails());
+        // 기본 필드 업데이트
+        book.setTitle(bookEditDto.getTitle());
+        book.setAuthor(bookEditDto.getAuthor());
+        book.setPublisher(bookEditDto.getPublisher());
+        book.setDetails(bookEditDto.getDetails());
 
-        // 카테고리 정보 업데이트
-        List<Category> updatedCategories = categoryService.updateCategories(editParam.getCategories(), book);
+        // 카테고리 처리: 기존 카테고리 삭제 후 새로운 카테고리 추가
+        Set<Category> updatedCategories = new HashSet<>();
+        for (Category category : bookEditDto.getCategories()) {
+            Optional<Category> existingCategory = categoryRepository.findByCate(category.getCate());
 
-        // 기존 카테고리와 비교해 사라진 카테고리 삭제
-        categoryService.changeDelete(book, updatedCategories);
-        // 도서 저장
-        return bookRepository.save(book);
+            // 카테고리가 이미 존재하면, 해당 카테고리 추가
+            if (existingCategory.isPresent()) {
+                updatedCategories.add(existingCategory.get());
+            } else {
+                // 존재하지 않으면 새로 생성하여 추가
+                Category newCategory = new Category(category.getCate(), book);
+                updatedCategories.add(newCategory);
+            }
+        }
+
+        book.setCategories(updatedCategories);  // Set<Category> 형식으로 설정
+
+        return bookRepository.save(book); // 책과 카테고리 저장
     }
+
 
     @Override
     public void deleteById(Long bookId) {

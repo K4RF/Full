@@ -47,7 +47,7 @@ public class TotalConfig {
 
     @Bean
     public BookService bookService() {
-        return new BookServiceImpl(bookRepository(), categoryService());
+        return new BookServiceImpl(bookRepository(), categoryService(),categoryRepository());
     }
 
     @Bean

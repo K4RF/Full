@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,12 +23,13 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public List<Category> createCategories(Set<String> cateNames, Book book) {
         List<Category> categories = new ArrayList<>();
-        for (String cate : cateNames) {
-            Category category = categoryRepository.findByTagAndBookId(cate, book.getBookId())
+        for (String cateName : cateNames) {
+            Category category = categoryRepository.findByTagAndBookId(cateName, book.getBookId())
                     .orElseGet(() -> {
-                        Category newCategory = new Category(cate, book);
+                        Category newCategory = new Category(cateName, book);
                         return categoryRepository.save(newCategory);
                     });
+            categories.add(category);
         }
         return categories;
     }
@@ -36,16 +38,22 @@ public class CategoryServiceImpl implements CategoryService{
     public List<Category> updateCategories(List<Category> cateToUpdate, Book book) {
         List<Category> updatedCategories = new ArrayList<>();
         for (Category category : cateToUpdate) {
-            Category existingCat = categoryRepository.findByTagAndBookId(category.getCate(), book.getBookId())
+            Category existingCate = categoryRepository.findByTagAndBookId(category.getCate(), book.getBookId())
                     .orElseGet(() -> {
                         Category newCategory = new Category(category.getCate(), book);
                         return categoryRepository.save(newCategory);
                     });
-            updatedCategories.add(existingCat);
+            updatedCategories.add(existingCate);
         }
         return updatedCategories;
     }
 
+    @Override
+    public boolean hasDuplicateCates(List<String> cateNames) {
+        Set<String> cateSet = new HashSet<>(cateNames);
+        return cateSet.size() != cateNames.size();
+    }
+    @Override
     @Transactional
     public void changeDelete(Book book, List<Category> updatedCategories) {
         // 업데이트된 태그 이름만 추출

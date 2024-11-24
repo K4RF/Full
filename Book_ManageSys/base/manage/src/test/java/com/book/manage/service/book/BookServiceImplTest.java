@@ -4,7 +4,7 @@ import com.book.manage.entity.Book;
 import com.book.manage.entity.Category;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.service.book.category.CategoryService;
+import com.book.manage.repository.book.category.CategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,33 +17,33 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Slf4j
 @SpringBootTest
 @Transactional
+@Slf4j
 class BookServiceImplTest {
 
     @Autowired
-    private BookServiceImpl bookService;
+    private BookService bookService;
 
     @Autowired
     private BookRepository bookRepository;
 
     @Autowired
-    private CategoryService categoryService;
+    private CategoryRepository categoryRepository;
 
     private Book defaultBook;
 
     @BeforeEach
     void setUp() {
-        // 기본 데이터 저장
+        // 테스트용 기본 데이터 생성
         defaultBook = new Book();
         defaultBook.setTitle("Default Book Title");
         defaultBook.setAuthor("Default Author");
         defaultBook.setPublisher("Default Publisher");
         defaultBook.setDetails("This is a default book for testing.");
-        defaultBook = bookRepository.save(defaultBook); // 데이터 저장
+        defaultBook = bookRepository.save(defaultBook); // DB 저장
+        log.info("Created default book: {}", defaultBook);
     }
 
     @Test
@@ -56,18 +56,23 @@ class BookServiceImplTest {
         newBook.setDetails("Comprehensive guide on Spring Boot");
         Set<String> categories = Set.of("Programming", "Technology");
 
+        log.info("Saving new book: {}", newBook);
+
         // When
         Book savedBook = bookService.save(newBook, categories);
+        log.info("Book saved successfully: {}", savedBook);
 
         // Then
         assertThat(savedBook).isNotNull();
         assertThat(savedBook.getTitle()).isEqualTo("Spring Boot Guide");
-        assertThat(savedBook.getTags()).hasSize(categories.size());
-        assertThat(savedBook.getTags())
-                .extracting(Category::getTag)
-                .containsExactlyInAnyOrderElementsOf(categories);
 
-        log.info("Saved Book with Categories: {}", savedBook.getTags());
+        // 카테고리 확인
+        Set<Category> savedCategories = savedBook.getCategories();  // Set으로 변경
+        log.info("Saved categories: {}", savedCategories);
+        assertThat(savedCategories).hasSize(2);
+        assertThat(savedCategories)
+                .extracting(Category::getCate)
+                .containsExactlyInAnyOrderElementsOf(categories);
     }
 
     @Test
@@ -79,19 +84,28 @@ class BookServiceImplTest {
         editParam.setAuthor("Updated Author");
         editParam.setPublisher("Updated Publisher");
         editParam.setDetails("Updated Details");
-       // editParam.setCategories(Set.of("Fiction", "Drama"));
+        editParam.setCategories(Set.of(
+                new Category("Fiction", defaultBook),
+                new Category("Drama", defaultBook)
+        ));
+
+        log.info("Editing book with ID {}: {}", bookId, editParam);
 
         // When
         Book updatedBook = bookService.edit(bookId, editParam);
+        log.info("Updated book: {}", updatedBook);
 
         // Then
         assertThat(updatedBook).isNotNull();
         assertThat(updatedBook.getTitle()).isEqualTo("Updated Title");
-        assertThat(updatedBook.getTags())
-                .extracting(Category::getTag)
-                .containsExactlyInAnyOrder("Fiction", "Drama");
 
-        log.info("Updated Book with Categories: {}", updatedBook.getTags());
+        // 업데이트된 카테고리 확인
+        Set<Category> updatedCategories = updatedBook.getCategories();  // Set으로 변경
+        log.info("Updated categories: {}", updatedCategories);
+        assertThat(updatedCategories).hasSize(2);
+        assertThat(updatedCategories)
+                .extracting(Category::getCate)
+                .containsExactlyInAnyOrder("Fiction", "Drama");
     }
 
     @Test
@@ -100,18 +114,20 @@ class BookServiceImplTest {
         Long bookId = defaultBook.getBookId();
         Set<String> categories = Set.of("Programming", "Science");
         bookService.save(defaultBook, categories);
+        log.info("Deleting book with ID {}", bookId);
 
         // When
         bookService.deleteById(bookId);
 
         // Then
         Optional<Book> deletedBook = bookRepository.findById(bookId);
+        log.info("Deleted book: {}", deletedBook);
         assertThat(deletedBook).isEmpty(); // 도서 삭제 확인
 
-//        List<Category> remainingCategories = categoryService.fin(bookId);
-//        assertThat(remainingCategories).isEmpty(); // 카테고리 삭제 확인
-
-        log.info("Deleted Book and Categories for Book ID: {}", bookId);
+        // 카테고리 삭제 확인
+        List<Category> remainingCategories = categoryRepository.findAll();
+        log.info("Remaining categories after deletion: {}", remainingCategories);
+        assertThat(remainingCategories).isEmpty();
     }
 
     @Test
@@ -120,16 +136,39 @@ class BookServiceImplTest {
         Long bookId = defaultBook.getBookId();
         Set<String> categories = Set.of("Fiction", "Adventure");
         bookService.save(defaultBook, categories);
+        log.info("Finding book with ID {}", bookId);
 
         // When
         Optional<Book> foundBook = bookService.findById(bookId);
+        log.info("Found book: {}", foundBook);
 
         // Then
         assertThat(foundBook).isPresent();
-        assertThat(foundBook.get().getTags())
-                .extracting(Category::getTag)
+        Set<Category> foundCategories = foundBook.get().getCategories();  // Set으로 변경
+        log.info("Found categories for book: {}", foundCategories);
+        assertThat(foundCategories)
+                .extracting(Category::getCate)
                 .containsExactlyInAnyOrder("Fiction", "Adventure");
+    }
 
-        log.info("Found Book with Categories: {}", foundBook.get().getTags());
+    @Test
+    void findAll_shouldReturnAllCategories() {
+        // Given
+        Category category1 = new Category("Fiction", defaultBook);
+        Category category2 = new Category("Adventure", defaultBook);
+        categoryRepository.save(category1);
+        categoryRepository.save(category2);
+
+        log.info("Fetching all categories...");
+
+        // When
+        List<Category> allCategories = categoryRepository.findAll();
+        log.info("All categories: {}", allCategories);
+
+        // Then
+        assertThat(allCategories).hasSize(2);
+        assertThat(allCategories)
+                .extracting(Category::getCate)
+                .containsExactlyInAnyOrder("Fiction", "Adventure");
     }
 }

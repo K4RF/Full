@@ -2,16 +2,17 @@ package com.book.manage.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
 @Entity
+@EqualsAndHashCode(exclude = "categories")  // categories 필드를 제외하여 무한 참조 방지
 public class Book {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookId;
@@ -39,7 +40,7 @@ public class Book {
     )
     @ToString.Exclude
     @OrderColumn(name = "cate_order")
-    private List<Category> categories = new ArrayList<>();
+    private Set<Category> categories = new HashSet<>();  // Set으로 변경
 
     public String getCategoriesFormatted() {
         return categories.stream()
@@ -50,7 +51,8 @@ public class Book {
     public void setTagsFormatted(String tagsFormatted) {
         this.categories = Arrays.stream(tagsFormatted.split(","))
                 .map(String::trim)
-                .map(Category::new) // Book과 연결 제거
-                .collect(Collectors.toList());
+                .map(Category::new)
+                .collect(Collectors.toSet());  // Set으로 변경
     }
+
 }

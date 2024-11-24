@@ -8,6 +8,7 @@ import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.book.RentalService;
+import com.book.manage.service.book.category.CategoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 public class BookController {
     private final BookService bookService;
     private final RentalService rentalService;
+    private final CategoryService categoryService;
 
     // 모든 요청에서 loginMember 모델을 추가
     @ModelAttribute
@@ -132,6 +134,16 @@ public class BookController {
                 .map(String::trim)
                 .collect(Collectors.toList());
 
+        // 카테고리 중복 검증
+        if (categoryService.hasDuplicateCates(categories)) {
+            bindingResult.rejectValue("categoriesFormatted", "duplicateCates", "중복된 카테고리가 있습니다.");
+        }
+
+        // 검증에 실패한 경우 다시 폼으로
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("post", book);
+            return "/book/addBookForm";
+        }
         // 책 저장
         Book savedBook = bookService.save(book, new HashSet<>(categories));
 
@@ -180,6 +192,16 @@ public class BookController {
         List<String> categories = bookEditDto.getCategories().stream()
                 .map(Category::getCate)
                 .collect(Collectors.toList());
+        // 카테고리 중복 검증
+        if (categoryService.hasDuplicateCates(categories)) {
+            bindingResult.rejectValue("categoriesFormatted", "duplicateCates", "중복된 카테고리가 있습니다.");
+        }
+
+        // 검증에 실패한 경우 다시 폼으로
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("post", bookEditDto);
+            return "/book/editBookForm";
+        }
 
         bookService.edit(bookId, bookEditDto);
         redirectAttributes.addFlashAttribute("message", "도서가 성공적으로 수정되었습니다");
