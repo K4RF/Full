@@ -47,10 +47,11 @@ DROP TABLE IF EXISTS book_category CASCADE;
 
 -- book_category 조인 테이블 생성
 CREATE TABLE book_category(
-                          book_id BIGINT NOT NULL,
-                          category_id BIGINT NOT NULL,
-                          cate_order INTEGER NOT NULL DEFAULT 0,
-                          PRIMARY KEY (book_id, book_id),
-                          FOREIGN KEY (book_id) REFERENCES book(book_id) ON DELETE CASCADE,
-                          FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE
+                              book_id BIGINT NOT NULL,
+                              category_id BIGINT NOT NULL,
+                              cate_order INTEGER NOT NULL DEFAULT 0,
+                              PRIMARY KEY (book_id, category_id),  -- Primary key는 book_id와 category_id 조합으로 설정
+                              FOREIGN KEY (book_id) REFERENCES book(book_id) ON DELETE CASCADE,
+                              FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE
 );
+

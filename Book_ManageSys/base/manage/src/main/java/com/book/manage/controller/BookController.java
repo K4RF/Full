@@ -10,6 +10,7 @@ import com.book.manage.service.book.BookService;
 import com.book.manage.service.book.RentalService;
 import com.book.manage.service.book.category.CategoryService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -19,9 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,7 +37,8 @@ public class BookController {
     public void addLoginMemberToModel(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model) {
         model.addAttribute("loginMember", loginMember);
     }
-    private String handleLoginBookRedirect(Member loginMember, Long bookId) {
+
+    private String handleLoginRedirect(Member loginMember, Long bookId) {
         if (loginMember == null) {
             String redirectUrl = "/bookList";
             if (bookId != null) {
@@ -46,7 +46,7 @@ public class BookController {
             }
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
-        return null; // 로그인된 경우 null 반환
+        return null;
     }
 
     @GetMapping
@@ -81,37 +81,24 @@ public class BookController {
         String rentalStatus = rentalService.getRentalStatusByBookId(bookId);
         Rental rental = rentalService.findActiveRentalByBookId(bookId);
 
-        // 로그인된 사용자의 memberId 가져오기
-        Long loginMemberId = (loginMember != null) ? loginMember.getMemberId() : null;
-
-        // 대출 기록의 memberId 확인
-        Long rentalMemberId = (rental != null) ? rental.getMember().getMemberId() : null;
-
-        // 대출 가능 여부 계산 (대출중일 경우 대출 불가로 설정)
-        if ("대출중".equals(rentalStatus)) {
-            book.setRentalAbleBook(false); // 대출중일 경우 대출 불가
-        } else if ("대출 가능".equals(rentalStatus)) {
-            book.setRentalAbleBook(true); // 대출 가능일 경우 대출 가능
-        }
+        // 대출 가능 여부 계산
+        boolean rentalAbleBook = !("대출중".equals(rentalStatus));
+        book.setRentalAbleBook(rentalAbleBook); // 대출 가능 여부 설정
 
         // 모델에 데이터 추가
         model.addAttribute("book", book);
         model.addAttribute("rentalStatus", rentalStatus);
-        model.addAttribute("rentalId", (rental != null) ? rental.getRentalId() : null);
-        model.addAttribute("rentalMemberId", rentalMemberId);
-        model.addAttribute("loginMemberId", loginMemberId); // 로그인된 사용자 ID 추가
-        model.addAttribute("rentalAbleBook", book.getRentalAbleBook()); // rentalAbleBook 값을 모델에 추가
+        model.addAttribute("rentalId", rental != null ? rental.getRentalId() : null);
+        model.addAttribute("rentalAbleBook", rentalAbleBook);
 
         return "/book/bookInfo";
     }
 
     @GetMapping("/add")
-    public String addBookReq(Model model,
-                             @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                             HttpServletRequest request) {
-        if (loginMember == null) {
-            String redirectUrl = request.getRequestURI();
-            return "redirect:/login?redirectURL=" + redirectUrl;
+    public String addBookReq(Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
+        String redirect = handleLoginRedirect(loginMember, null);
+        if (redirect != null) {
+            return redirect;
         }
 
         Book book = new Book();
@@ -119,153 +106,95 @@ public class BookController {
         return "book/addBookForm";
     }
 
+    // 도서 등록 처리
     @PostMapping("/add")
-    public String addBookRes(@ModelAttribute @Validated Book book, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
-        // 로그인 상태 확인
-        if (loginMember == null) {
-            String redirectUrl = request.getRequestURI();
-            return "redirect:/login?redirectURL=" + redirectUrl;
-        }
-        // 도서 대출 가능 상태: 기본값
-        book.setRentalAbleBook(true); // 기본값을 true로 설정
+    public String addBook(@ModelAttribute("book") @Valid Book book,
+                          @RequestParam("categoriesFormatted") String categoriesFormatted,
+                          Model model) {
 
-        // 카테고리 처리
-        List<String> categories = Arrays.stream(book.getCategoriesFormatted().split(","))
-                .map(String::trim)
-                .collect(Collectors.toList());
+        // 카테고리 입력값을 쉼표로 구분하여 Set<String>으로 변환
+        Set<String> categories = new HashSet<>();
+        String[] categoryNames = categoriesFormatted.split(",");
 
-        // 카테고리 중복 검증
-        if (categoryService.hasDuplicateCates(categories)) {
-            bindingResult.rejectValue("categoriesFormatted", "duplicateCates", "중복된 카테고리가 있습니다.");
+        for (String categoryName : categoryNames) {
+            categories.add(categoryName.trim());  // 각 카테고리명을 Set에 추가
         }
 
-        // 검증에 실패한 경우 다시 폼으로
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("post", book);
-            return "/book/addBookForm";
+        // 도서 저장 및 카테고리 처리
+        try {
+            bookService.save(book, categories);
+            model.addAttribute("message", "도서 등록이 완료되었습니다.");
+            return "redirect:/bookList"; // 도서 목록 페이지로 리디렉션
+        } catch (Exception e) {
+            log.error("Error occurred while saving book: {}", e.getMessage());
+            model.addAttribute("error", "도서 등록에 실패했습니다.");
+            return "book/addBookForm"; // 도서 등록 폼 페이지로 다시 돌아가기
         }
-        // 책 저장
-        Book savedBook = bookService.save(book, new HashSet<>(categories));
-
-        // 책 ID로 렌탈 상태 가져오기 (렌탈 서비스에서 상태 조회)
-        String rentalStatus = rentalService.getRentalStatusByBookId(savedBook.getBookId()); // bookId를 기반으로 렌탈 상태를 확인
-
-        // 리다이렉트할 때 책 ID와 렌탈 상태를 파라미터로 전달
-        redirectAttributes.addAttribute("bookId", savedBook.getBookId());
-        redirectAttributes.addAttribute("status", true);
-        redirectAttributes.addAttribute("rentalStatus", rentalStatus); // 렌탈 상태 추가
-
-        return "redirect:/bookList/{bookId}";
     }
+
 
     @GetMapping("/{bookId}/edit")
     public String editBookReq(@PathVariable Long bookId, Model model, HttpServletRequest request, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
-        String redirect = handleLoginBookRedirect(loginMember, bookId);
+        String redirect = handleLoginRedirect(loginMember, bookId);
         if (redirect != null) {
             return redirect;
         }
 
-
         Book book = bookService.findById(bookId).orElseThrow();
-
-        // 로그인한 사용자가 도서 편집 권한 있는지 검증 로직 추가 필요
         BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories());
         model.addAttribute("book", bookEditDto);
-
         return "book/editBookForm";
     }
 
     @PostMapping("/{bookId}/edit")
-    public String editBookRes(@PathVariable Long bookId, @Validated @ModelAttribute("book") BookEditDto bookEditDto, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
-        if (loginMember == null) {
-            String redirectUrl = request.getRequestURI();
-            return "redirect:/login?redirectURL=" + redirectUrl;
+    public String editBookRes(@PathVariable Long bookId, @Validated @ModelAttribute("book") BookEditDto bookEditDto, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        String redirect = handleLoginRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
         }
 
-        // 검증에 실패한 경우 다시 폼으로
         if (bindingResult.hasErrors()) {
-            model.addAttribute("book", bookEditDto);
             return "book/editBookForm";
         }
 
-        // 태그 중복 확인
+        // 카테고리 중복 검증
         List<String> categories = bookEditDto.getCategories().stream()
                 .map(Category::getCate)
                 .collect(Collectors.toList());
-        // 카테고리 중복 검증
         if (categoryService.hasDuplicateCates(categories)) {
             bindingResult.rejectValue("categoriesFormatted", "duplicateCates", "중복된 카테고리가 있습니다.");
         }
 
-        // 검증에 실패한 경우 다시 폼으로
         if (bindingResult.hasErrors()) {
-            model.addAttribute("post", bookEditDto);
-            return "/book/editBookForm";
+            return "book/editBookForm";
         }
 
         bookService.edit(bookId, bookEditDto);
-        redirectAttributes.addFlashAttribute("message", "도서가 성공적으로 수정되었습니다");
-        return "redirect:/bookList/" + bookId;
-    }
-
-    @GetMapping("/{bookId}/delete")
-    public String deleteBookGet(@PathVariable Long bookId,
-                                @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                                HttpServletRequest request) {
-        String redirect = handleLoginBookRedirect(loginMember, bookId);
-        if (redirect != null) {
-            return redirect;
-        }
-
-
-        log.warn("잘못된 접근: GET 요청은 허용되지 않습니다. POST 요청을 사용하세요.");
-        return "redirect:/bookList/" + bookId;
+        redirectAttributes.addFlashAttribute("message", "도서가 성공적으로 수정되었습니다.");
+        return "redirect:/bookList/{bookId}";
     }
 
     @PostMapping("/{bookId}/delete")
-    public String deleteBook(@PathVariable Long bookId, RedirectAttributes redirectAttributes, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
-        String redirect = handleLoginBookRedirect(loginMember, bookId);
+    public String deleteBook(@PathVariable Long bookId, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        String redirect = handleLoginRedirect(loginMember, bookId);
         if (redirect != null) {
             return redirect;
         }
 
-
-        // 해당 도서에 대한 대출 기록 삭제
         rentalService.deleteRentalsByBookId(bookId);
-
-        // 도서 삭제
         bookService.deleteById(bookId);
-
-        redirectAttributes.addFlashAttribute("message", "도서와 관련된 대출 데이터가 성공적으로 삭제되었습니다");
+        redirectAttributes.addFlashAttribute("message", "도서와 관련된 대출 데이터가 성공적으로 삭제되었습니다.");
         return "redirect:/bookList";
     }
 
-    @GetMapping("/{bookId}/rental")
-    public String rentBookGet(@PathVariable Long bookId,
-                              @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                              HttpServletRequest request) {
-        String redirect = handleLoginBookRedirect(loginMember, bookId);
-        if (redirect != null) {
-            return redirect;
-        }
-
-
-        log.warn("잘못된 접근: GET 요청은 허용되지 않습니다. POST 요청을 사용하세요.");
-        return "redirect:/bookList/" + bookId;
-    }
-
     @PostMapping("/{bookId}/rental")
-    public String rentBook(@PathVariable Long bookId,
-                           @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                           RedirectAttributes redirectAttributes) {
-        String redirect = handleLoginBookRedirect(loginMember, bookId);
+    public String rentBook(@PathVariable Long bookId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, RedirectAttributes redirectAttributes) {
+        String redirect = handleLoginRedirect(loginMember, bookId);
         if (redirect != null) {
             return redirect;
         }
-
 
         try {
-            // 대출 로직 수행
             rentalService.createRental(bookId, loginMember.getMemberId());
             redirectAttributes.addFlashAttribute("status", "대출 성공!");
             redirectAttributes.addFlashAttribute("message", "도서를 성공적으로 대출했습니다.");
@@ -276,36 +205,20 @@ public class BookController {
         return "redirect:/bookList/{bookId}";
     }
 
-    @GetMapping("/{bookId}/return")
-    public String returnBookGet(@PathVariable Long bookId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
-        String redirect = handleLoginBookRedirect(loginMember, bookId);
-        if (redirect != null) {
-            return redirect;
-        }
-
-
-        log.warn("잘못된 접근: GET 요청은 허용되지 않습니다. POST 요청을 사용하세요.");
-        return "redirect:/bookList/" + bookId;
-    }
-
     @PostMapping("/{bookId}/return")
-    public String returnBook(@PathVariable Long bookId,
-                             @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-                             RedirectAttributes redirectAttributes) {
-        String redirect = handleLoginBookRedirect(loginMember, bookId);
+    public String returnBook(@PathVariable Long bookId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, RedirectAttributes redirectAttributes) {
+        String redirect = handleLoginRedirect(loginMember, bookId);
         if (redirect != null) {
             return redirect;
         }
-
 
         try {
-            // 반납 처리 로직 수행
             rentalService.returnBook(bookId, loginMember.getMemberId());
             redirectAttributes.addFlashAttribute("status", "반납 성공");
             redirectAttributes.addFlashAttribute("message", "도서를 성공적으로 반납했습니다.");
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("status", "반납 실패");
-            redirectAttributes.addFlashAttribute("message", "반납에 실패했습니다.");
+            redirectAttributes.addFlashAttribute("message", "반납할 대출 기록이 없습니다.");
         }
         return "redirect:/bookList/{bookId}";
     }
