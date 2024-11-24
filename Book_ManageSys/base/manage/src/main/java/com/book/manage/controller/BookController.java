@@ -6,9 +6,11 @@ import com.book.manage.entity.Member;
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
+import com.book.manage.repository.book.category.CategoryRepository;
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.book.RentalService;
 import com.book.manage.service.book.category.CategoryService;
+import com.book.manage.service.member.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class BookController {
     private final BookService bookService;
     private final RentalService rentalService;
     private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
 
     // 모든 요청에서 loginMember 모델을 추가
     @ModelAttribute
@@ -77,6 +80,11 @@ public class BookController {
         // 도서 정보 가져오기
         Book book = bookService.findById(bookId).orElseThrow(() -> new IllegalArgumentException("도서를 찾을 수 없습니다."));
 
+        // 카테고리 순서대로 정렬
+        List<Category> sortedCategories = book.getCategories().stream()
+                .sorted(Comparator.comparingInt(Category::getCateOrder))  // cateOrder 기준으로 정렬
+                .collect(Collectors.toList());
+
         // 대출 상태 및 대출 기록 가져오기
         String rentalStatus = rentalService.getRentalStatusByBookId(bookId);
         Rental rental = rentalService.findActiveRentalByBookId(bookId);
@@ -90,9 +98,11 @@ public class BookController {
         model.addAttribute("rentalStatus", rentalStatus);
         model.addAttribute("rentalId", rental != null ? rental.getRentalId() : null);
         model.addAttribute("rentalAbleBook", rentalAbleBook);
+        model.addAttribute("sortedCategories", sortedCategories);
 
         return "/book/bookInfo";
     }
+
 
     @GetMapping("/add")
     public String addBookReq(Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {

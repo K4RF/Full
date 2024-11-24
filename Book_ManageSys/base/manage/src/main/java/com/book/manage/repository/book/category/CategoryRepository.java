@@ -14,4 +14,5 @@ public interface CategoryRepository {
     List<Category> findAll();
     Optional<Category> findByCate(String cate);
     List<Category> findByBook(Book book);
+    List<Category> findByBookIdOrderByCateOrder(Long bookId);
 }

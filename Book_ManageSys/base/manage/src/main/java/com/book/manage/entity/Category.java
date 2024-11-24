@@ -29,6 +29,9 @@ public class Category {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
+    private int cateOrder;  // 순서를 관리할 필드
+
+
     public Category() {}
 
     public Category(String cate) {
@@ -39,4 +42,5 @@ public class Category {
         this.cate = cate;
         this.book = book;
     }
+
 }

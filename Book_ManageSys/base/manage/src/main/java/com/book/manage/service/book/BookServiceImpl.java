@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -34,23 +31,33 @@ public class BookServiceImpl implements BookService {
         // 책 저장
         book = bookRepository.save(book);
 
-        // 카테고리 처리
-        Set<Category> categorySet = new HashSet<>();
+        // 카테고리 순서 처리: 순서를 추가할 List 사용
+        List<Category> categoryList = new ArrayList<>();
+        int order = 0; // 카테고리 순서 초기화
+
         for (final String categoryName : categories) {
             Book finalBook = book;
+
+            // 이미 존재하는 카테고리 조회, 없으면 새로 생성
             Category category = categoryRepository.findByCate(categoryName)
-                    .orElseGet(() -> new Category(categoryName, finalBook));  // 이미 존재하는 카테고리면 가져오고, 없으면 새로 생성
-            category.setBook(book); // 책과 카테고리 연결
+                    .orElseGet(() -> new Category(categoryName, finalBook));
+
+            // 책과 카테고리 연결
+            category.setBook(book);
+
+            // 카테고리 순서 설정
+            category.setCateOrder(order++);  // 순서 설정 후 증가
             categoryRepository.save(category);
 
-            // Set<Category>에 카테고리 추가
-            categorySet.add(category);
+            // List에 카테고리 추가
+            categoryList.add(category);
         }
 
         // 책과 카테고리 연관 업데이트 후 리턴
-        book.setCategories(categorySet);  // Set<Category> 타입으로 설정
+        book.setCategories(new HashSet<>(categoryList));  // Set<Category> 타입으로 설정
         return book;
     }
+
 
 
     @Override

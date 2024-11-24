@@ -124,4 +124,12 @@ public class CategoryJpaRepository implements CategoryRepository {
                 .selectFrom(category)
                 .fetch();
     }
+    public List<Category> findByBookIdOrderByCateOrder(Long bookId) {
+        QCategory category = QCategory.category;
+        return query
+                .selectFrom(category)
+                .where(category.book.bookId.eq(bookId)) // 책과 연결된 카테고리 검색
+                .orderBy(category.cateOrder.asc())  // cate_order 순으로 정렬
+                .fetch();
+    }
 }
