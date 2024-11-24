@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface CategoryRepository {
     Category save(Category category);
-    Optional<Category> findByTagAndBookId(String tag, Long bookId);
-    void updateDelete(Long bookId, List<String> tagNames);
+    Optional<Category> findByTagAndBookId(String cate, Long bookId);
+    void updateDelete(Long bookId, List<String> cateNames);
     void deleteByBookId(Long bookId);
 }

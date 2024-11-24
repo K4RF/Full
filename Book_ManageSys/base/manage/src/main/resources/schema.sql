@@ -38,15 +38,15 @@ DROP TABLE IF EXISTS category CASCADE;
 -- category 테이블 생성 (book_id 추가)
 CREATE TABLE category (
                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                          tag VARCHAR(255) NOT NULL,
+                          cate VARCHAR(255) NOT NULL,
                           book_id BIGINT NOT NULL,
-                          UNIQUE(tag, book_id)  -- tag과 book_id의 조합에 대해 유니크 제약 조건 추가
+                          UNIQUE(cate, book_id)  -- tag과 book_id의 조합에 대해 유니크 제약 조건 추가
 );
 
-DROP TABLE IF EXISTS book_cate CASCADE;
+DROP TABLE IF EXISTS book_category CASCADE;
 
 -- book_category 조인 테이블 생성
-CREATE TABLE book_cate(
+CREATE TABLE book_category(
                           book_id BIGINT NOT NULL,
                           category_id BIGINT NOT NULL,
                           cate_order INTEGER NOT NULL DEFAULT 0,

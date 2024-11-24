@@ -26,7 +26,7 @@ public class CategoryJpaRepository implements CategoryRepository {
     public Category save(Category category) {
         if(category.getId() == null) {
             // 중복 체크
-            Optional<Category> existingCat = findByTagAndBookId(category.getTag(), category.getBook().getBookId());
+            Optional<Category> existingCat = findByTagAndBookId(category.getCate(), category.getBook().getBookId());
             if(existingCat.isPresent()) {
                 return existingCat.get();
             }
@@ -36,30 +36,30 @@ public class CategoryJpaRepository implements CategoryRepository {
         }return category;
     }
 
-    public Optional<Category> findByTagAndBookId(String tag, Long bookId) {
+    public Optional<Category> findByTagAndBookId(String cate, Long bookId) {
         QCategory category = QCategory.category;
-        Category foundTag = query
+        Category foundCate = query
                 .selectFrom(category)
-                .where(category.tag.eq(tag)
+                .where(category.cate.eq(cate)
                         .and(category.book.bookId.eq(bookId)))
                 .fetchOne();
-        return Optional.ofNullable(foundTag);
+        return Optional.ofNullable(foundCate);
     }
 
-    public void updateDelete(Long bookId, List<String> tagNames) {
+    public void updateDelete(Long bookId, List<String> cateNames) {
         QCategory category = QCategory.category;
 
-        List<Category> tags = query
+        List<Category> cates = query
                 .selectFrom(category)
                 .where(category.book.bookId.eq(bookId)
-                        .and(category.tag.notIn(tagNames))) // 업데이트된 태그 목록에 없는 태그들만 찾음
+                        .and(category.cate.notIn(cateNames))) // 업데이트된 태그 목록에 없는 태그들만 찾음
                 .fetch();
 
-        for (Category tagEntity : tags) {
-            if (em.contains(tagEntity)) {
-                em.remove(tagEntity);
+        for (Category cateEntity : cates) {
+            if (em.contains(cateEntity)) {
+                em.remove(cateEntity);
             } else {
-                Category managedTag = em.find(Category.class, tagEntity.getId());
+                Category managedTag = em.find(Category.class, cateEntity.getId());
                 if (managedTag != null) {
                     em.remove(managedTag);
                 }
@@ -71,9 +71,9 @@ public class CategoryJpaRepository implements CategoryRepository {
         if (em.contains(category)) {
             em.remove(category);
         } else {
-            Category managedTag = em.find(Category.class, category.getId());
-            if (managedTag != null) {
-                em.remove(managedTag);
+            Category managedCate = em.find(Category.class, category.getId());
+            if (managedCate != null) {
+                em.remove(managedCate);
             }
         }
     }
@@ -81,18 +81,18 @@ public class CategoryJpaRepository implements CategoryRepository {
     public void deleteByBookId(Long bookId) {
         QCategory category = QCategory.category;
 
-        List<Category> tags = query
+        List<Category> cates = query
                 .selectFrom(category)
                 .where(category.book.bookId.eq(bookId))
                 .fetch();
 
-        for (Category tagEntity : tags) {
-            if (em.contains(tagEntity)) {
-                em.remove(tagEntity);
+        for (Category cateEntity : cates) {
+            if (em.contains(cateEntity)) {
+                em.remove(cateEntity);
             } else {
-                Category managedTag = em.find(Category.class,tagEntity.getId());
-                if (managedTag != null) {
-                    em.remove(managedTag);
+                Category managedCate = em.find(Category.class,cateEntity.getId());
+                if (managedCate != null) {
+                    em.remove(managedCate);
                 }
             }
         }

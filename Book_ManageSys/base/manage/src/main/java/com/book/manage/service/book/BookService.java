@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface BookService {
-    Book save(Book book, Set<String> tagNames);
+    Book save(Book book, Set<String> cateNames);
     Optional<Book> findById(Long bookId);
     Book edit(Long bookId, BookEditDto editParam);
     void deleteById(Long bookId);

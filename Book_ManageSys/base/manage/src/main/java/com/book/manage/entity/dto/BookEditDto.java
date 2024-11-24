@@ -31,7 +31,7 @@ public class BookEditDto {
 
     public String getCategoryFormatted() {
         return categories.stream()
-                .map(Category::getTag)
+                .map(Category::getCate)
                 .collect(Collectors.joining(", "));
     }
 

@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 public interface CategoryService {
-    List<Category> createCategories(Set<String> tags, Book book);
+    List<Category> createCategories(Set<String> cateNames, Book book);
     List<Category> updateCategories(List<Category> tagsToUpdate, Book book);
-    void changeDelete(Book book, List<Category> updatedTags);
+    void changeDelete(Book book, List<Category> updatedCategories);
     void delete(Long bookId);
 }

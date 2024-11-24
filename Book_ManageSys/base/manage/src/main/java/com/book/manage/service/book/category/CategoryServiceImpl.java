@@ -20,12 +20,12 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public List<Category> createCategories(Set<String> tagNames, Book book) {
+    public List<Category> createCategories(Set<String> cateNames, Book book) {
         List<Category> categories = new ArrayList<>();
-        for (String tag : tagNames) {
-            Category category = categoryRepository.findByTagAndBookId(tag, book.getBookId())
+        for (String cate : cateNames) {
+            Category category = categoryRepository.findByTagAndBookId(cate, book.getBookId())
                     .orElseGet(() -> {
-                        Category newCategory = new Category(tag, book);
+                        Category newCategory = new Category(cate, book);
                         return categoryRepository.save(newCategory);
                     });
         }
@@ -33,12 +33,12 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public List<Category> updateCategories(List<Category> tagsToUpdate, Book book) {
+    public List<Category> updateCategories(List<Category> cateToUpdate, Book book) {
         List<Category> updatedCategories = new ArrayList<>();
-        for (Category category : tagsToUpdate) {
-            Category existingCat = categoryRepository.findByTagAndBookId(category.getTag(), book.getBookId())
+        for (Category category : cateToUpdate) {
+            Category existingCat = categoryRepository.findByTagAndBookId(category.getCate(), book.getBookId())
                     .orElseGet(() -> {
-                        Category newCategory = new Category(category.getTag(), book);
+                        Category newCategory = new Category(category.getCate(), book);
                         return categoryRepository.save(newCategory);
                     });
             updatedCategories.add(existingCat);
@@ -47,14 +47,14 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Transactional
-    public void changeDelete(Book book, List<Category> updatedTags) {
+    public void changeDelete(Book book, List<Category> updatedCategories) {
         // 업데이트된 태그 이름만 추출
-        List<String> updatedTagNames = updatedTags.stream()
-                .map(Category::getTag)
+        List<String> updatedCateNames = updatedCategories.stream()
+                .map(Category::getCate)
                 .collect(Collectors.toList());
 
         // 삭제할 태그 처리
-        categoryRepository.updateDelete(book.getBookId(), updatedTagNames);
+        categoryRepository.updateDelete(book.getBookId(), updatedCateNames);
     }
 
     public void delete(Long bookId) {

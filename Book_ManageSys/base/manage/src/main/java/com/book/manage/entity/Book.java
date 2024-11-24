@@ -2,7 +2,6 @@ package com.book.manage.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Generated;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -25,8 +24,10 @@ public class Book {
 
     @Column(nullable = false)
     private String publisher;
+
     @Column(nullable = false)
     private String details;
+
     @Column(name = "RENTAL_ABLE_BOOK", columnDefinition = "boolean default true")
     private Boolean rentalAbleBook;
 
@@ -38,18 +39,18 @@ public class Book {
     )
     @ToString.Exclude
     @OrderColumn(name = "cate_order")
-    private List<Category> tags = new ArrayList<>();
+    private List<Category> categories = new ArrayList<>();
 
     public String getCategoriesFormatted() {
-        return tags.stream()
-                .map(Category::getTag)
+        return categories.stream()
+                .map(Category::getCate)
                 .collect(Collectors.joining(", "));
     }
 
     public void setTagsFormatted(String tagsFormatted) {
-        this.tags = Arrays.stream(tagsFormatted.split(","))
+        this.categories = Arrays.stream(tagsFormatted.split(","))
                 .map(String::trim)
-                .map(tag -> new Category(tag, this)) // this로 현재 Post와 연결
+                .map(Category::new) // Book과 연결 제거
                 .collect(Collectors.toList());
     }
 }

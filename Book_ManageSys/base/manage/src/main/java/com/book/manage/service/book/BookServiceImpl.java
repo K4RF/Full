@@ -26,13 +26,13 @@ public class BookServiceImpl implements BookService {
     private final CategoryService categoryService;
 
     @Override
-    public Book save(Book book, Set<String> tagNames) {
+    public Book save(Book book, Set<String> cateNames) {
         // 1. 추후 카테고리 적용을 위해 먼저 저장 시도
         Book savedBook = bookRepository.save(book);
 
         // 2. Category 생성 후 저장
-        List<Category> categories = categoryService.createCategories(tagNames, savedBook);
-        savedBook.setTags(categories);
+        List<Category> categories = categoryService.createCategories(cateNames, savedBook);
+        savedBook.setCategories(categories);
 
         // 3. Category 포함하여 업데이트
         return bookRepository.save(savedBook);

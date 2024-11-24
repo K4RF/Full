@@ -124,16 +124,11 @@
       <label for="publisher">출판사</label>
       <input type="text" id="publisher" th:field="*{publisher}" class="form-control">
     </div>
-    <div>
-      <label for="category">카테고리</label>
-      <div id="categoryBtns">
-        <!-- 카테고리 버튼들 -->
-        <button type="button" class="category-btn btn btn-info" th:attr="class=${book.category == '소설' ? 'category-btn btn btn-info active-category' : 'category-btn btn btn-info'}" th:onclick="|toggleCategory('소설')|">소설</button>
-        <button type="button" class="category-btn btn btn-info" th:attr="class=${book.category == '과학' ? 'category-btn btn btn-info active-category' : 'category-btn btn btn-info'}" th:onclick="|toggleCategory('과학')|">과학</button>
-        <button type="button" class="category-btn btn btn-info" th:attr="class=${book.category == '잡지' ? 'category-btn btn btn-info active-category' : 'category-btn btn btn-info'}" th:onclick="|toggleCategory('잡지')|">잡지</button>
-        <button type="button" class="category-btn btn btn-info" th:attr="class=${book.category == '기타' ? 'category-btn btn btn-info active-category' : 'category-btn btn btn-info'}" th:onclick="|toggleCategory('기타')|">기타</button>
-      </div>
-      <input type="hidden" id="category" th:field="*{category}" value="${book.category}">
+    <div class="form-group">
+      <label for="tags" class="form-header">카테고리</label>
+      <input type="text" id="tags" th:field="*{categoryFormatted}" class="form-control" th:classappend="${#fields.hasErrors('categories')} ? 'is-invalid' : ''">
+      <!-- 태그 중복 오류 메시지 -->
+      <div class="text-danger" th:if="${#fields.hasErrors('categoires')}" th:errors="*{categories}"></div>
     </div>
     <div class="form-group">
       <label for="details" class="form-header">내용</label>

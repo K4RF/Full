@@ -15,8 +15,8 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "tag", nullable = false)
-    private String tag;
+    @Column(name = "cate", nullable = false)
+    private String cate;
 
     @ManyToMany(mappedBy = "categories")
     @ToString.Exclude
@@ -27,11 +27,11 @@ public class Category {
     private Book book;
 
     public Category() {}
-    public Category(String tag) {
-        this.tag = tag;
+    public Category(String cate) {
+        this.cate = cate;
     }
-    public Category(String tag, Book book) {
-        this.tag = tag;
+    public Category(String cate, Book book) {
+        this.cate = cate;
         this.book = book;
     }
 }

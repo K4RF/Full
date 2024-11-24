@@ -134,15 +134,10 @@
             <input type="text" id="publisher" th:field="*{publisher}" class="form-control">
         </div>
         <div>
-            <label for="category">카테고리</label>
-            <div id="categoryBtns">
-                <!-- 카테고리 버튼 -->
-                <button type="button" class="category-btn btn btn-info" th:onclick="|toggleCategory('소설')|">소설</button>
-                <button type="button" class="category-btn btn btn-info" th:onclick="|toggleCategory('과학')|">과학</button>
-                <button type="button" class="category-btn btn btn-info" th:onclick="|toggleCategory('잡지')|">잡지</button>
-                <button type="button" class="category-btn btn btn-info" th:onclick="|toggleCategory('기타')|">기타</button>
-            </div>
-            <input type="hidden" id="category" th:field="*{category}">
+            <label for="tags">카테고리 (쉼표로 구분)</label>
+            <input type="text" id="tags" th:field="*{categoriesFormatted}" class="form-control"
+                   th:classappend="${#fields.hasErrors('categoriesFormatted')} ? 'is-invalid' : ''">
+            <div class="text-danger" th:if="${#fields.hasErrors('categoriesFormatted')}" th:errors="*{categoriesFormatted}"></div>
         </div>
         <div class="form-group">
             <label for="details" class="form-header">내용</label>

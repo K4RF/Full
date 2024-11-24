@@ -157,7 +157,7 @@ public class BookController {
         Book book = bookService.findById(bookId).orElseThrow();
 
         // 로그인한 사용자가 도서 편집 권한 있는지 검증 로직 추가 필요
-        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getTags());
+        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories());
         model.addAttribute("book", bookEditDto);
 
         return "book/editBookForm";
@@ -178,7 +178,7 @@ public class BookController {
 
         // 태그 중복 확인
         List<String> categories = bookEditDto.getCategories().stream()
-                .map(Category::getTag)
+                .map(Category::getCate)
                 .collect(Collectors.toList());
 
         bookService.edit(bookId, bookEditDto);
