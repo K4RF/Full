@@ -33,3 +33,25 @@ CREATE TABLE rental (
                         FOREIGN KEY (book_id) REFERENCES book(book_id),
                         FOREIGN KEY (member_id) REFERENCES member(member_id)
 );
+DROP TABLE IF EXISTS category CASCADE;
+
+-- category 테이블 생성 (book_id 추가)
+CREATE TABLE category (
+                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                          cate VARCHAR(255) NOT NULL,
+                          book_id BIGINT NOT NULL,
+                          UNIQUE(cate, book_id)  -- tag과 book_id의 조합에 대해 유니크 제약 조건 추가
+);
+
+DROP TABLE IF EXISTS book_category CASCADE;
+
+-- book_category 조인 테이블 생성
+CREATE TABLE book_category(
+                              book_id BIGINT NOT NULL,
+                              category_id BIGINT NOT NULL,
+                              cate_order INTEGER NOT NULL DEFAULT 0,
+                              PRIMARY KEY (book_id, category_id),  -- Primary key는 book_id와 category_id 조합으로 설정
+                              FOREIGN KEY (book_id) REFERENCES book(book_id) ON DELETE CASCADE,
+                              FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE
+);
+
