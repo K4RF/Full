@@ -55,11 +55,9 @@ public class BookController {
 
         // 검색 결과 및 사용 가능한 카테고리 목록 조회
         List<Book> books = bookService.findBooks(bookSearch);
-        List<String> categories = bookService.getAvailableCategories();
 
         // 모델에 데이터 추가
         model.addAttribute("books", books); // 검색된 도서 목록
-        model.addAttribute("categories", categories); // 사용 가능한 카테고리 목록
         model.addAttribute("selectedCategory", category); // 현재 선택된 카테고리
 
         return "/book/bookList";

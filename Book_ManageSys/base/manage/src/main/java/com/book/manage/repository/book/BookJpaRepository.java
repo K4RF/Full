@@ -66,15 +66,13 @@ public class BookJpaRepository implements BookRepository {
     public List<Book> findAll(BookSearchDto searchParam) {
         String author = searchParam.getAuthor();
         String title = searchParam.getTitle();
-        String category = searchParam.getCategory();
 
         List<Book> result = query
                 .select(book)
                 .from(book)
                 .where(
                         likeTitle(title),
-                        likeAuthor(author),
-                        eqCategory(category) // 추가된 카테고리 조건
+                        likeAuthor(author)
                 )
                 .fetch();
 
@@ -82,14 +80,6 @@ public class BookJpaRepository implements BookRepository {
         return result;
     }
 
-    @Override
-    public List<String> findDistinctCategories() {
-        return query
-                .select(book.category)
-                .distinct()
-                .from(book)
-                .fetch();
-    }
 
     private BooleanExpression likeTitle(String title) {
         return StringUtils.hasText(title) ? book.title.like("%" + title + "%") : null;
@@ -99,7 +89,4 @@ public class BookJpaRepository implements BookRepository {
         return StringUtils.hasText(author) ? book.author.like("%" + author + "%") : null;
     }
 
-    private BooleanExpression eqCategory(String category) {
-        return StringUtils.hasText(category) ? book.category.eq(category) : null;
-    }
 }

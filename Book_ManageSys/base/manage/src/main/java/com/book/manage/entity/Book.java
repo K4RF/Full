@@ -30,8 +30,6 @@ public class Book {
     @Column(name = "RENTAL_ABLE_BOOK", columnDefinition = "boolean default true")
     private Boolean rentalAbleBook;
 
-    private String category;
-
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "book_category",
@@ -39,7 +37,7 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     @ToString.Exclude
-    @OrderColumn(name = "book_cate")
+    @OrderColumn(name = "cate_order")
     private List<Category> tags = new ArrayList<>();
 
     public String getCategoriesFormatted() {

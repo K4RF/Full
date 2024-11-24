@@ -85,7 +85,4 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAll(searchDto);
     }
 
-    public List<String> getAvailableCategories() {
-        return bookRepository.findDistinctCategories();
-    }
 }

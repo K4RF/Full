@@ -13,5 +13,4 @@ public interface BookRepository {
     void edit(Long bookId, BookEditDto editParam);
     void deleteById(Long bookId);
     List<Book> findAll(BookSearchDto searchParam);
-    List<String> findDistinctCategories();
 }
