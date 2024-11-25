@@ -80,24 +80,35 @@ public class BookController {
         // 도서 정보 가져오기
         Book book = bookService.findById(bookId).orElseThrow(() -> new IllegalArgumentException("도서를 찾을 수 없습니다."));
 
+        // 대출 상태 및 대출 기록 가져오기
+        String rentalStatus = rentalService.getRentalStatusByBookId(bookId);
+        Rental rental = rentalService.findActiveRentalByBookId(bookId);
         // 카테고리 순서대로 정렬
         List<Category> sortedCategories = book.getCategories().stream()
                 .sorted(Comparator.comparingInt(Category::getCateOrder))  // cateOrder 기준으로 정렬
                 .collect(Collectors.toList());
 
-        // 대출 상태 및 대출 기록 가져오기
-        String rentalStatus = rentalService.getRentalStatusByBookId(bookId);
-        Rental rental = rentalService.findActiveRentalByBookId(bookId);
+        // 로그인된 사용자의 memberId 가져오기
+        Long loginMemberId = (loginMember != null) ? loginMember.getMemberId() : null;
 
-        // 대출 가능 여부 계산
-        boolean rentalAbleBook = !("대출중".equals(rentalStatus));
-        book.setRentalAbleBook(rentalAbleBook); // 대출 가능 여부 설정
+        // 대출 기록의 memberId 확인
+        Long rentalMemberId = (rental != null) ? rental.getMember().getMemberId() : null;
+
+
+        // 대출 가능 여부 계산 (대출중일 경우 대출 불가로 설정)
+        if ("대출중".equals(rentalStatus)) {
+            book.setRentalAbleBook(false); // 대출중일 경우 대출 불가
+        } else if ("대출 가능".equals(rentalStatus)) {
+            book.setRentalAbleBook(true); // 대출 가능일 경우 대출 가능
+        }
 
         // 모델에 데이터 추가
         model.addAttribute("book", book);
         model.addAttribute("rentalStatus", rentalStatus);
         model.addAttribute("rentalId", rental != null ? rental.getRentalId() : null);
-        model.addAttribute("rentalAbleBook", rentalAbleBook);
+        model.addAttribute("rentalAbleBook", book.getRentalAbleBook()); // rentalAbleBook 값을 모델에 추가
+        model.addAttribute("rentalMemberId", rentalMemberId);
+        model.addAttribute("loginMemberId", loginMemberId); // 로그인된 사용자 ID 추가
         model.addAttribute("sortedCategories", sortedCategories);
 
         return "/book/bookInfo";
@@ -106,9 +117,9 @@ public class BookController {
 
     @GetMapping("/add")
     public String addBookReq(Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
-        String redirect = handleLoginRedirect(loginMember, null);
-        if (redirect != null) {
-            return redirect;
+        if (loginMember == null) {
+            String redirectUrl = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectUrl;
         }
 
         Book book = new Book();
@@ -120,7 +131,10 @@ public class BookController {
     @PostMapping("/add")
     public String addBook(@ModelAttribute("book") @Valid Book book,
                           @RequestParam("categoriesFormatted") String categoriesFormatted,
-                          Model model) {
+                          Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request)  {
+
+        // 도서 대출 가능 상태: 기본값
+        book.setRentalAbleBook(true); // 기본값을 true로 설정
 
         // 카테고리 입력값을 쉼표로 구분하여 Set<String>으로 변환
         Set<String> categories = new HashSet<>();
@@ -132,9 +146,14 @@ public class BookController {
 
         // 도서 저장 및 카테고리 처리
         try {
-            bookService.save(book, categories);
+            Book savedBook = bookService.save(book, categories);
+            // 책 ID로 렌탈 상태 가져오기 (렌탈 서비스에서 상태 조회)
+            String rentalStatus = rentalService.getRentalStatusByBookId(savedBook.getBookId()); // bookId를 기반으로 렌탈 상태를 확인
+            redirectAttributes.addAttribute("bookId", savedBook.getBookId());
+            redirectAttributes.addAttribute("status", true);
+            redirectAttributes.addAttribute("rentalStatus", rentalStatus); // 렌탈 상태 추가
             model.addAttribute("message", "도서 등록이 완료되었습니다.");
-            return "redirect:/bookList"; // 도서 목록 페이지로 리디렉션
+            return "redirect:/bookList/{bookId}";
         } catch (Exception e) {
             log.error("Error occurred while saving book: {}", e.getMessage());
             model.addAttribute("error", "도서 등록에 실패했습니다.");

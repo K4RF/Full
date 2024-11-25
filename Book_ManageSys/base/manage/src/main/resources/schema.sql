@@ -33,14 +33,15 @@ CREATE TABLE rental (
                         FOREIGN KEY (book_id) REFERENCES book(book_id),
                         FOREIGN KEY (member_id) REFERENCES member(member_id)
 );
+-- category 테이블 삭제 및 생성
 DROP TABLE IF EXISTS category CASCADE;
 
--- category 테이블 생성 (book_id 추가)
 CREATE TABLE category (
                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
                           cate VARCHAR(255) NOT NULL,
                           book_id BIGINT NOT NULL,
-                          UNIQUE(cate, book_id)  -- tag과 book_id의 조합에 대해 유니크 제약 조건 추가
+                          cate_order INTEGER NOT NULL DEFAULT 0, -- cate_order 필드 추가
+                          UNIQUE(cate, book_id) -- cate와 book_id의 조합에 대해 유니크 제약 조건 추가
 );
 
 DROP TABLE IF EXISTS book_category CASCADE;
