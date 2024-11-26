@@ -58,7 +58,6 @@
     </ul>
   </div>
 </nav>
-
 <div class="container" style="max-width: 600px">
   <div class="py-5 text-center">
     <h2>도서 목록</h2>
@@ -92,6 +91,9 @@
   </div>
 
   <form th:object="${bookSearch}" method="get" class="form-inline">
+    <!-- 현재 카테고리 값을 유지하기 위한 hidden 필드 -->
+    <input type="hidden" name="category" th:value="${selectedCategory}"/>
+
     <div class="row">
       <div class="col">
         <input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
@@ -112,8 +114,6 @@
       </div>
     </div>
   </form>
-
-
 
   <hr class="my-4">
   <div>
