@@ -56,6 +56,7 @@ public class BookController {
     public String books(@ModelAttribute("bookSearch") BookSearchDto bookSearch, Model model) {
         List<Book> books = bookService.findBooks(bookSearch);
         model.addAttribute("books", books);
+        model.addAttribute("selectedCategory", bookSearch.getCategory());  // 선택된 카테고리 추가
         return "book/bookList";
     }
 
