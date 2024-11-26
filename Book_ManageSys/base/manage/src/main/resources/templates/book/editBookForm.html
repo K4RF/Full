@@ -51,19 +51,24 @@
       margin-top: 1rem;
     }
 
+    html, body {
+      height: 100%; /* 페이지 전체 높이를 브라우저 창 높이와 동일하게 설정 */
+      margin: 0; /* 기본 마진 제거 */
+    }
+
     .container {
       max-width: 560px;
-      padding-bottom: 60px;
-      min-height: calc(100vh - 120px);
+      padding-bottom: 60px; /* 푸터와 겹치지 않도록 하단에 여유 공간 추가 */
+      min-height: calc(100vh - 120px); /* 뷰포트 높이에서 푸터 및 헤더 높이 제외 */
     }
 
     .footer {
-      background-color: #f8f9fa;
-      color: #333;
+      background-color: #f8f9fa; /* 연회색 배경 */
+      color: #333; /* 어두운 글씨 */
       text-align: center;
-      padding: 20px 0;
-      width: 100%;
-      position: relative;
+      padding: 20px 0; /* 상하 패딩 */
+      width: 100%; /* 전체 너비 */
+      position: relative; /* 절대 위치 대신 상대 위치 사용 */
     }
 
     .category-btn {
@@ -74,7 +79,7 @@
     }
 
     .active-category {
-      background-color: #007bff;
+      background-color: #17a2b8;
       color: white;
     }
   </style>
@@ -125,9 +130,20 @@
       <input type="text" id="publisher" th:field="*{publisher}" class="form-control">
     </div>
     <div class="form-group">
-      <label for="categoryFormatted" class="form-header">카테고리</label>
-      <input type="text" id="categoryFormatted" th:field="*{categoryFormatted}" class="form-control"
+      <label class="form-header">카테고리</label>
+      <!-- 히든 필드 -->
+      <input type="hidden" id="categoryFormatted" th:field="*{categoryFormatted}" class="form-control"
              th:classappend="${#fields.hasErrors('categoryFormatted')} ? 'is-invalid' : ''">
+
+      <!-- 카테고리 버튼 그룹 -->
+      <div id="category-buttons">
+        <button type="button" class="btn btn-outline-primary category-btn" data-category="소설">소설</button>
+        <button type="button" class="btn btn-outline-primary category-btn" data-category="역사">역사</button>
+        <button type="button" class="btn btn-outline-primary category-btn" data-category="과학">과학</button>
+        <button type="button" class="btn btn-outline-primary category-btn" data-category="기술">기술</button>
+        <button type="button" class="btn btn-outline-primary category-btn" data-category="예술">예술</button>
+      </div>
+
       <!-- 카테고리 오류 메시지 -->
       <div class="text-danger" th:if="${#fields.hasErrors('categoryFormatted')}" th:errors="*{categoryFormatted}"></div>
     </div>
@@ -155,28 +171,38 @@
 
 <script>
   $(document).ready(function() {
+    // Summernote 초기화
     $('#details').summernote({
       height: 300,
       placeholder: '내용을 입력하세요'
     });
+
+    // 기존 카테고리 활성화 처리
+    const existingCategories = $('#categoryFormatted').val().split(','); // 히든 필드 값 가져오기
+    existingCategories.forEach(category => {
+      $(`.category-btn[data-category="${category.trim()}"]`).addClass('active-category');
+    });
+
+    // 카테고리 버튼 클릭 이벤트
+    $('.category-btn').click(function() {
+      const category = $(this).data('category');
+      if ($(this).hasClass('active-category')) {
+        // 이미 선택된 카테고리 -> 선택 해제
+        $(this).removeClass('active-category');
+      } else {
+        // 새로 선택된 카테고리
+        $(this).addClass('active-category');
+      }
+
+      // 히든 필드 값 업데이트
+      const selectedCategories = $('.category-btn.active-category').map(function() {
+        return $(this).data('category');
+      }).get().join(', ');
+      $('#categoryFormatted').val(selectedCategories);
+    });
   });
-
-  // 카테고리 토글 함수
-  function toggleCategory(category) {
-    let currentCategory = document.getElementById("category").value;
-    if (currentCategory === category) {
-      document.getElementById("category").value = "";  // 선택 해제
-    } else {
-      document.getElementById("category").value = category;  // 카테고리 설정
-    }
-
-    // 버튼 상태 변경
-    $('.category-btn').removeClass('active-category');  // 모든 버튼에서 선택 상태 제거
-    if (document.getElementById("category").value === category) {
-      $(event.target).addClass('active-category');  // 클릭한 버튼에 선택 상태 추가
-    }
-  }
 </script>
+
 
 <div class="footer">
   <p>Created by Kaarf_o</p>

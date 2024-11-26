@@ -79,7 +79,8 @@
         }
 
         .active-category {
-            background-color: #17a2b8; /* 버튼 클릭 시 색상 변경 */
+            background-color: #17a2b8;
+            color: white;
         }
     </style>
 </head>
@@ -134,10 +135,20 @@
             <input type="text" id="publisher" th:field="*{publisher}" class="form-control">
         </div>
         <div>
-            <label for="categoriesFormatted">카테고리 (쉼표로 구분)</label>
-            <input type="text" id="categoriesFormatted" th:field="*{categoriesFormatted}" class="form-control"
+            <label for="categoriesFormatted">카테고리 (버튼을 눌러 선택하세요)</label>
+            <!-- 숨겨진 입력 필드 -->
+            <input type="hidden" id="categoriesFormatted" name="categoriesFormatted" th:field="*{categoriesFormatted}" class="form-control"
                    th:classappend="${#fields.hasErrors('categoriesFormatted')} ? 'is-invalid' : ''">
             <div class="text-danger" th:if="${#fields.hasErrors('categoriesFormatted')}" th:errors="*{categoriesFormatted}"></div>
+
+            <!-- 버튼 리스트 -->
+            <div id="category-buttons">
+                <button type="button" class="btn btn-outline-primary category-btn" data-category="소설">소설</button>
+                <button type="button" class="btn btn-outline-primary category-btn" data-category="역사">역사</button>
+                <button type="button" class="btn btn-outline-primary category-btn" data-category="과학">과학</button>
+                <button type="button" class="btn btn-outline-primary category-btn" data-category="기술">기술</button>
+                <button type="button" class="btn btn-outline-primary category-btn" data-category="예술">예술</button>
+            </div>
         </div>
         <div class="form-group">
             <label for="details" class="form-header">내용</label>
@@ -169,6 +180,34 @@
         $('#details').summernote({
             height: 300, // 에디터 높이 설정
             placeholder: '내용을 입력하세요'
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectedCategories = new Set(); // 선택된 카테고리들을 저장
+        const categoriesFormattedInput = document.getElementById('categoriesFormatted'); // 숨겨진 입력 필드
+
+        // 버튼 클릭 이벤트 처리
+        document.getElementById('category-buttons').addEventListener('click', function (event) {
+            const button = event.target;
+
+            if (button.classList.contains('category-btn')) {
+                const category = button.getAttribute('data-category');
+
+                if (selectedCategories.has(category)) {
+                    // 이미 선택된 카테고리라면 제거
+                    selectedCategories.delete(category);
+                    button.classList.remove('active-category'); // 버튼 색상 초기화
+                } else {
+                    // 선택되지 않은 카테고리라면 추가
+                    selectedCategories.add(category);
+                    button.classList.add('active-category'); // 버튼 색상 변경
+                }
+
+                // 숨겨진 입력 필드 값 업데이트
+                categoriesFormattedInput.value = Array.from(selectedCategories).join(',');
+            }
         });
     });
 </script>
