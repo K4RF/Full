@@ -66,20 +66,21 @@ public class BookJpaRepository implements BookRepository {
     public List<Book> findAll(BookSearchDto searchParam) {
         String author = searchParam.getAuthor();
         String title = searchParam.getTitle();
+        String category = searchParam.getCategory();
 
         List<Book> result = query
                 .select(book)
                 .from(book)
                 .where(
                         likeTitle(title),
-                        likeAuthor(author)
+                        likeAuthor(author),
+                        likeCategory(category) // 카테고리 조건 추가
                 )
                 .fetch();
 
         log.info("Generated Query Result: {}", result);
         return result;
     }
-
 
     private BooleanExpression likeTitle(String title) {
         return StringUtils.hasText(title) ? book.title.like("%" + title + "%") : null;
@@ -88,5 +89,10 @@ public class BookJpaRepository implements BookRepository {
     private BooleanExpression likeAuthor(String author) {
         return StringUtils.hasText(author) ? book.author.like("%" + author + "%") : null;
     }
+
+    private BooleanExpression likeCategory(String category) {
+        return StringUtils.hasText(category) ? book.categories.any().cate.like("%" + category + "%") : null;
+    }
+
 
 }

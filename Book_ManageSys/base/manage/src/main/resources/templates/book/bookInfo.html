@@ -101,12 +101,40 @@
             <p><strong>출판사:</strong> <span th:text="${book.publisher}">publisher</span></p>
         </div>
     </div>
-    <p>대출 상태: <span th:text="${rentalAbleBook ? '대출 가능' : '대출중'}">대출상황</span></p>
-    <div class="col-md-6">
-        <label for="tags">카테고리</label>
-        <input type="text" id="tags" name="tags" class="form-control"
-               th:value="${book.categoriesFormatted}" readonly>
+    <p><strong>대출 상태: </strong><span th:text="${rentalAbleBook ? '대출 가능' : '대출중'}">대출상황</span></p>
+
+    <div class="row">
+    <p><strong>카테고리</strong></p>
+        <!-- 카테고리 출력 버튼으로 처리  -->
+        <div id="category-buttons">
+            <button type="button"
+                    class="btn btn-outline-primary category-btn"
+                    data-category="소설"
+                    disabled
+                    th:if="${book.categoriesFormatted.contains('소설')}">소설</button>
+            <button type="button"
+                    class="btn btn-outline-primary category-btn"
+                    data-category="역사"
+                    disabled
+                    th:if="${book.categoriesFormatted.contains('역사')}">역사</button>
+            <button type="button"
+                    class="btn btn-outline-primary category-btn"
+                    data-category="과학"
+                    disabled
+                    th:if="${book.categoriesFormatted.contains('과학')}">과학</button>
+            <button type="button"
+                    class="btn btn-outline-primary category-btn"
+                    data-category="기술"
+                    disabled
+                    th:if="${book.categoriesFormatted.contains('기술')}">기술</button>
+            <button type="button"
+                    class="btn btn-outline-primary category-btn"
+                    data-category="예술"
+                    disabled
+                    th:if="${book.categoriesFormatted.contains('예술')}">예술</button>
+        </div>
     </div>
+
     <hr class="my-4">
     <div>
         <h3><strong>상세 정보</strong></h3>
