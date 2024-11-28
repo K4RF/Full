@@ -1,58 +1,64 @@
+-- 기존 member 테이블 삭제
 DROP TABLE IF EXISTS member CASCADE;
 
--- member 테이블 생성
+-- member 테이블 생성 (Role 추가)
 CREATE TABLE member (
                         MEMBER_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
                         LOGIN_ID VARCHAR(255) NOT NULL,
                         NICKNAME VARCHAR(255) NOT NULL,
-                        PASSWORD VARCHAR(255) NOT NULL
+                        PASSWORD VARCHAR(255) NOT NULL,
+                        ROLE VARCHAR(20) NOT NULL DEFAULT 'USER' -- 역할 필드 추가 (기본값: USER)
 );
 
--- 기존 테이블 삭제
+-- 기존 book 테이블 삭제
 DROP TABLE IF EXISTS book CASCADE;
 
 -- book 테이블 생성
 CREATE TABLE book (
                       BOOK_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
-                      title VARCHAR(50) NOT NULL,
-                      author VARCHAR(255) NOT NULL,
-                      publisher VARCHAR(255) NOT NULL,
-                      details TEXT NOT NULL,
+                      TITLE VARCHAR(50) NOT NULL,
+                      AUTHOR VARCHAR(255) NOT NULL,
+                      PUBLISHER VARCHAR(255) NOT NULL,
+                      DETAILS TEXT NOT NULL,
                       RENTAL_ABLE_BOOK BOOLEAN DEFAULT TRUE -- 대출 가능 여부 필드 추가
 );
 
+-- 기존 rental 테이블 삭제
 DROP TABLE IF EXISTS rental CASCADE;
 
+-- rental 테이블 생성
 CREATE TABLE rental (
-                        rental_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                        book_id BIGINT NOT NULL,
-                        member_id BIGINT NOT NULL,
-                        rental_status VARCHAR(20) NOT NULL,
-                        rental_date DATE NOT NULL,
-                        return_date DATE, -- NULL 허용
-                        FOREIGN KEY (book_id) REFERENCES book(book_id),
-                        FOREIGN KEY (member_id) REFERENCES member(member_id)
+                        RENTAL_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        BOOK_ID BIGINT NOT NULL,
+                        MEMBER_ID BIGINT NOT NULL,
+                        RENTAL_STATUS VARCHAR(20) NOT NULL,
+                        RENTAL_DATE DATE NOT NULL,
+                        RETURN_DATE DATE, -- NULL 허용
+                        FOREIGN KEY (BOOK_ID) REFERENCES book(BOOK_ID),
+                        FOREIGN KEY (MEMBER_ID) REFERENCES member(MEMBER_ID)
 );
--- category 테이블 삭제 및 생성
+
+-- 기존 category 테이블 삭제
 DROP TABLE IF EXISTS category CASCADE;
 
+-- category 테이블 생성
 CREATE TABLE category (
-                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                          cate VARCHAR(255) NOT NULL,
-                          book_id BIGINT NOT NULL,
-                          cate_order INTEGER NOT NULL DEFAULT 0, -- cate_order 필드 추가
-                          UNIQUE(cate, book_id) -- cate와 book_id의 조합에 대해 유니크 제약 조건 추가
+                          ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+                          CATE VARCHAR(255) NOT NULL,
+                          BOOK_ID BIGINT NOT NULL,
+                          CATE_ORDER INTEGER NOT NULL DEFAULT 0, -- cate_order 필드 추가
+                          UNIQUE(CATE, BOOK_ID) -- cate와 book_id의 조합에 대해 유니크 제약 조건 추가
 );
 
+-- 기존 book_category 테이블 삭제
 DROP TABLE IF EXISTS book_category CASCADE;
 
 -- book_category 조인 테이블 생성
-CREATE TABLE book_category(
-                              book_id BIGINT NOT NULL,
-                              category_id BIGINT NOT NULL,
-                              cate_order INTEGER NOT NULL DEFAULT 0,
-                              PRIMARY KEY (book_id, category_id),  -- Primary key는 book_id와 category_id 조합으로 설정
-                              FOREIGN KEY (book_id) REFERENCES book(book_id) ON DELETE CASCADE,
-                              FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE
+CREATE TABLE book_category (
+                               BOOK_ID BIGINT NOT NULL,
+                               CATEGORY_ID BIGINT NOT NULL,
+                               CATE_ORDER INTEGER NOT NULL DEFAULT 0,
+                               PRIMARY KEY (BOOK_ID, CATEGORY_ID),  -- Primary key는 book_id와 category_id 조합으로 설정
+                               FOREIGN KEY (BOOK_ID) REFERENCES book(BOOK_ID) ON DELETE CASCADE,
+                               FOREIGN KEY (CATEGORY_ID) REFERENCES category(ID) ON DELETE CASCADE
 );
-

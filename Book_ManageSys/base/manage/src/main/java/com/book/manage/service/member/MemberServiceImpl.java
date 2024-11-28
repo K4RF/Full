@@ -3,6 +3,7 @@ package com.book.manage.service.member;
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.Rental;
+import com.book.manage.entity.Role;
 import com.book.manage.entity.dto.MemberEditDto;
 import com.book.manage.repository.book.BookRepository;
 import com.book.manage.repository.book.RentalRepository;
@@ -35,6 +36,9 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public void join(Member member) {
+        if (member.getRole() == null) {
+            member.setRole(Role.USER); // 기본값 설정
+        }
         //비밀번호 해시화
         String encodedPassword = passwordEncoder.encode(member.getPassword());
         member.setPassword(encodedPassword);

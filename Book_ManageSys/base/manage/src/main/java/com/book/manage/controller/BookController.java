@@ -1,9 +1,6 @@
 package com.book.manage.controller;
 
-import com.book.manage.entity.Book;
-import com.book.manage.entity.Category;
-import com.book.manage.entity.Member;
-import com.book.manage.entity.Rental;
+import com.book.manage.entity.*;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.repository.book.category.CategoryRepository;
@@ -109,6 +106,9 @@ public class BookController {
             String redirectUrl = request.getRequestURI();
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
+        if(loginMember.getRole() != Role.ADMIN) {
+            return "/book/returnBook";
+        }
 
         Book book = new Book();
         model.addAttribute("book", book);
@@ -156,6 +156,9 @@ public class BookController {
         if (redirect != null) {
             return redirect;
         }
+        if(loginMember.getRole() != Role.ADMIN) {
+            return "/book/returnBook";
+        }
 
         Book book = bookService.findById(bookId).orElseThrow();
         BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories());
@@ -175,6 +178,10 @@ public class BookController {
         String redirect = handleLoginRedirect(loginMember, bookId);
         if (redirect != null) {
             return redirect;
+        }
+
+        if(loginMember.getRole() != Role.ADMIN) {
+            return "/book/returnBook";
         }
 
         if (bindingResult.hasErrors()) {
@@ -220,6 +227,9 @@ public class BookController {
         String redirect = handleLoginRedirect(loginMember, bookId);
         if (redirect != null) {
             return redirect;
+        }
+        if(loginMember.getRole() != Role.ADMIN) {
+            return "/book/returnBook";
         }
 
         rentalService.deleteRentalsByBookId(bookId);
