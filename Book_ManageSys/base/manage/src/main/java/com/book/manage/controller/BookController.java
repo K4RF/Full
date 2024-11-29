@@ -50,10 +50,19 @@ public class BookController {
     }
 
     @GetMapping
-    public String books(@ModelAttribute("bookSearch") BookSearchDto bookSearch, Model model) {
+    public String books(
+            @ModelAttribute("bookSearch") BookSearchDto bookSearch,
+            Model model,
+            @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+
+        // 책 검색 결과를 조회하고 모델에 추가
         List<Book> books = bookService.findBooks(bookSearch);
         model.addAttribute("books", books);
-        model.addAttribute("selectedCategory", bookSearch.getCategory());  // 선택된 카테고리 추가
+        model.addAttribute("selectedCategory", bookSearch.getCategory()); // 선택된 카테고리 추가
+
+        // 로그인 멤버 정보를 모델에 추가 (null일 수도 있음)
+        model.addAttribute("loginMember", loginMember);
+
         return "book/bookList";
     }
 

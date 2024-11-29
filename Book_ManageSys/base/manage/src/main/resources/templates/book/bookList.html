@@ -88,6 +88,16 @@
     <a class="btn btn-outline-primary"
        th:classappend="${selectedCategory == '예술'} ? 'active' : ''"
        th:href="@{/bookList(category='예술', title=${bookSearch.title}, author=${bookSearch.author})}">예술</a>
+    <div class="col">
+      <div class="col">
+        <!-- ADMIN 역할일 때만 보이는 도서 추가 버튼 -->
+        <button class="btn btn-primary float-end"
+                th:if="${loginMember != null and loginMember.role.name() == 'ADMIN'}"
+                th:onclick="|location.href='@{/bookList/add}'|"
+                type="button">도서 등록
+        </button>
+      </div>
+    </div>
   </div>
 
   <form th:object="${bookSearch}" method="get" class="form-inline">
@@ -103,14 +113,6 @@
       </div>
       <div class="col">
         <button type="submit" class="btn btn-secondary mb-2">검색</button>
-      </div>
-      <div class="col">
-        <div class="col">
-          <button class="btn btn-primary float-end"
-                  th:onclick="|location.href='@{/bookList/add}'|"
-                  type="button">도서 등록
-          </button>
-        </div>
       </div>
     </div>
   </form>
