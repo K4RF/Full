@@ -2,6 +2,8 @@ package com.book.manage.repository.book;
 
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.QRental;
+import com.book.manage.entity.dto.RentalSearchDto;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,22 @@ public class RentalJpaRepository implements RentalRepository {
             return em.merge(rental);  // 업데이트 처리
         }
     }
+
+    @Override
+    public Optional<Rental> findLatestRental(Long bookId, Long memberId) {
+        QRental rental = QRental.rental;
+
+        // 같은 책과 같은 멤버에 대해, 반납되지 않은 최신 대출 기록을 찾음
+        Rental latestRental = query.selectFrom(rental)
+                .where(rental.book.bookId.eq(bookId)
+                        .and(rental.member.memberId.eq(memberId))
+                        .and(rental.returnDate.isNull())) // 반납되지 않은 대출만
+                .orderBy(rental.rentalDate.desc()) // 최신 대출을 우선적으로 정렬
+                .fetchFirst(); // 가장 최신 대출 1개만 가져옴
+
+        return Optional.ofNullable(latestRental);
+    }
+
 
     @Override
     public Optional<Rental> findById(Long rentalId) {
@@ -99,4 +117,34 @@ public class RentalJpaRepository implements RentalRepository {
             em.remove(rental); // 대출 기록 삭제
         }
     }
+
+    @Override
+    public List<Rental> findAll(RentalSearchDto searchParam) {
+        String title = searchParam.getTitle();
+        Long memberId = searchParam.getMemberId();  // memberId 추가
+
+        return query
+                .selectFrom(QRental.rental)
+                .where(
+                        likeTitle(title)  // 제목 필터
+                                .and(likeMemberId(memberId))  // 회원 ID 필터
+                )
+                .fetch();
+    }
+
+    // 제목 필터링
+    private BooleanExpression likeTitle(String title) {
+        if (title != null && !title.trim().isEmpty()) {
+            return QRental.rental.book.title.like("%" + title + "%");
+        }
+        return QRental.rental.book.title.isNotNull(); // 제목이 없으면 모두 포함되도록 처리
+    }
+
+    // 회원 ID 필터링
+    private BooleanExpression likeMemberId(Long memberId) {
+        return memberId != null
+                ? QRental.rental.member.memberId.eq(memberId)  // 회원 ID가 일치하는 대출 기록만 조회
+                : null;
+    }
+
 }

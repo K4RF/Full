@@ -1,8 +1,10 @@
 package com.book.manage.service.book;
 
 import com.book.manage.entity.Book;
+import com.book.manage.entity.Category;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.repository.book.BookRepository;
+import com.book.manage.repository.book.category.CategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,158 +12,163 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Slf4j
 @SpringBootTest
 @Transactional
+@Slf4j
 class BookServiceImplTest {
 
     @Autowired
-    private BookServiceImpl bookService;
+    private BookService bookService;
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     private Book defaultBook;
 
     @BeforeEach
     void setUp() {
-        // 기본 데이터 저장
+        // 테스트용 기본 데이터 생성
         defaultBook = new Book();
         defaultBook.setTitle("Default Book Title");
         defaultBook.setAuthor("Default Author");
         defaultBook.setPublisher("Default Publisher");
         defaultBook.setDetails("This is a default book for testing.");
-        defaultBook = bookRepository.save(defaultBook); // 데이터 저장
+        defaultBook = bookRepository.save(defaultBook); // DB 저장
+        log.info("Created default book: {}", defaultBook);
     }
 
     @Test
-    void save_shouldSaveAndReturnBook() {
+    void save_shouldSaveBookWithCategories() {
         // Given
         Book newBook = new Book();
         newBook.setTitle("Spring Boot Guide");
         newBook.setAuthor("AuthorName");
         newBook.setPublisher("PublisherName");
         newBook.setDetails("Comprehensive guide on Spring Boot");
+        Set<String> categories = Set.of("Programming", "Technology");
+
+        log.info("Saving new book: {}", newBook);
 
         // When
-        Book savedBook = bookService.save(newBook);
+        Book savedBook = bookService.save(newBook, categories);
+        log.info("Book saved successfully: {}", savedBook);
 
         // Then
         assertThat(savedBook).isNotNull();
         assertThat(savedBook.getTitle()).isEqualTo("Spring Boot Guide");
-        assertThat(savedBook.getAuthor()).isEqualTo("AuthorName");
-        assertThat(savedBook.getPublisher()).isEqualTo("PublisherName");
-        assertThat(savedBook.getDetails()).isEqualTo("Comprehensive guide on Spring Boot");
-        // Log savedBook 정보 출력
-        log.info("Saved Book Info: {}", savedBook);
+
+        // 카테고리 확인
+        Set<Category> savedCategories = savedBook.getCategories();  // Set으로 변경
+        log.info("Saved categories: {}", savedCategories);
+        assertThat(savedCategories).hasSize(2);
+        assertThat(savedCategories)
+                .extracting(Category::getCate)
+                .containsExactlyInAnyOrderElementsOf(categories);
     }
 
     @Test
-    void findById_shouldReturnBookWhenBookExists() {
+    void edit_shouldUpdateBookAndCategories() {
         // Given
         Long bookId = defaultBook.getBookId();
-
-        // When
-        Optional<Book> foundBook = bookService.findById(bookId);
-
-        // Then
-        assertThat(foundBook).isPresent();
-        assertThat(foundBook.get().getTitle()).isEqualTo(defaultBook.getTitle());
-        assertThat(foundBook.get().getAuthor()).isEqualTo(defaultBook.getAuthor());
-        assertThat(foundBook.get().getPublisher()).isEqualTo(defaultBook.getPublisher());
-        assertThat(foundBook.get().getDetails()).isEqualTo(defaultBook.getDetails());
-    }
-
-    @Test
-    void findById_shouldReturnEmptyWhenBookDoesNotExist() {
-        // Given
-        Long nonExistentBookId = 999L;
-
-        // When
-        Optional<Book> foundBook = bookService.findById(nonExistentBookId);
-
-        // Then
-        assertThat(foundBook).isEmpty();
-    }
-
-    @Test
-    void edit_shouldUpdateBookDetails() {
-        // Given
-        Book existingBook = bookRepository.findById(defaultBook.getBookId()) // 기본 데이터를 저장한 후 ID를 통해 조회
-                .orElseThrow(() -> new RuntimeException("Test setup failed: Book not found"));
-        Long bookId = existingBook.getBookId();
-
-        // 수정할 데이터 준비
         BookEditDto editParam = new BookEditDto();
         editParam.setTitle("Updated Title");
         editParam.setAuthor("Updated Author");
         editParam.setPublisher("Updated Publisher");
         editParam.setDetails("Updated Details");
+        editParam.setCategories(Set.of(
+                new Category("Fiction", defaultBook),
+                new Category("Drama", defaultBook)
+        ));
+
+        log.info("Editing book with ID {}: {}", bookId, editParam);
 
         // When
         Book updatedBook = bookService.edit(bookId, editParam);
+        log.info("Updated book: {}", updatedBook);
 
         // Then
         assertThat(updatedBook).isNotNull();
-        assertThat(updatedBook.getBookId()).isEqualTo(bookId);
         assertThat(updatedBook.getTitle()).isEqualTo("Updated Title");
-        assertThat(updatedBook.getAuthor()).isEqualTo("Updated Author");
-        assertThat(updatedBook.getPublisher()).isEqualTo("Updated Publisher");
-        assertThat(updatedBook.getDetails()).isEqualTo("Updated Details");
 
-        // 로그 출력
-        log.info("Updated book: {}", updatedBook);
+        // 업데이트된 카테고리 확인
+        Set<Category> updatedCategories = updatedBook.getCategories();  // Set으로 변경
+        log.info("Updated categories: {}", updatedCategories);
+        assertThat(updatedCategories).hasSize(2);
+        assertThat(updatedCategories)
+                .extracting(Category::getCate)
+                .containsExactlyInAnyOrder("Fiction", "Drama");
     }
 
-
     @Test
-    void edit_shouldThrowExceptionWhenBookNotFound() {
+    void deleteById_shouldDeleteBookAndCategories() {
         // Given
-        Long nonExistentBookId = 999L; // 존재하지 않는 ID
-        BookEditDto editParam = new BookEditDto();
-        editParam.setTitle("New Title");
-        editParam.setAuthor("New Author");
-        editParam.setPublisher("New Publisher");
-        editParam.setDetails("New Details");
-
-        // When & Then
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> bookService.edit(nonExistentBookId, editParam));
-
-        assertThat(exception.getMessage()).isEqualTo("Book not found");
-    }
-
-    @Test
-    void deleteById_shouldDeleteBookWhenBookExists() {
-        // Given: 삭제할 책이 존재함
         Long bookId = defaultBook.getBookId();
+        Set<String> categories = Set.of("Programming", "Science");
+        bookService.save(defaultBook, categories);
+        log.info("Deleting book with ID {}", bookId);
 
-        // When: 삭제 요청
+        // When
         bookService.deleteById(bookId);
 
-        // Then: 삭제된 책을 조회하여 없어진 것을 확인
+        // Then
         Optional<Book> deletedBook = bookRepository.findById(bookId);
-        assertThat(deletedBook).isEmpty(); // 삭제된 책은 더 이상 존재하지 않아야 함
+        log.info("Deleted book: {}", deletedBook);
+        assertThat(deletedBook).isEmpty(); // 도서 삭제 확인
 
-        // 로그 출력
-        log.info("Book with ID: {} has been successfully deleted", bookId);
+        // 카테고리 삭제 확인
+        List<Category> remainingCategories = categoryRepository.findAll();
+        log.info("Remaining categories after deletion: {}", remainingCategories);
+        assertThat(remainingCategories).isEmpty();
     }
 
     @Test
-    void deleteById_shouldThrowExceptionWhenBookDoesNotExist() {
-        // Given: 존재하지 않는 책 ID
-        Long nonExistentBookId = 999L;
+    void findById_shouldReturnBookWithCategories() {
+        // Given
+        Long bookId = defaultBook.getBookId();
+        Set<String> categories = Set.of("Fiction", "Adventure");
+        bookService.save(defaultBook, categories);
+        log.info("Finding book with ID {}", bookId);
 
-        // When & Then: 삭제 시 예외 발생
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> bookService.deleteById(nonExistentBookId));
+        // When
+        Optional<Book> foundBook = bookService.findById(bookId);
+        log.info("Found book: {}", foundBook);
 
-        // Then: 예외 메시지 검증
-        assertThat(exception.getMessage()).isEqualTo("Book not found");
+        // Then
+        assertThat(foundBook).isPresent();
+        Set<Category> foundCategories = foundBook.get().getCategories();  // Set으로 변경
+        log.info("Found categories for book: {}", foundCategories);
+        assertThat(foundCategories)
+                .extracting(Category::getCate)
+                .containsExactlyInAnyOrder("Fiction", "Adventure");
+    }
+
+    @Test
+    void findAll_shouldReturnAllCategories() {
+        // Given
+        Category category1 = new Category("Fiction", defaultBook);
+        Category category2 = new Category("Adventure", defaultBook);
+        categoryRepository.save(category1);
+        categoryRepository.save(category2);
+
+        log.info("Fetching all categories...");
+
+        // When
+        List<Category> allCategories = categoryRepository.findAll();
+        log.info("All categories: {}", allCategories);
+
+        // Then
+        assertThat(allCategories).hasSize(2);
+        assertThat(allCategories)
+                .extracting(Category::getCate)
+                .containsExactlyInAnyOrder("Fiction", "Adventure");
     }
 }

@@ -3,6 +3,7 @@ package com.book.manage.service.book;
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.Rental;
+import com.book.manage.entity.dto.RentalSearchDto;
 import com.book.manage.repository.book.BookRepository;
 import com.book.manage.repository.book.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
@@ -75,14 +76,16 @@ public class RentalServiceImpl implements RentalService {
         return rentalRepository.save(rental);
     }
 
-    // 반납 처리 메서드
-    public Rental returnBook(Long rentalId, Long bookId) {
-        Rental rental = rentalRepository.findById(rentalId)
+    // 반납 처리 메서드 (최신 대출 기록 기준)
+    @Override
+    public Rental returnBook(Long bookId, Long memberId) {
+        // 최신 대출 기록을 조회 (반납되지 않은 대출 중 가장 최신 대출)
+        Rental rental = rentalRepository.findLatestRental(bookId, memberId)
                 .orElseThrow(() -> new EntityNotFoundException("대출 기록을 찾을 수 없습니다."));
 
-        // 대출 중인 책인지 확인
-        if (!rental.getBook().getBookId().equals(bookId)) {
-            throw new IllegalArgumentException("책 ID가 일치하지 않습니다.");
+        // 대출 상태가 '대출중'인지 확인
+        if (!rental.getRentalStatus().equals("대출중")) {
+            throw new IllegalStateException("이 책은 이미 반납된 상태입니다.");
         }
 
         // 반납 처리
@@ -124,5 +127,12 @@ public class RentalServiceImpl implements RentalService {
     // 연체 상태 갱신 메서드
     public void updateOverdueRentals() {
         rentalRepository.updateRentalStatus();  // 연체 상태를 포함한 모든 대출 상태 갱신
+    }
+
+
+    // 검색 조건에 따른 대출 목록 조회
+    @Override
+    public List<Rental> findRentals(RentalSearchDto searchParam) {
+        return rentalRepository.findAll(searchParam);
     }
 }

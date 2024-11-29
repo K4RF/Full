@@ -51,64 +51,98 @@
       <li class="nav-item">
         <a class="nav-link" href="/bookList">도서 목록</a>
       </li>
+      <!-- 대출 목록 -->
+      <li class="nav-item" th:if="${loginMember != null}">
+        <a class="nav-link" th:href="@{/rentalList}">대출 현황 조회</a>
+      </li>
     </ul>
   </div>
 </nav>
-  <div class="container" style="max-width: 600px">
-    <div class="py-5 text-center">
-      <h2>도서 목록</h2>
-    </div>
+<div class="container" style="max-width: 600px">
+  <div class="py-5 text-center">
+    <h2>도서 목록</h2>
+  </div>
 
-    <form th:object="${bookSearch}" method="get" class="form-inline">
-      <!-- 검색 폼 -->
-      <div class="row">
-        <div class="col">
-          <input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
-        </div>
-        <div class="col">
-          <input type="text" th:field="*{author}" class="form-control" placeholder="저자"/>
-        </div>
-        <div class="col">
-          <button type="submit" class="btn btn-secondary mb-2">검색</button>
-        </div>
-        <div class="col">
-          <div class="col">
-            <!-- 로그인 여부와 상관없이 포스트 등록 버튼 표시 -->
-            <button class="btn btn-primary float-end"
-                    th:onclick="|location.href='@{/bookList/add}'|"
-                    type="button">도서 등록
-            </button>
-          </div>
-        </div>
+  <div class="mb-3">
+    <!-- 카테고리 버튼들 -->
+    <a class="btn btn-outline-primary"
+       th:classappend="${selectedCategory == null} ? 'active' : ''"
+       th:href="@{/bookList(category=null, title=${bookSearch.title}, author=${bookSearch.author})}">전체</a>
+
+    <a class="btn btn-outline-primary"
+       th:classappend="${selectedCategory == '소설'} ? 'active' : ''"
+       th:href="@{/bookList(category='소설', title=${bookSearch.title}, author=${bookSearch.author})}">소설</a>
+
+    <a class="btn btn-outline-primary"
+       th:classappend="${selectedCategory == '역사'} ? 'active' : ''"
+       th:href="@{/bookList(category='역사', title=${bookSearch.title}, author=${bookSearch.author})}">역사</a>
+
+    <a class="btn btn-outline-primary"
+       th:classappend="${selectedCategory == '과학'} ? 'active' : ''"
+       th:href="@{/bookList(category='과학', title=${bookSearch.title}, author=${bookSearch.author})}">과학</a>
+
+    <a class="btn btn-outline-primary"
+       th:classappend="${selectedCategory == '기술'} ? 'active' : ''"
+       th:href="@{/bookList(category='기술', title=${bookSearch.title}, author=${bookSearch.author})}">기술</a>
+
+    <a class="btn btn-outline-primary"
+       th:classappend="${selectedCategory == '예술'} ? 'active' : ''"
+       th:href="@{/bookList(category='예술', title=${bookSearch.title}, author=${bookSearch.author})}">예술</a>
+    <div class="col">
+      <div class="col">
+        <!-- ADMIN 역할일 때만 보이는 도서 추가 버튼 -->
+        <button class="btn btn-primary float-end"
+                th:if="${loginMember != null and loginMember.role.name() == 'ADMIN'}"
+                th:onclick="|location.href='@{/bookList/add}'|"
+                type="button">도서 등록
+        </button>
       </div>
-    </form>
-
-    <hr class="my-4">
-    <div>
-      <table class="table">
-        <thead>
-        <tr>
-          <th>ID</th>
-          <th>제목</th>
-          <th>저자</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="book : ${books}">
-          <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.bookId}">포스트 id</a></td>
-          <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.title}">제목</a></td>
-          <td th:text="${book.author}">저자</td>
-        </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 
-  <div class="footer">
-    <p>Created by Kaarf_o</p>
-    <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
-  </div>
+  <form th:object="${bookSearch}" method="get" class="form-inline">
+    <!-- 현재 카테고리 값을 유지하기 위한 hidden 필드 -->
+    <input type="hidden" name="category" th:value="${selectedCategory}"/>
 
-  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <div class="row">
+      <div class="col">
+        <input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
+      </div>
+      <div class="col">
+        <input type="text" th:field="*{author}" class="form-control" placeholder="저자"/>
+      </div>
+      <div class="col">
+        <button type="submit" class="btn btn-secondary mb-2">검색</button>
+      </div>
+    </div>
+  </form>
+
+  <hr class="my-4">
+  <div>
+    <table class="table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>제목</th>
+        <th>저자</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="book : ${books}">
+        <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.bookId}">포스트 id</a></td>
+        <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.title}">제목</a></td>
+        <td th:text="${book.author}">저자</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Created by Kaarf_o</p>
+  <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
