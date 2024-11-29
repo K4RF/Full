@@ -231,6 +231,22 @@ public class BookController {
         return "redirect:/bookList/{bookId}";
     }
 
+    // 도서 삭제에 대한 Get 방식 처리
+    @GetMapping("/{bookId}/delete")
+    public String deleteBookGet(@PathVariable Long bookId, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        String redirect = handleLoginRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
+        }
+
+        // 관리자 권한 확인
+        if (loginMember.getRole() != Role.ADMIN) {
+            redirectAttributes.addFlashAttribute("error", "삭제 권한이 없습니다.");
+            return "redirect:/bookList/" + bookId;
+        }
+
+        return "redirect:/bookList/" + bookId; // 삭제는 POST 요청으로만 허용
+    }
     @PostMapping("/{bookId}/delete")
     public String deleteBook(@PathVariable Long bookId, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
         String redirect = handleLoginRedirect(loginMember, bookId);
@@ -247,6 +263,17 @@ public class BookController {
         return "redirect:/bookList";
     }
 
+    // 도서 대여에 대한 Get 방식 처리
+    @GetMapping("/{bookId}/rental")
+    public String rentBookGet(@PathVariable Long bookId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, RedirectAttributes redirectAttributes) {
+        String redirect = handleLoginRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
+        }
+
+        redirectAttributes.addFlashAttribute("error", "대출은 POST 요청으로만 가능합니다.");
+        return "redirect:/bookList/" + bookId;
+    }
     @PostMapping("/{bookId}/rental")
     public String rentBook(@PathVariable Long bookId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, RedirectAttributes redirectAttributes) {
         String redirect = handleLoginRedirect(loginMember, bookId);
@@ -265,6 +292,17 @@ public class BookController {
         return "redirect:/bookList/{bookId}";
     }
 
+    // 도서 반납에 대한 Get 방식 처리
+    @GetMapping("/{bookId}/return")
+    public String returnBookGet(@PathVariable Long bookId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, RedirectAttributes redirectAttributes) {
+        String redirect = handleLoginRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
+        }
+
+        redirectAttributes.addFlashAttribute("error", "반납은 POST 요청으로만 가능합니다.");
+        return "redirect:/bookList/" + bookId;
+    }
     @PostMapping("/{bookId}/return")
     public String returnBook(@PathVariable Long bookId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, RedirectAttributes redirectAttributes) {
         String redirect = handleLoginRedirect(loginMember, bookId);
