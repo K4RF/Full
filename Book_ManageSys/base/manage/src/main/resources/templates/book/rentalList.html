@@ -86,7 +86,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="rental, iterStat : ${rentals}">
+            <!-- rentals 리스트가 비어있지 않을 때만 테이블 내용 출력 -->
+            <tr th:each="rental, iterStat : ${rentals}" th:if="${!#lists.isEmpty(rentals)}">
                 <td th:text="${iterStat.index + 1}"></td>
                 <td th:text="${rental.book.title}"></td>
                 <td th:text="${rental.rentalDate}"></td>
@@ -95,6 +96,9 @@
             </tr>
             </tbody>
         </table>
+
+        <!-- rentals 리스트가 비어있을 때 메시지 출력 -->
+        <p class="text-center text-muted" th:if="${#lists.isEmpty(rentals)}">조회된 결과가 없습니다</p>
     </div>
 </div>
 

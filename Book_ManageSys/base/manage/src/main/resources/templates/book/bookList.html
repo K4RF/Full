@@ -128,13 +128,17 @@
       </tr>
       </thead>
       <tbody>
-      <tr th:each="book : ${books}">
+      <!-- books 리스트가 비어있지 않을 때 테이블 출력 -->
+      <tr th:each="book : ${books}" th:if="${!#lists.isEmpty(books)}">
         <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.bookId}">포스트 id</a></td>
         <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.title}">제목</a></td>
         <td th:text="${book.author}">저자</td>
       </tr>
       </tbody>
     </table>
+
+    <!-- books 리스트가 비어있을 때 메시지 출력 -->
+    <p class="text-center" th:if="${#lists.isEmpty(books)}">검색된 결과가 없습니다</p>
   </div>
 </div>
 
