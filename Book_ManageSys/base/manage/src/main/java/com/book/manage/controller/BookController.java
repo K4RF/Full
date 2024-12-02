@@ -7,7 +7,6 @@ import com.book.manage.repository.book.category.CategoryRepository;
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.book.RentalService;
 import com.book.manage.service.book.category.CategoryService;
-import com.book.manage.service.member.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +16,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -128,7 +132,11 @@ public class BookController {
     @PostMapping("/add")
     public String addBook(@ModelAttribute("book") @Valid Book book,
                           @RequestParam("categoriesFormatted") String categoriesFormatted,
-                          Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request)  {
+                          @RequestParam("imageFile") MultipartFile imageFile, // 이미지 파일 파라미터 추가
+                          Model model, BindingResult bindingResult,
+                          RedirectAttributes redirectAttributes,
+                          @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                          HttpServletRequest request) {
 
         // 도서 대출 가능 상태: 기본값
         book.setRentalAbleBook(true); // 기본값을 true로 설정
@@ -139,6 +147,25 @@ public class BookController {
 
         for (String categoryName : categoryNames) {
             categories.add(categoryName.trim());  // 각 카테고리명을 Set에 추가
+        }
+
+        // 이미지 업로드 처리
+        if (!imageFile.isEmpty()) {
+            String uploadDir = "src/main/resources/static/uploads/images"; // static 폴더 내에 저장하도록 수정
+            try {
+                String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+                Path uploadPath = Paths.get(uploadDir);
+
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                imageFile.transferTo(uploadPath.resolve(fileName));
+                book.setImagePath("/uploads/images/" + fileName); // 클라이언트에서 사용할 경로 설정
+            } catch (IOException e) {
+                log.error("Error occurred while uploading image: {}", e.getMessage());
+                model.addAttribute("error", "이미지 업로드에 실패했습니다.");
+                return "book/addBookForm";
+            }
         }
 
         // 도서 저장 및 카테고리 처리

@@ -121,7 +121,7 @@
     <div class="py-5 text-center">
         <h2>도서 등록</h2>
     </div>
-    <form th:action="@{/bookList/add}" th:object="${book}" method="post">
+    <form th:action="@{/bookList/add}" th:object="${book}" method="post" enctype="multipart/form-data">
         <div>
             <label for="title">제목</label>
             <input type="text" id="title" th:field="*{title}" class="form-control">
@@ -136,12 +136,9 @@
         </div>
         <div>
             <label for="categoriesFormatted">카테고리 (버튼을 눌러 선택하세요)</label>
-            <!-- 숨겨진 입력 필드 -->
             <input type="hidden" id="categoriesFormatted" name="categoriesFormatted" th:field="*{categoriesFormatted}" class="form-control"
                    th:classappend="${#fields.hasErrors('categoriesFormatted')} ? 'is-invalid' : ''">
             <div class="text-danger" th:if="${#fields.hasErrors('categoriesFormatted')}" th:errors="*{categoriesFormatted}"></div>
-
-            <!-- 버튼 리스트 -->
             <div id="category-buttons">
                 <button type="button" class="btn btn-outline-primary category-btn" data-category="소설">소설</button>
                 <button type="button" class="btn btn-outline-primary category-btn" data-category="역사">역사</button>
@@ -154,7 +151,10 @@
             <label for="details" class="form-header">내용</label>
             <textarea id="details" th:field="*{details}" class="form-control"></textarea>
         </div>
-
+        <div>
+            <label for="imageFile">이미지 업로드</label>
+            <input type="file" id="imageFile" name="imageFile" class="form-control">
+        </div>
         <hr class="my-4">
         <div class="row">
             <div class="col">

@@ -42,6 +42,13 @@
             max-width: 560px;
             padding-bottom: 60px; /* footer 공간 확보 */
         }
+        img {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body>
@@ -91,6 +98,9 @@
         <span th:text="${error}"></span>
     </div>
     <h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
+    <div>
+        <img th:src="@{${book.imagePath}}" alt="Book Image" style="max-width: 300px;">
+    </div>
     <div class="row">
         <div class="col-md-6">
             <p><strong>저자:</strong> <span th:text="${book.author}">author</span></p>

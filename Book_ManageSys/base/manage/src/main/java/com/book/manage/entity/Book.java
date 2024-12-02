@@ -32,6 +32,8 @@ public class Book {
     @Column(name = "RENTAL_ABLE_BOOK", columnDefinition = "boolean default true")
     private Boolean rentalAbleBook;
 
+    private String imagePath; // 이미지 경로를 저장하는 필드
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "book_category",
