@@ -22,9 +22,4 @@ public class WebConfig implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new LoginArgumentResolver());
     }
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/src/main/resources/static/uploads/images/**")
-                .addResourceLocations("file:/path/to/uploads/images/");
-    }
 }

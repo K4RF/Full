@@ -13,14 +13,15 @@ CREATE TABLE member (
 -- 기존 book 테이블 삭제
 DROP TABLE IF EXISTS book CASCADE;
 
--- book 테이블 생성
+-- book 테이블 생성 (imagePath 필드 추가)
 CREATE TABLE book (
                       BOOK_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
                       TITLE VARCHAR(50) NOT NULL,
                       AUTHOR VARCHAR(255) NOT NULL,
                       PUBLISHER VARCHAR(255) NOT NULL,
                       DETAILS TEXT NOT NULL,
-                      RENTAL_ABLE_BOOK BOOLEAN DEFAULT TRUE -- 대출 가능 여부 필드 추가
+                      RENTAL_ABLE_BOOK BOOLEAN DEFAULT TRUE, -- 대출 가능 여부 필드 추가
+                      IMAGE_PATH VARCHAR(255) -- 이미지 경로 필드 추가
 );
 
 -- 기존 rental 테이블 삭제
