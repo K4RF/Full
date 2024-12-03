@@ -99,7 +99,7 @@
     </div>
     <h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
     <div>
-        <img th:src="@{${book.imagePath}}" alt="Book Image" style="max-width: 300px;">
+        <img th:src="@{${book.imagePath} + '?v=' + ${cacheBuster}}" alt="Book Image">
     </div>
     <div class="row">
         <div class="col-md-6">
