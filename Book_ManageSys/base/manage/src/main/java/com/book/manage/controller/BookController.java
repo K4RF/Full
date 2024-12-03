@@ -107,6 +107,7 @@ public class BookController {
         model.addAttribute("rentalAbleBook", book.getRentalAbleBook()); // rentalAbleBook 값을 모델에 추가
         model.addAttribute("rentalMemberId", rentalMemberId);
         model.addAttribute("loginMemberId", loginMemberId); // 로그인된 사용자 ID 추가
+        model.addAttribute("cacheBuster", System.currentTimeMillis()); // 캐시 방지용 무작위 값
         model.addAttribute("sortedCategories", sortedCategories);
 
         return "/book/bookInfo";
@@ -119,7 +120,7 @@ public class BookController {
             String redirectUrl = request.getRequestURI();
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
-        if(loginMember.getRole() != Role.ADMIN) {
+        if (loginMember.getRole() != Role.ADMIN) {
             return "/book/returnBook";
         }
 
@@ -151,7 +152,7 @@ public class BookController {
 
         // 이미지 업로드 처리
         if (!imageFile.isEmpty()) {
-            String uploadDir = "src/main/resources/static/uploads/images"; // static 폴더 내에 저장하도록 수정
+            String uploadDir = "src/main/resources/static/uploads/images"; // static 폴더 내에 저장
             try {
                 String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
                 Path uploadPath = Paths.get(uploadDir);
@@ -160,7 +161,7 @@ public class BookController {
                     Files.createDirectories(uploadPath);
                 }
                 imageFile.transferTo(uploadPath.resolve(fileName));
-                book.setImagePath("/uploads/images/" + fileName); // 클라이언트에서 사용할 경로 설정
+                book.setImagePath("/uploads/images/" + fileName + "?v=" + UUID.randomUUID()); // 캐시 무효화 쿼리 추가
             } catch (IOException e) {
                 log.error("Error occurred while uploading image: {}", e.getMessage());
                 model.addAttribute("error", "이미지 업로드에 실패했습니다.");
@@ -171,8 +172,7 @@ public class BookController {
         // 도서 저장 및 카테고리 처리
         try {
             Book savedBook = bookService.save(book, categories);
-            // 책 ID로 렌탈 상태 가져오기 (렌탈 서비스에서 상태 조회)
-            String rentalStatus = rentalService.getRentalStatusByBookId(savedBook.getBookId()); // bookId를 기반으로 렌탈 상태를 확인
+            String rentalStatus = rentalService.getRentalStatusByBookId(savedBook.getBookId()); // bookId를 기반으로 렌탈 상태 확인
             redirectAttributes.addAttribute("bookId", savedBook.getBookId());
             redirectAttributes.addAttribute("status", true);
             redirectAttributes.addAttribute("rentalStatus", rentalStatus); // 렌탈 상태 추가
