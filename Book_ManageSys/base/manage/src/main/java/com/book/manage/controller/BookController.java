@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -296,21 +297,55 @@ public class BookController {
 
         return "redirect:/bookList/" + bookId; // 삭제는 POST 요청으로만 허용
     }
+    // 도서 삭제
     @PostMapping("/{bookId}/delete")
-    public String deleteBook(@PathVariable Long bookId, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+    public String deleteBook(@PathVariable Long bookId,
+                             RedirectAttributes redirectAttributes,
+                             @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        // 로그인 체크 및 리디렉션 처리
         String redirect = handleLoginRedirect(loginMember, bookId);
         if (redirect != null) {
             return redirect;
         }
-        if(loginMember.getRole() != Role.ADMIN) {
+
+        // 관리자 권한 체크
+        if (loginMember.getRole() != Role.ADMIN) {
             return "/book/returnBook";
         }
 
-        rentalService.deleteRentalsByBookId(bookId);
-        bookService.deleteById(bookId);
-        redirectAttributes.addFlashAttribute("message", "도서와 관련된 대출 데이터가 성공적으로 삭제되었습니다.");
+        // 도서 정보 가져오기
+        Optional<Book> bookOptional = bookService.findById(bookId);
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+
+            // 이미지 파일 삭제
+            String imagePath = book.getImagePath();
+            if (imagePath != null && !imagePath.isEmpty()) {
+                String fileSystemPath = "src/main/resources/static" + imagePath;
+                File imageFile = new File(fileSystemPath);
+                if (imageFile.exists() && imageFile.isFile()) {
+                    if (!imageFile.delete()) {
+                        log.warn("이미지 파일 삭제 실패: {}", fileSystemPath);
+                    }
+                } else {
+                    log.warn("이미지 파일이 존재하지 않거나 파일이 아님: {}", fileSystemPath);
+                }
+            }
+
+            // 관련 대출 데이터 삭제
+            rentalService.deleteRentalsByBookId(bookId);
+
+            // 도서 데이터 삭제
+            bookService.deleteById(bookId);
+
+            redirectAttributes.addFlashAttribute("message", "도서와 관련된 대출 데이터 및 이미지 파일이 성공적으로 삭제되었습니다.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "삭제할 도서를 찾을 수 없습니다.");
+        }
+
         return "redirect:/bookList";
     }
+
 
     // 도서 대여에 대한 Get 방식 처리
     @GetMapping("/{bookId}/rental")
