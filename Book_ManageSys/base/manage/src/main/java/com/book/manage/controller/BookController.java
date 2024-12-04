@@ -197,7 +197,7 @@ public class BookController {
         }
 
         Book book = bookService.findById(bookId).orElseThrow();
-        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories());
+        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories(), book.getImagePath());
         model.addAttribute("book", bookEditDto);
         return "book/editBookForm";
     }
@@ -206,6 +206,7 @@ public class BookController {
     public String editBookRes(@PathVariable Long bookId,
                               @Validated @ModelAttribute("book") BookEditDto bookEditDto,
                               @RequestParam("categoryFormatted") String categoryFormatted,
+                              @RequestParam("imageFile") MultipartFile imageFile, // 이미지 파일 파라미터 추가
                               Model model,
                               BindingResult bindingResult,
                               RedirectAttributes redirectAttributes,
@@ -231,6 +232,25 @@ public class BookController {
             categories.add(categoryName.trim());  // 각 카테고리명을 Set에 추가
         }
 
+        // 이미지 업로드 처리
+        if (!imageFile.isEmpty()) {
+            String uploadDir = "src/main/resources/static/uploads/images"; // static 폴더 내에 저장
+            try {
+                String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+                Path uploadPath = Paths.get(uploadDir);
+
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                imageFile.transferTo(uploadPath.resolve(fileName));
+                bookEditDto.setImagePath("/uploads/images/" + fileName + "?v=" + UUID.randomUUID()); // 캐시 무효화 쿼리 추가
+            } catch (IOException e) {
+                log.error("Error occurred while uploading image: {}", e.getMessage());
+                model.addAttribute("error", "이미지 업로드에 실패했습니다.");
+                return "book/addBookForm";
+            }
+        }
+
         // 카테고리 중복 검증
         List<String> categoryList = bookEditDto.getCategories().stream()
                 .map(Category::getCate)
@@ -245,11 +265,13 @@ public class BookController {
 
         // Book 객체로 변환하여 저장
         Book book = new Book();
+
         book.setBookId(bookId);
         book.setTitle(bookEditDto.getTitle());
         book.setAuthor(bookEditDto.getAuthor());
         book.setPublisher(bookEditDto.getPublisher());
         book.setDetails(bookEditDto.getDetails());
+        book.setImagePath(bookEditDto.getImagePath());
 
         // 카테고리 처리
         bookService.edit(bookId, bookEditDto);

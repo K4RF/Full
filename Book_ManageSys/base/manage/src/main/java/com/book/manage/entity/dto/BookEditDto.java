@@ -16,15 +16,18 @@ public class BookEditDto {
     private Set<Category> categories = new HashSet<>();  // Set<Category>로 변경
 
 
+    private String imagePath; // 이미지 경로를 저장하는 필드
+
     public BookEditDto() {}
     // 생성자
-    public BookEditDto(Long bookId, String title, String author, String publisher, String details, Set<Category> categories) {
+    public BookEditDto(Long bookId, String title, String author, String publisher, String details, Set<Category> categories, String imagePath) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.details = details;
         this.categories = categories;
+        this.imagePath = imagePath;
     }
 
     public String getCategoryFormatted() {
