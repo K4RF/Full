@@ -125,6 +125,7 @@
         <th>ID</th>
         <th>제목</th>
         <th>저자</th>
+        <th>조회수</th> <!-- 조회수 열 추가 -->
       </tr>
       </thead>
       <tbody>
@@ -133,6 +134,7 @@
         <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.bookId}">포스트 id</a></td>
         <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.title}">제목</a></td>
         <td th:text="${book.author}">저자</td>
+        <td th:text="${book.viewCount}">조회수</td> <!-- 조회수 출력 -->
       </tr>
       </tbody>
     </table>
