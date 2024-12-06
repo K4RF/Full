@@ -111,7 +111,7 @@
             <p><strong>출판사:</strong> <span th:text="${book.publisher}">publisher</span></p>
         </div>
     </div>
-    <p><strong>대출 상태: </strong><span th:text="${rentalAbleBook ? '대출 가능' : '대출중'}">대출상황</span></p>
+    <p><strong>대여 상태: </strong><span th:text="${rentalAbleBook ? '대여 가능' : '대여중'}">대여상황</span></p>
 
     <div class="row">
     <p><strong>카테고리</strong></p>
@@ -184,7 +184,7 @@
                 <form th:if="${rentalAbleBook or (!rentalAbleBook and loginMemberId != rentalMemberId)}"
                       th:action="@{/bookList/{bookId}/rental(bookId=${book.bookId})}"
                       method="post">
-                    <button class="btn btn-primary" type="submit">대출하기</button>
+                    <button class="btn btn-primary" type="submit">대여하기</button>
                 </form>
 
                 <!-- 반납하기 버튼 -->
