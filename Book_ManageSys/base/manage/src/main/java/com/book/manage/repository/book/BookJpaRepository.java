@@ -77,8 +77,6 @@ public class BookJpaRepository implements BookRepository {
                         likeCategory(category) // 카테고리 조건 추가
                 )
                 .fetch();
-
-        log.info("Generated Query Result: {}", result);
         return result;
     }
 
