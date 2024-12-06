@@ -64,7 +64,7 @@ public class BookController {
         List<Book> books = bookService.findBooks(bookSearch);
         model.addAttribute("books", books);
         model.addAttribute("selectedCategory", bookSearch.getCategory()); // 선택된 카테고리 추가
-
+        model.addAttribute("cacheBuster", System.currentTimeMillis()); // 캐시 방지용 무작위 값
         // 로그인 멤버 정보를 모델에 추가 (null일 수도 있음)
         model.addAttribute("loginMember", loginMember);
 

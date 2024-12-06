@@ -122,19 +122,25 @@
     <table class="table">
       <thead>
       <tr>
-        <th>ID</th>
+        <th>이미지</th>
         <th>제목</th>
         <th>저자</th>
-        <th>조회수</th> <!-- 조회수 열 추가 -->
+        <th>조회수</th>
       </tr>
       </thead>
       <tbody>
-      <!-- books 리스트가 비어있지 않을 때 테이블 출력 -->
+      <!-- 도서 리스트 출력 -->
       <tr th:each="book : ${books}" th:if="${!#lists.isEmpty(books)}">
-        <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.bookId}">포스트 id</a></td>
+        <td>
+          <!-- 이미지 클릭 시 상세 페이지로 이동 -->
+          <a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}">
+            <img th:src="@{${book.imagePath} + '?v=' + ${cacheBuster}}"
+            alt="도서 이미지" style="width: 100px; height: auto;"/>
+          </a>
+        </td>
         <td><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.title}">제목</a></td>
         <td th:text="${book.author}">저자</td>
-        <td th:text="${book.viewCount}">조회수</td> <!-- 조회수 출력 -->
+        <td th:text="${book.viewCount}">조회수</td>
       </tr>
       </tbody>
     </table>
