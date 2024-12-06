@@ -64,7 +64,7 @@ public class BookController {
         List<Book> books = bookService.findBooks(bookSearch);
         model.addAttribute("books", books);
         model.addAttribute("selectedCategory", bookSearch.getCategory()); // 선택된 카테고리 추가
-
+        model.addAttribute("cacheBuster", System.currentTimeMillis()); // 캐시 방지용 무작위 값
         // 로그인 멤버 정보를 모델에 추가 (null일 수도 있음)
         model.addAttribute("loginMember", loginMember);
 
@@ -76,6 +76,8 @@ public class BookController {
             @PathVariable long bookId,
             Model model,
             @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        bookService.incrementViewCount(bookId); // 조회수 증가
+
         // 도서 정보 가져오기
         Book book = bookService.findById(bookId).orElseThrow(() -> new IllegalArgumentException("도서를 찾을 수 없습니다."));
 

@@ -36,13 +36,11 @@ public class MemberJpaRepository implements MemberRepository {
 
     @Override
     public Optional<Member> findById(Long memberId) {
-        log.info("Finding member by ID: {}", memberId);
         return Optional.ofNullable(em.find(Member.class, memberId));
     }
 
     @Override
     public Optional<Member> findByLoginId(String loginId) {
-        log.info("Finding member by loginId: {}", loginId);
         QMember member = QMember.member;
 
         return Optional.ofNullable(
@@ -54,20 +52,16 @@ public class MemberJpaRepository implements MemberRepository {
 
     @Override
     public List<Member> findAll() {
-        log.info("Finding all members");
         QMember member = QMember.member;
 
         List<Member> members = query
                 .selectFrom(member)
                 .fetch();
-
-        log.info("Found {} members", members.size());
         return members;
     }
 
     @Override
     public boolean existsByName(String nickname) {
-        log.info("Checking if name exists: {}", nickname);
         QMember member = QMember.member;
 
         return query
@@ -78,7 +72,6 @@ public class MemberJpaRepository implements MemberRepository {
 
     @Override
     public Optional<Member> findByName(String nickname) {
-        log.info("Finding member by nickname: {}", nickname);
         QMember member = QMember.member;
 
         return Optional.ofNullable(

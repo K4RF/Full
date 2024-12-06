@@ -21,7 +21,8 @@ CREATE TABLE book (
                       PUBLISHER VARCHAR(255) NOT NULL,
                       DETAILS TEXT NOT NULL,
                       RENTAL_ABLE_BOOK BOOLEAN DEFAULT TRUE, -- 대출 가능 여부 필드 추가
-                      IMAGE_PATH VARCHAR(255) -- 이미지 경로 필드 추가
+                      IMAGE_PATH VARCHAR(255), -- 이미지 경로 필드 추가
+                      view_count INT DEFAULT 0 -- 조회수 필드 추가
 );
 
 -- 기존 rental 테이블 삭제

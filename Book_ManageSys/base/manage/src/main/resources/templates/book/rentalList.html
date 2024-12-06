@@ -34,29 +34,33 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
+            <!-- 로그인 버튼 -->
             <li class="nav-item" th:if="${loginMember == null}">
                 <a class="nav-link" th:href="@{/login(redirectURL=${redirectURL})}">로그인</a>
             </li>
+            <!-- 로그아웃 버튼 -->
             <li class="nav-item" th:if="${loginMember != null}">
                 <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
                 <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
             </li>
+            <!-- 회원정보 -->
             <li class="nav-item" th:if="${loginMember != null}">
                 <a class="nav-link" th:href="@{/members/edit(redirectURL=${redirectURL})}">회원정보</a>
             </li>
+            <!-- 도서 목록 -->
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/bookList}">도서 목록</a>
+                <a class="nav-link" href="/bookList">도서 목록</a>
             </li>
+            <!-- 대출 목록 -->
             <li class="nav-item" th:if="${loginMember != null}">
-                <a class="nav-link" th:href="@{/rentalList}">대출 현황 조회</a>
+                <a class="nav-link" th:href="@{/rentalList}">도서 대여 현황 조회</a>
             </li>
         </ul>
     </div>
 </nav>
-
 <div class="container mt-5" style="max-width: 600px">
     <div class="py-5 text-center">
-        <h2>대출 목록</h2>
+        <h2>도서 대여 목록</h2>
     </div>
 
     <!-- 검색 폼 -->
@@ -80,9 +84,9 @@
             <tr>
                 <th>#</th>
                 <th>도서 제목</th>
-                <th>대출 날짜</th>
+                <th>대여 날짜</th>
                 <th>반납 날짜</th>
-                <th>대출 상태</th>
+                <th>대여 상태</th>
             </tr>
             </thead>
             <tbody>
@@ -91,7 +95,7 @@
                 <td th:text="${iterStat.index + 1}"></td>
                 <td th:text="${rental.book.title}"></td>
                 <td th:text="${rental.rentalDate}"></td>
-                <td th:text="${rental.returnDate != null ? rental.returnDate : '미반납'}"></td>
+                <td th:text="${rental.returnDate != null ? rental.returnDate : '반납전'}"></td>
                 <td th:text="${rental.rentalStatus}"></td>
             </tr>
             </tbody>

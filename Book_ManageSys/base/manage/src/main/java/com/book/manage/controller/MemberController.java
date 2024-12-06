@@ -17,6 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -239,6 +241,20 @@ public class MemberController {
             redirectAttributes.addFlashAttribute("error", "회원 탈퇴 중 오류가 발생했습니다.");
             return "redirect:/members/edit";  // 에러 발생 시 수정 페이지로 리디렉션
         }
+    }
+
+    @GetMapping("/checkLoginId")
+    @ResponseBody
+    public Map<String, Boolean> checkLoginId(@RequestParam("value") String loginId) {
+        boolean exists = memberRepository.findByLoginId(loginId).isPresent();
+        return Collections.singletonMap("exists", exists);
+    }
+
+    @GetMapping("/checkNickname")
+    @ResponseBody
+    public Map<String, Boolean> checkNickname(@RequestParam("value") String nickname) {
+        boolean exists = memberRepository.findByName(nickname).isPresent();
+        return Collections.singletonMap("exists", exists);
     }
 
 }
