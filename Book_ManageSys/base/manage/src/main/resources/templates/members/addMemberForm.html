@@ -99,8 +99,12 @@
 
         <div class="mb-3">
             <label for="loginId" class="form-label">로그인 ID</label>
-            <input type="text" id="loginId" th:field="*{loginId}" class="form-control"
-                   th:classappend="${#fields.hasErrors('loginId')} ? 'is-invalid' : ''">
+            <div class="input-group">
+                <input type="text" id="loginId" th:field="*{loginId}" class="form-control"
+                       th:classappend="${#fields.hasErrors('loginId')} ? 'is-invalid' : ''">
+                <button type="button" class="btn btn-outline-secondary"
+                        th:onclick="|checkDuplicate('/members/checkLoginId', 'loginId')|">중복 확인</button>
+            </div>
             <div class="field-error" th:errors="*{loginId}"></div>
         </div>
 
@@ -113,8 +117,12 @@
 
         <div class="mb-3">
             <label for="nickname" class="form-label">닉네임</label>
-            <input type="text" id="nickname" th:field="*{nickname}" class="form-control"
-                   th:classappend="${#fields.hasErrors('nickname')} ? 'is-invalid' : ''">
+            <div class="input-group">
+                <input type="text" id="nickname" th:field="*{nickname}" class="form-control"
+                       th:classappend="${#fields.hasErrors('nickname')} ? 'is-invalid' : ''">
+                <button type="button" class="btn btn-outline-secondary"
+                        th:onclick="|checkDuplicate('/members/checkNickname', 'nickname')|">중복 확인</button>
+            </div>
             <div class="field-error" th:errors="*{nickname}"></div>
         </div>
 
@@ -133,6 +141,29 @@
     </form>
 
 </div> <!-- /container -->
+
+<script>
+    function checkDuplicate(url, fieldId) {
+        const value = document.getElementById(fieldId).value;
+        if (!value) {
+            alert("값을 입력해주세요.");
+            return;
+        }
+
+        fetch(`${url}?value=${value}`, { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    alert("이미 사용 중입니다.");
+                } else {
+                }
+            })
+            .catch(error => {
+                console.error("중복 확인 오류:", error);
+                alert("중복 확인 중 오류가 발생했습니다.");
+            });
+    }
+</script>
 
 <!-- footer -->
 <div class="footer">
