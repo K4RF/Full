@@ -1,174 +1,205 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8">
-    <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .field-error {
-            color: #dc3545;
-            font-size: 0.875rem;
-        }
-        .form-control.is-invalid {
-            border-color: #dc3545;
-        }
-        .btn {
-            font-size: 1.125rem;
-            padding: 10px 20px;
-        }
-        .btn-lg {
-            padding: 12px;
-        }
-        hr {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        /* 페이지 전체 높이를 최소 화면 높이로 설정 */
-        html, body {
-            height: 100%;
-            margin: 0;
-            position: relative;
-            overflow-x: hidden; /* 가로 스크롤 제거 */
+    <!DOCTYPE HTML>
+    <html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            .field-error {
+                color: #dc3545;
+                font-size: 0.875rem;
+            }
+            .form-control.is-invalid {
+                border-color: #dc3545;
+            }
+            .btn {
+                font-size: 1.125rem;
+                padding: 10px 20px;
+            }
+            .btn-lg {
+                padding: 12px;
+            }
+            hr {
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            /* 페이지 전체 높이를 최소 화면 높이로 설정 */
+            html, body {
+                height: 100%;
+                margin: 0;
+                position: relative;
+                overflow-x: hidden; /* 가로 스크롤 제거 */
+            }
+
+            /* .container에 최소 높이와 padding 설정 */
+            .container {
+                max-width: 560px;
+                min-height: calc(100vh - 100px); /* 화면 높이에서 footer 높이를 뺀 만큼 */
+                padding-bottom: 60px; /* Give some space for the footer */
+                box-sizing: border-box;
+            }
+
+            /* footer를 하단에 고정하되, 스크롤이 가능하도록 설정 */
+            .footer {
+                background-color: #f8f9fa;
+                color: #333;
+                text-align: center;
+                padding: 20px 0;
+                position: relative; /* absolute에서 relative로 변경 */
+                bottom: 0;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body><nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">Book Manage</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <!-- 로그인 버튼 -->
+                <li class="nav-item" th:if="${loginMember == null}">
+                    <a class="nav-link" th:href="@{/login(redirectURL=${redirectURL})}">로그인</a>
+                </li>
+                <!-- 로그아웃 버튼 -->
+                <li class="nav-item" th:if="${loginMember != null}">
+                    <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
+                    <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
+                </li>
+                <!-- 회원정보 -->
+                <li class="nav-item" th:if="${loginMember != null}">
+                    <a class="nav-link" th:href="@{/members/edit(redirectURL=${redirectURL})}">회원정보</a>
+                </li>
+                <!-- 도서 목록 -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/bookList">도서 목록</a>
+                </li>
+                <!-- 대출 목록 -->
+                <li class="nav-item" th:if="${loginMember != null}">
+                    <a class="nav-link" th:href="@{/rentalList}">도서 대여 현황 조회</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+
+        <div class="py-5 text-center">
+            <h2>회원 가입</h2>
+        </div>
+
+        <h4 class="mb-3">회원 정보 입력</h4>
+
+        <form th:action="@{/members/add}" th:object="${member}" method="post">
+
+            <!-- 글로벌 오류 메시지 표시 -->
+            <div th:if="${#fields.hasGlobalErrors()}">
+                <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
+            </div>
+
+            <div class="mb-3">
+                <label for="loginId" class="form-label">로그인 ID</label>
+                <div class="input-group">
+                    <input type="text" id="loginId" th:field="*{loginId}" class="form-control"
+                           th:classappend="${#fields.hasErrors('loginId')} ? 'is-invalid' : ''">
+                    <button type="button" class="btn btn-outline-secondary"
+                            th:onclick="|checkDuplicate('/members/checkLoginId', 'loginId')|">중복 확인</button>
+                </div>
+                <div class="field-error" th:errors="*{loginId}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">비밀번호</label>
+                <input type="password" id="password" th:field="*{password}" class="form-control"
+                       th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
+                <div class="field-error" th:errors="*{password}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="nickname" class="form-label">닉네임</label>
+                <div class="input-group">
+                    <input type="text" id="nickname" th:field="*{nickname}" class="form-control"
+                           th:classappend="${#fields.hasErrors('nickname')} ? 'is-invalid' : ''">
+                    <button type="button" class="btn btn-outline-secondary"
+                            th:onclick="|checkDuplicate('/members/checkNickname', 'nickname')|">중복 확인</button>
+                </div>
+                <div class="field-error" th:errors="*{nickname}"></div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="row">
+                <div class="col">
+                    <button class="w-100 btn btn-primary btn-lg" type="submit">회원 가입</button>
+                </div>
+                <div class="col">
+                    <button class="w-100 btn btn-secondary btn-lg" th:onclick="|location.href='@{/login}'|"
+                            type="button">취소</button>
+                </div>
+            </div>
+
+        </form>
+
+    </div> <!-- /container -->
+
+    <script>
+        // 중복 확인 상태 변수
+        let isLoginIdChecked = false;
+        let isNicknameChecked = false;
+
+        // 중복 확인 로직
+        function checkDuplicate(url, fieldId) {
+            const value = document.getElementById(fieldId).value;
+            if (!value) {
+                alert("값을 입력해주세요.");
+                return;
+            }
+
+            fetch(`${url}?value=${value}`, { method: 'GET' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        alert("이미 사용 중입니다.");
+                        // 해당 필드의 중복 확인 상태를 false로 설정
+                        if (fieldId === "loginId") {
+                            isLoginIdChecked = false;
+                        } else if (fieldId === "nickname") {
+                            isNicknameChecked = false;
+                        }
+                    } else {
+                        alert("사용 가능합니다.");
+                        // 해당 필드의 중복 확인 상태를 true로 설정
+                        if (fieldId === "loginId") {
+                            isLoginIdChecked = true;
+                        } else if (fieldId === "nickname") {
+                            isNicknameChecked = true;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error("중복 확인 오류:", error);
+                    alert("중복 확인 중 오류가 발생했습니다.");
+                });
         }
 
-        /* .container에 최소 높이와 padding 설정 */
-        .container {
-            max-width: 560px;
-            min-height: calc(100vh - 100px); /* 화면 높이에서 footer 높이를 뺀 만큼 */
-            padding-bottom: 60px; /* Give some space for the footer */
-            box-sizing: border-box;
-        }
+        // 폼 제출 시 중복 확인 여부 체크
+        document.querySelector("form").addEventListener("submit", function (event) {
+            if (!isLoginIdChecked) {
+                alert("로그인 ID 중복 확인을 완료해주세요.");
+                event.preventDefault(); // 폼 제출 방지
+                return;
+            }
+            if (!isNicknameChecked) {
+                alert("닉네임 중복 확인을 완료해주세요.");
+                event.preventDefault(); // 폼 제출 방지
+            }
+        });
+    </script>
 
-        /* footer를 하단에 고정하되, 스크롤이 가능하도록 설정 */
-        .footer {
-            background-color: #f8f9fa;
-            color: #333;
-            text-align: center;
-            padding: 20px 0;
-            position: relative; /* absolute에서 relative로 변경 */
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
-</head>
-<body><nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">Book Manage</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <!-- 로그인 버튼 -->
-            <li class="nav-item" th:if="${loginMember == null}">
-                <a class="nav-link" th:href="@{/login(redirectURL=${redirectURL})}">로그인</a>
-            </li>
-            <!-- 로그아웃 버튼 -->
-            <li class="nav-item" th:if="${loginMember != null}">
-                <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
-                <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
-            </li>
-            <!-- 회원정보 -->
-            <li class="nav-item" th:if="${loginMember != null}">
-                <a class="nav-link" th:href="@{/members/edit(redirectURL=${redirectURL})}">회원정보</a>
-            </li>
-            <!-- 도서 목록 -->
-            <li class="nav-item">
-                <a class="nav-link" href="/bookList">도서 목록</a>
-            </li>
-            <!-- 대출 목록 -->
-            <li class="nav-item" th:if="${loginMember != null}">
-                <a class="nav-link" th:href="@{/rentalList}">도서 대여 현황 조회</a>
-            </li>
-        </ul>
+    <!-- footer -->
+    <div class="footer">
+        <p>Created by Kaarf_o</p>
+        <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
     </div>
-</nav>
-<div class="container">
-
-    <div class="py-5 text-center">
-        <h2>회원 가입</h2>
-    </div>
-
-    <h4 class="mb-3">회원 정보 입력</h4>
-
-    <form th:action="@{/members/add}" th:object="${member}" method="post">
-
-        <!-- 글로벌 오류 메시지 표시 -->
-        <div th:if="${#fields.hasGlobalErrors()}">
-            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
-        </div>
-
-        <div class="mb-3">
-            <label for="loginId" class="form-label">로그인 ID</label>
-            <div class="input-group">
-                <input type="text" id="loginId" th:field="*{loginId}" class="form-control"
-                       th:classappend="${#fields.hasErrors('loginId')} ? 'is-invalid' : ''">
-                <button type="button" class="btn btn-outline-secondary"
-                        th:onclick="|checkDuplicate('/members/checkLoginId', 'loginId')|">중복 확인</button>
-            </div>
-            <div class="field-error" th:errors="*{loginId}"></div>
-        </div>
-
-        <div class="mb-3">
-            <label for="password" class="form-label">비밀번호</label>
-            <input type="password" id="password" th:field="*{password}" class="form-control"
-                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
-            <div class="field-error" th:errors="*{password}"></div>
-        </div>
-
-        <div class="mb-3">
-            <label for="nickname" class="form-label">닉네임</label>
-            <div class="input-group">
-                <input type="text" id="nickname" th:field="*{nickname}" class="form-control"
-                       th:classappend="${#fields.hasErrors('nickname')} ? 'is-invalid' : ''">
-                <button type="button" class="btn btn-outline-secondary"
-                        th:onclick="|checkDuplicate('/members/checkNickname', 'nickname')|">중복 확인</button>
-            </div>
-            <div class="field-error" th:errors="*{nickname}"></div>
-        </div>
-
-        <hr class="my-4">
-
-        <div class="row">
-            <div class="col">
-                <button class="w-100 btn btn-primary btn-lg" type="submit">회원 가입</button>
-            </div>
-            <div class="col">
-                <button class="w-100 btn btn-secondary btn-lg" th:onclick="|location.href='@{/login}'|"
-                        type="button">취소</button>
-            </div>
-        </div>
-
-    </form>
-
-</div> <!-- /container -->
-
-<script>
-    function checkDuplicate(url, fieldId) {
-        const value = document.getElementById(fieldId).value;
-        if (!value) {
-            alert("값을 입력해주세요.");
-            return;
-        }
-
-        fetch(`${url}?value=${value}`, { method: 'GET' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.exists) {
-                    alert("이미 사용 중입니다.");
-                } else {
-                }
-            })
-            .catch(error => {
-                console.error("중복 확인 오류:", error);
-                alert("중복 확인 중 오류가 발생했습니다.");
-            });
-    }
-</script>
-
-<!-- footer -->
-<div class="footer">
-    <p>Created by Kaarf_o</p>
-    <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
-</div>
-</body>
-</html>
+    </body>
+    </html>

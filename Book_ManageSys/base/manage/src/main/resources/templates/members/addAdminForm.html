@@ -144,6 +144,11 @@
 </div> <!-- /container -->
 
 <script>
+    // 중복 확인 상태 변수
+    let isLoginIdChecked = false;
+    let isNicknameChecked = false;
+
+    // 중복 확인 로직
     function checkDuplicate(url, fieldId) {
         const value = document.getElementById(fieldId).value;
         if (!value) {
@@ -156,7 +161,20 @@
             .then(data => {
                 if (data.exists) {
                     alert("이미 사용 중입니다.");
+                    // 해당 필드의 중복 확인 상태를 false로 설정
+                    if (fieldId === "loginId") {
+                        isLoginIdChecked = false;
+                    } else if (fieldId === "nickname") {
+                        isNicknameChecked = false;
+                    }
                 } else {
+                    alert("사용 가능합니다.");
+                    // 해당 필드의 중복 확인 상태를 true로 설정
+                    if (fieldId === "loginId") {
+                        isLoginIdChecked = true;
+                    } else if (fieldId === "nickname") {
+                        isNicknameChecked = true;
+                    }
                 }
             })
             .catch(error => {
@@ -164,6 +182,19 @@
                 alert("중복 확인 중 오류가 발생했습니다.");
             });
     }
+
+    // 폼 제출 시 중복 확인 여부 체크
+    document.querySelector("form").addEventListener("submit", function (event) {
+        if (!isLoginIdChecked) {
+            alert("로그인 ID 중복 확인을 완료해주세요.");
+            event.preventDefault(); // 폼 제출 방지
+            return;
+        }
+        if (!isNicknameChecked) {
+            alert("닉네임 중복 확인을 완료해주세요.");
+            event.preventDefault(); // 폼 제출 방지
+        }
+    });
 </script>
 <!-- footer -->
 <div class="footer">
