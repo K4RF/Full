@@ -114,6 +114,12 @@ public class BookServiceImpl implements BookService {
 
         }
     }
+    @Transactional
+    public void incrementViewCount(Long bookId) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new NoSuchElementException("Book not found"));
+        book.incrementViewCount();
+        bookRepository.save(book); // 조회수만 업데이트
+    }
 
     public List<Book> findBooks(BookSearchDto searchDto) {
         return bookRepository.findAll(searchDto);

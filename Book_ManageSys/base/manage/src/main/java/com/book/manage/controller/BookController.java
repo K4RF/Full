@@ -76,6 +76,8 @@ public class BookController {
             @PathVariable long bookId,
             Model model,
             @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        bookService.incrementViewCount(bookId); // 조회수 증가
+
         // 도서 정보 가져오기
         Book book = bookService.findById(bookId).orElseThrow(() -> new IllegalArgumentException("도서를 찾을 수 없습니다."));
 

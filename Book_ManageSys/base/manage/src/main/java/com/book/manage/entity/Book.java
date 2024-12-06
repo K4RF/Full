@@ -34,6 +34,8 @@ public class Book {
 
     private String imagePath; // 이미지 경로를 저장하는 필드
 
+    private int viewCount = 0; // 조회수 필드
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "book_category",
@@ -55,6 +57,9 @@ public class Book {
                 .map(String::trim)
                 .map(Category::new)
                 .collect(Collectors.toSet());  // Set으로 변경
+    }
+    public void incrementViewCount() {
+        this.viewCount++;
     }
 
 }
