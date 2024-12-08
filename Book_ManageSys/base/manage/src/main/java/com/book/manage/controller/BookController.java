@@ -7,7 +7,6 @@ import com.book.manage.repository.book.category.CategoryRepository;
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.book.RentalService;
 import com.book.manage.service.book.category.CategoryService;
-import com.book.manage.service.member.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +16,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,7 +64,7 @@ public class BookController {
         List<Book> books = bookService.findBooks(bookSearch);
         model.addAttribute("books", books);
         model.addAttribute("selectedCategory", bookSearch.getCategory()); // 선택된 카테고리 추가
-
+        model.addAttribute("cacheBuster", System.currentTimeMillis()); // 캐시 방지용 무작위 값
         // 로그인 멤버 정보를 모델에 추가 (null일 수도 있음)
         model.addAttribute("loginMember", loginMember);
 
@@ -71,6 +76,8 @@ public class BookController {
             @PathVariable long bookId,
             Model model,
             @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        bookService.incrementViewCount(bookId); // 조회수 증가
+
         // 도서 정보 가져오기
         Book book = bookService.findById(bookId).orElseThrow(() -> new IllegalArgumentException("도서를 찾을 수 없습니다."));
 
@@ -103,6 +110,7 @@ public class BookController {
         model.addAttribute("rentalAbleBook", book.getRentalAbleBook()); // rentalAbleBook 값을 모델에 추가
         model.addAttribute("rentalMemberId", rentalMemberId);
         model.addAttribute("loginMemberId", loginMemberId); // 로그인된 사용자 ID 추가
+        model.addAttribute("cacheBuster", System.currentTimeMillis()); // 캐시 방지용 무작위 값
         model.addAttribute("sortedCategories", sortedCategories);
 
         return "/book/bookInfo";
@@ -115,7 +123,7 @@ public class BookController {
             String redirectUrl = request.getRequestURI();
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
-        if(loginMember.getRole() != Role.ADMIN) {
+        if (loginMember.getRole() != Role.ADMIN) {
             return "/book/returnBook";
         }
 
@@ -128,7 +136,11 @@ public class BookController {
     @PostMapping("/add")
     public String addBook(@ModelAttribute("book") @Valid Book book,
                           @RequestParam("categoriesFormatted") String categoriesFormatted,
-                          Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request)  {
+                          @RequestParam("imageFile") MultipartFile imageFile, // 이미지 파일 파라미터 추가
+                          Model model, BindingResult bindingResult,
+                          RedirectAttributes redirectAttributes,
+                          @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                          HttpServletRequest request) {
 
         // 도서 대출 가능 상태: 기본값
         book.setRentalAbleBook(true); // 기본값을 true로 설정
@@ -141,11 +153,29 @@ public class BookController {
             categories.add(categoryName.trim());  // 각 카테고리명을 Set에 추가
         }
 
+        // 이미지 업로드 처리
+        if (!imageFile.isEmpty()) {
+            String uploadDir = "src/main/resources/static/uploads/images"; // static 폴더 내에 저장
+            try {
+                String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+                Path uploadPath = Paths.get(uploadDir);
+
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                imageFile.transferTo(uploadPath.resolve(fileName));
+                book.setImagePath("/uploads/images/" + fileName + "?v=" + UUID.randomUUID()); // 캐시 무효화 쿼리 추가
+            } catch (IOException e) {
+                log.error("Error occurred while uploading image: {}", e.getMessage());
+                model.addAttribute("error", "이미지 업로드에 실패했습니다.");
+                return "book/addBookForm";
+            }
+        }
+
         // 도서 저장 및 카테고리 처리
         try {
             Book savedBook = bookService.save(book, categories);
-            // 책 ID로 렌탈 상태 가져오기 (렌탈 서비스에서 상태 조회)
-            String rentalStatus = rentalService.getRentalStatusByBookId(savedBook.getBookId()); // bookId를 기반으로 렌탈 상태를 확인
+            String rentalStatus = rentalService.getRentalStatusByBookId(savedBook.getBookId()); // bookId를 기반으로 렌탈 상태 확인
             redirectAttributes.addAttribute("bookId", savedBook.getBookId());
             redirectAttributes.addAttribute("status", true);
             redirectAttributes.addAttribute("rentalStatus", rentalStatus); // 렌탈 상태 추가
@@ -170,7 +200,7 @@ public class BookController {
         }
 
         Book book = bookService.findById(bookId).orElseThrow();
-        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories());
+        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories(), book.getImagePath());
         model.addAttribute("book", bookEditDto);
         return "book/editBookForm";
     }
@@ -179,6 +209,7 @@ public class BookController {
     public String editBookRes(@PathVariable Long bookId,
                               @Validated @ModelAttribute("book") BookEditDto bookEditDto,
                               @RequestParam("categoryFormatted") String categoryFormatted,
+                              @RequestParam("imageFile") MultipartFile imageFile, // 이미지 파일 파라미터 추가
                               Model model,
                               BindingResult bindingResult,
                               RedirectAttributes redirectAttributes,
@@ -204,6 +235,25 @@ public class BookController {
             categories.add(categoryName.trim());  // 각 카테고리명을 Set에 추가
         }
 
+        // 이미지 업로드 처리
+        if (!imageFile.isEmpty()) {
+            String uploadDir = "src/main/resources/static/uploads/images"; // static 폴더 내에 저장
+            try {
+                String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+                Path uploadPath = Paths.get(uploadDir);
+
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                imageFile.transferTo(uploadPath.resolve(fileName));
+                bookEditDto.setImagePath("/uploads/images/" + fileName + "?v=" + UUID.randomUUID()); // 캐시 무효화 쿼리 추가
+            } catch (IOException e) {
+                log.error("Error occurred while uploading image: {}", e.getMessage());
+                model.addAttribute("error", "이미지 업로드에 실패했습니다.");
+                return "book/addBookForm";
+            }
+        }
+
         // 카테고리 중복 검증
         List<String> categoryList = bookEditDto.getCategories().stream()
                 .map(Category::getCate)
@@ -218,11 +268,13 @@ public class BookController {
 
         // Book 객체로 변환하여 저장
         Book book = new Book();
+
         book.setBookId(bookId);
         book.setTitle(bookEditDto.getTitle());
         book.setAuthor(bookEditDto.getAuthor());
         book.setPublisher(bookEditDto.getPublisher());
         book.setDetails(bookEditDto.getDetails());
+        book.setImagePath(bookEditDto.getImagePath());
 
         // 카테고리 처리
         bookService.edit(bookId, bookEditDto);
@@ -247,21 +299,55 @@ public class BookController {
 
         return "redirect:/bookList/" + bookId; // 삭제는 POST 요청으로만 허용
     }
+    // 도서 삭제
     @PostMapping("/{bookId}/delete")
-    public String deleteBook(@PathVariable Long bookId, RedirectAttributes redirectAttributes, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+    public String deleteBook(@PathVariable Long bookId,
+                             RedirectAttributes redirectAttributes,
+                             @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        // 로그인 체크 및 리디렉션 처리
         String redirect = handleLoginRedirect(loginMember, bookId);
         if (redirect != null) {
             return redirect;
         }
-        if(loginMember.getRole() != Role.ADMIN) {
+
+        // 관리자 권한 체크
+        if (loginMember.getRole() != Role.ADMIN) {
             return "/book/returnBook";
         }
 
-        rentalService.deleteRentalsByBookId(bookId);
-        bookService.deleteById(bookId);
-        redirectAttributes.addFlashAttribute("message", "도서와 관련된 대출 데이터가 성공적으로 삭제되었습니다.");
+        // 도서 정보 가져오기
+        Optional<Book> bookOptional = bookService.findById(bookId);
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+
+            // 이미지 파일 삭제
+            String imagePath = book.getImagePath();
+            if (imagePath != null && !imagePath.isEmpty()) {
+                String fileSystemPath = "src/main/resources/static" + imagePath;
+                File imageFile = new File(fileSystemPath);
+                if (imageFile.exists() && imageFile.isFile()) {
+                    if (!imageFile.delete()) {
+                        log.warn("이미지 파일 삭제 실패: {}", fileSystemPath);
+                    }
+                } else {
+                    log.warn("이미지 파일이 존재하지 않거나 파일이 아님: {}", fileSystemPath);
+                }
+            }
+
+            // 관련 대출 데이터 삭제
+            rentalService.deleteRentalsByBookId(bookId);
+
+            // 도서 데이터 삭제
+            bookService.deleteById(bookId);
+
+            redirectAttributes.addFlashAttribute("message", "도서와 관련된 대출 데이터 및 이미지 파일이 성공적으로 삭제되었습니다.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "삭제할 도서를 찾을 수 없습니다.");
+        }
+
         return "redirect:/bookList";
     }
+
 
     // 도서 대여에 대한 Get 방식 처리
     @GetMapping("/{bookId}/rental")

@@ -42,6 +42,13 @@
             max-width: 560px;
             padding-bottom: 60px; /* footer 공간 확보 */
         }
+        img {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body>
@@ -72,7 +79,7 @@
             </li>
             <!-- 대출 목록 -->
             <li class="nav-item" th:if="${loginMember != null}">
-                <a class="nav-link" th:href="@{/rentalList}">대출 현황 조회</a>
+                <a class="nav-link" th:href="@{/rentalList}">도서 대여 현황 조회</a>
             </li>
         </ul>
     </div>
@@ -91,6 +98,9 @@
         <span th:text="${error}"></span>
     </div>
     <h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
+    <div>
+        <img th:src="@{${book.imagePath} + '?v=' + ${cacheBuster}}" alt="Book Image">
+    </div>
     <div class="row">
         <div class="col-md-6">
             <p><strong>저자:</strong> <span th:text="${book.author}">author</span></p>
@@ -101,7 +111,7 @@
             <p><strong>출판사:</strong> <span th:text="${book.publisher}">publisher</span></p>
         </div>
     </div>
-    <p><strong>대출 상태: </strong><span th:text="${rentalAbleBook ? '대출 가능' : '대출중'}">대출상황</span></p>
+    <p><strong>대여 상태: </strong><span th:text="${rentalAbleBook ? '대여 가능' : '대여중'}">대여상황</span></p>
 
     <div class="row">
     <p><strong>카테고리</strong></p>
@@ -174,7 +184,7 @@
                 <form th:if="${rentalAbleBook or (!rentalAbleBook and loginMemberId != rentalMemberId)}"
                       th:action="@{/bookList/{bookId}/rental(bookId=${book.bookId})}"
                       method="post">
-                    <button class="btn btn-primary" type="submit">대출하기</button>
+                    <button class="btn btn-primary" type="submit">대여하기</button>
                 </form>
 
                 <!-- 반납하기 버튼 -->
