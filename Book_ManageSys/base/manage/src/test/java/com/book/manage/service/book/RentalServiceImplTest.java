@@ -6,6 +6,7 @@ import com.book.manage.entity.Rental;
 import com.book.manage.repository.book.BookRepository;
 import com.book.manage.repository.book.rental.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
+import com.book.manage.service.book.rental.RentalServiceImpl;
 import com.book.manage.service.member.MemberService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;

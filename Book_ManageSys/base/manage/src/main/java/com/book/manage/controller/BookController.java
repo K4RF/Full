@@ -5,7 +5,7 @@ import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.repository.book.category.CategoryRepository;
 import com.book.manage.service.book.BookService;
-import com.book.manage.service.book.RentalService;
+import com.book.manage.service.book.rental.RentalService;
 import com.book.manage.service.book.category.CategoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

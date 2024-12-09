@@ -11,8 +11,8 @@ import com.book.manage.repository.member.MemberRepository;
 
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.book.BookServiceImpl;
-import com.book.manage.service.book.RentalService;
-import com.book.manage.service.book.RentalServiceImpl;
+import com.book.manage.service.book.rental.RentalService;
+import com.book.manage.service.book.rental.RentalServiceImpl;
 import com.book.manage.service.book.category.CategoryService;
 import com.book.manage.service.book.category.CategoryServiceImpl;
 import com.book.manage.service.member.MemberService;
