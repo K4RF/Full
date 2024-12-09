@@ -5,7 +5,7 @@ import com.book.manage.entity.Member;
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.dto.RentalSearchDto;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.RentalRepository;
+import com.book.manage.repository.book.rental.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

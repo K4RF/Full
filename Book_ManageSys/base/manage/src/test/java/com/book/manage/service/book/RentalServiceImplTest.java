@@ -4,7 +4,7 @@ import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.Rental;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.RentalRepository;
+import com.book.manage.repository.book.rental.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
 import com.book.manage.service.member.MemberService;
 import jakarta.persistence.EntityNotFoundException;

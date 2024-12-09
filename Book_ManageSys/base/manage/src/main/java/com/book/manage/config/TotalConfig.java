@@ -2,8 +2,8 @@ package com.book.manage.config;
 
 import com.book.manage.repository.book.BookJpaRepository;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.RentalJpaRepository;
-import com.book.manage.repository.book.RentalRepository;
+import com.book.manage.repository.book.rental.RentalJpaRepository;
+import com.book.manage.repository.book.rental.RentalRepository;
 import com.book.manage.repository.book.category.CategoryRepository;
 import com.book.manage.repository.book.category.CategoryJpaRepository;
 import com.book.manage.repository.member.MemberJpaRepository;
