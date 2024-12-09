@@ -9,6 +9,7 @@ import com.book.manage.repository.book.BookRepository;
 import com.book.manage.repository.book.category.CategoryRepository;
 import com.book.manage.service.book.category.CategoryService;
 import com.book.manage.service.book.category.CategoryServiceImpl;
+import com.book.manage.service.book.comment.CommentService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final CategoryService categoryService;
     private final CategoryRepository categoryRepository;
+    private final CommentService commentService;
 
     @Override
     public Book save(Book book, Set<String> categories) {
@@ -106,6 +108,10 @@ public class BookServiceImpl implements BookService {
 
             // 카테고리 삭제
             categoryService.delete(bookId);
+
+            // 댓글 삭제
+            commentService.deleteByBookId(bookId);
+
             // 도서 삭제
             bookRepository.deleteById(bookId);
             log.info("Successfully deleted member with ID: {} and updated their posts to 'deleteUser'", bookId);
