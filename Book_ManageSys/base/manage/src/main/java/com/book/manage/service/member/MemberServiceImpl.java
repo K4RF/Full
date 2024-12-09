@@ -1,12 +1,10 @@
 package com.book.manage.service.member;
 
-import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.Role;
 import com.book.manage.entity.dto.MemberEditDto;
-import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.RentalRepository;
+import com.book.manage.repository.book.rental.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;

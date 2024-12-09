@@ -2,8 +2,10 @@ package com.book.manage.config;
 
 import com.book.manage.repository.book.BookJpaRepository;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.RentalJpaRepository;
-import com.book.manage.repository.book.RentalRepository;
+import com.book.manage.repository.book.comment.CommentJpaRepository;
+import com.book.manage.repository.book.comment.CommentRepository;
+import com.book.manage.repository.book.rental.RentalJpaRepository;
+import com.book.manage.repository.book.rental.RentalRepository;
 import com.book.manage.repository.book.category.CategoryRepository;
 import com.book.manage.repository.book.category.CategoryJpaRepository;
 import com.book.manage.repository.member.MemberJpaRepository;
@@ -11,8 +13,10 @@ import com.book.manage.repository.member.MemberRepository;
 
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.book.BookServiceImpl;
-import com.book.manage.service.book.RentalService;
-import com.book.manage.service.book.RentalServiceImpl;
+import com.book.manage.service.book.comment.CommentService;
+import com.book.manage.service.book.comment.CommentServiceImpl;
+import com.book.manage.service.book.rental.RentalService;
+import com.book.manage.service.book.rental.RentalServiceImpl;
 import com.book.manage.service.book.category.CategoryService;
 import com.book.manage.service.book.category.CategoryServiceImpl;
 import com.book.manage.service.member.MemberService;
@@ -67,5 +71,15 @@ public class TotalConfig {
     @Bean
     public CategoryService categoryService() {
         return new CategoryServiceImpl(categoryRepository());
+    }
+
+    @Bean
+    public CommentRepository commentRepository(){
+        return new CommentJpaRepository(em);
+    }
+
+    @Bean
+    public CommentService commentService(){
+        return new CommentServiceImpl(commentRepository(), bookRepository());
     }
 }

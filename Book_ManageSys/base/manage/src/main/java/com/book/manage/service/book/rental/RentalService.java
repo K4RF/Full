@@ -1,4 +1,4 @@
-package com.book.manage.service.book;
+package com.book.manage.service.book.rental;
 
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.dto.RentalSearchDto;
