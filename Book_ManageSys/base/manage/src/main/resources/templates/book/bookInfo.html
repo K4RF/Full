@@ -203,8 +203,8 @@
             <div th:id="'edit-comment-form-' + ${comment.commentId}" style="display: none; margin-top: 10px;">
                 <form th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/edit'}" method="post">
                     <div>
-                        <label th:for="'newComet-' + ${comment.commentId}">새 댓글 내용</label>
-                        <input type="text" th:id="'newComet-' + ${comment.commentId}" name="newComet" class="form-control" placeholder="새 댓글 내용" required>
+                        <label th:for="'newReview-' + ${comment.commentId}">새 댓글 내용</label>
+                        <input type="text" th:id="'newComet-' + ${comment.commentId}" name="newReview" class="form-control" placeholder="새 댓글 내용" required>
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm mt-2">수정</button>
                 </form>
@@ -235,8 +235,8 @@
                 <input type="text" id="writer" name="writer" class="form-control" th:value="${loginMember.nickname}" readonly />
             </div>
             <div>
-                <label for="comet">댓글 내용</label>
-                <textarea id="comet" name="comet" class="form-control" required></textarea>
+                <label for="review">댓글 내용</label>
+                <textarea id="review" name="review" class="form-control" required></textarea>
             </div>
             <button class="w-100 btn btn-primary btn-lg mt-3" type="submit">댓글 작성</button>
         </form>
