@@ -5,6 +5,7 @@ import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.repository.book.category.CategoryRepository;
 import com.book.manage.service.book.BookService;
+import com.book.manage.service.book.comment.CommentService;
 import com.book.manage.service.book.rental.RentalService;
 import com.book.manage.service.book.category.CategoryService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +36,7 @@ public class BookController {
     private final BookService bookService;
     private final RentalService rentalService;
     private final CategoryService categoryService;
-    private final CategoryRepository categoryRepository;
+    private final CommentService commentService;
 
     // 모든 요청에서 loginMember 모델을 추가
     @ModelAttribute
@@ -103,6 +104,9 @@ public class BookController {
             book.setRentalAbleBook(true); // 대출 가능일 경우 대출 가능
         }
 
+        // 댓글 불러오기
+        List<Comment> comments = commentService.getCommentsByBookId(bookId);
+
         // 모델에 데이터 추가
         model.addAttribute("book", book);
         model.addAttribute("rentalStatus", rentalStatus);
@@ -112,6 +116,7 @@ public class BookController {
         model.addAttribute("loginMemberId", loginMemberId); // 로그인된 사용자 ID 추가
         model.addAttribute("cacheBuster", System.currentTimeMillis()); // 캐시 방지용 무작위 값
         model.addAttribute("sortedCategories", sortedCategories);
+        model.addAttribute("comments", comments);
 
         return "/book/bookInfo";
     }

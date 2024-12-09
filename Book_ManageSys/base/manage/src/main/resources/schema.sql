@@ -64,3 +64,14 @@ CREATE TABLE book_category (
                                FOREIGN KEY (BOOK_ID) REFERENCES book(BOOK_ID) ON DELETE CASCADE,
                                FOREIGN KEY (CATEGORY_ID) REFERENCES category(ID) ON DELETE CASCADE
 );
+
+-- 기존 comment 테이블 삭제
+DROP TABLE IF EXISTS comment CASCADE;
+
+-- comment 테이블 생성
+CREATE TABLE comment (
+                         COMMENT_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+                         BOOK_ID BIGINT NOT NULL,
+                         WRITER VARCHAR(255) NOT NULL,
+                         REVIEW TEXT NOT NULL
+);
