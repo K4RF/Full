@@ -6,12 +6,14 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Repository
+@Transactional
 public class CommentJpaRepository implements CommentRepository{
     private final EntityManager em;
     private final JPAQueryFactory queryFactory;

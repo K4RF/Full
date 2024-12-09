@@ -33,7 +33,7 @@ public class CommentController {
         }
         //댓글 작성
         commentService.addComment(bookId, loginMember.getNickname(), review);
-        return "redirect:/bookList" + bookId;
+        return "redirect:/bookList/" + bookId;
     }
 
     @PostMapping("/{commentId}/edit")
@@ -45,7 +45,7 @@ public class CommentController {
             return "redirect:/login?redirectURL=/bookList/" + bookId;
         }
         commentService.updateComment(commentId, newReview, loginMember.getNickname());
-        return "redirect:/bookList" + bookId;
+        return "redirect:/bookList/" + bookId;
     }
 
     @PostMapping("/{commentId}/delete")
@@ -57,6 +57,6 @@ public class CommentController {
         }
         // 댓글 삭제 로직 실행
         commentService.deleteComment(commentId, loginMember.getNickname());
-        return "redirect:/bookList" + bookId;
+        return "redirect:/bookList/" + bookId;
     }
 }

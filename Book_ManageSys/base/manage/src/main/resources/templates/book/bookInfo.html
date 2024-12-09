@@ -190,7 +190,7 @@
     <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
 
                     <!-- 댓글 삭제 -->
-    <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.id}').submit();|">삭제</a>
+    <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.commentId}').submit();|">삭제</a>
                 </span>
 
                 <!-- 삭제 폼 (POST 메서드로 제출) - 블록 요소를 span 외부에 배치 -->
