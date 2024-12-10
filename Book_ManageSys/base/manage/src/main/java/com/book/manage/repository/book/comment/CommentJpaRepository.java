@@ -67,4 +67,17 @@ public class CommentJpaRepository implements CommentRepository{
     public void delete(Comment comment) {
         em.remove(comment);
     }
+
+    @Override
+    public List<Comment> findByWriter(String writer) {
+        QComment qComment = QComment.comment;
+        log.info("Executing query to find comments by writer: {}", writer);
+
+        List<Comment> results = queryFactory.selectFrom(qComment)
+                .where(qComment.writer.eq(writer))
+                .fetch();
+
+        log.info("Query executed successfully, found {} comments for writer: {}", results.size(), writer);
+        return results;
+    }
 }

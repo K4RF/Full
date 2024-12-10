@@ -52,4 +52,9 @@ public class CommentServiceImpl implements CommentService{
         }
         commentRepository.delete(comment);
     }
+
+    @Override
+    public List<Comment> getCommentsByWriter(String writer) {
+        return commentRepository.findByWriter(writer);
+    }
 }

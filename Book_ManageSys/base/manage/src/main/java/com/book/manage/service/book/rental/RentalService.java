@@ -17,4 +17,5 @@ public interface RentalService {
     Rental findActiveRentalByBookId(Long bookId);
     void deleteRentalsByBookId(Long bookId);
     List<Rental> findRentals(RentalSearchDto searchParam);
+    void deleteRentalsByMemberId(Long memberId);
 }

@@ -1,6 +1,7 @@
 package com.book.manage.service.book.rental;
 
 import com.book.manage.entity.Book;
+import com.book.manage.entity.Comment;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.dto.RentalSearchDto;
@@ -135,5 +136,13 @@ public class RentalServiceImpl implements RentalService {
     @Override
     public List<Rental> findRentals(RentalSearchDto searchParam) {
         return rentalRepository.findAll(searchParam);
+    }
+
+    @Override
+    public void deleteRentalsByMemberId(Long memberId) {
+        List<Rental> rentals = rentalRepository.findByMemberMemberId(memberId); // 책 ID로 대출 목록 조회
+        for (Rental rental : rentals) {
+            rentalRepository.delete(rental); // 대출 기록 삭제
+        }
     }
 }

@@ -15,4 +15,7 @@ public interface CommentRepository {
     Optional<Comment> findById(Long commentId); // 댓글 ID 로 조회
 
     void delete(Comment comment);   // 댓글 삭제
+
+    List<Comment> findByWriter(String writer);  // 사용자로 댓글 조회
+
 }
