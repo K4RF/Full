@@ -16,4 +16,7 @@ public interface CommentService {
 
     // 댓글 삭제
     void deleteComment(Long commentId, String loginMemberNickname);
+
+    // 사용자로 댓글 조회
+    List<Comment> getCommentsByWriter(String writer);
 }
