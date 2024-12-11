@@ -152,11 +152,21 @@
     </div>
     <div class="form-group">
       <label class="form-header">카테고리</label>
-      <input type="hidden" id="categoryFormatted" th:field="*{categoryFormatted}" class="form-control">
+      <!-- 히든 필드 -->
+      <input type="hidden" id="categoryFormatted" th:field="*{categoryFormatted}" class="form-control"
+             th:classappend="${#fields.hasErrors('categoryFormatted')} ? 'is-invalid' : ''">
+
+      <!-- 카테고리 버튼 그룹 -->
       <div id="category-buttons">
         <button type="button" class="btn btn-outline-primary category-btn" data-category="소설">소설</button>
         <button type="button" class="btn btn-outline-primary category-btn" data-category="역사">역사</button>
+        <button type="button" class="btn btn-outline-primary category-btn" data-category="과학">과학</button>
+        <button type="button" class="btn btn-outline-primary category-btn" data-category="기술">기술</button>
+        <button type="button" class="btn btn-outline-primary category-btn" data-category="예술">예술</button>
       </div>
+
+      <!-- 카테고리 오류 메시지 -->
+      <div class="text-danger" th:if="${#fields.hasErrors('categoryFormatted')}" th:errors="*{categoryFormatted}"></div>
     </div>
     <div class="form-group">
       <label for="details" class="form-header">내용</label>

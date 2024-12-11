@@ -231,6 +231,9 @@ public class BookController {
             return "book/editBookForm";
         }
 
+        // 기존 도서 데이터 가져오기
+        Book existingBook = bookService.findById(bookId).orElseThrow();
+
         // 카테고리 입력값을 쉼표로 구분하여 Set<String>으로 변환
         Set<String> categories = new HashSet<>();
         String[] categoryNames = categoryFormatted.split(",");
@@ -253,14 +256,20 @@ public class BookController {
             } catch (IOException e) {
                 log.error("Error occurred while uploading image: {}", e.getMessage());
                 model.addAttribute("error", "이미지 업로드에 실패했습니다.");
-                return "book/addBookForm";
+                return "book/editBookForm";
             }
+        } else {
+            // 이미지 파일이 없으면 기존 경로 유지
+            bookEditDto.setImagePath(existingBook.getImagePath());
+        }
+
+        // 발행일자가 입력되지 않았을 경우 기존 값 유지
+        if (bookEditDto.getPublishDate() == null) {
+            bookEditDto.setPublishDate(existingBook.getPublishDate());
         }
 
         // 카테고리 중복 검증
-        List<String> categoryList = bookEditDto.getCategories().stream()
-                .map(Category::getCate)
-                .collect(Collectors.toList());
+        List<String> categoryList = categories.stream().collect(Collectors.toList());
         if (categoryService.hasDuplicateCates(categoryList)) {
             bindingResult.rejectValue("categoryFormatted", "duplicateCates", "중복된 카테고리가 있습니다.");
         }
@@ -269,16 +278,13 @@ public class BookController {
             return "book/editBookForm";
         }
 
-        // Book 객체로 변환하여 저장
-        Book book = new Book();
-
-        book.setBookId(bookId);
-        book.setTitle(bookEditDto.getTitle());
-        book.setAuthor(bookEditDto.getAuthor());
-        book.setPublisher(bookEditDto.getPublisher());
-        book.setDetails(bookEditDto.getDetails());
-        book.setImagePath(bookEditDto.getImagePath());
-        book.setPublishDate(bookEditDto.getPublishDate());
+        // Book 객체 업데이트
+        existingBook.setTitle(bookEditDto.getTitle());
+        existingBook.setAuthor(bookEditDto.getAuthor());
+        existingBook.setPublisher(bookEditDto.getPublisher());
+        existingBook.setDetails(bookEditDto.getDetails());
+        existingBook.setImagePath(bookEditDto.getImagePath());
+        existingBook.setPublishDate(bookEditDto.getPublishDate());
 
         // 카테고리 처리
         bookService.edit(bookId, bookEditDto);
