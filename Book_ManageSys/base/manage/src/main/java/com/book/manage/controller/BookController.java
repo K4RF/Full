@@ -278,6 +278,7 @@ public class BookController {
         book.setPublisher(bookEditDto.getPublisher());
         book.setDetails(bookEditDto.getDetails());
         book.setImagePath(bookEditDto.getImagePath());
+        book.setPublishDate(bookEditDto.getPublishDate());
 
         // 카테고리 처리
         bookService.edit(bookId, bookEditDto);
