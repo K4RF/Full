@@ -136,6 +136,7 @@
         <div class="col-9">
           <h5><a th:href="@{/bookList/{bookId}(bookId=${book.bookId})}" th:text="${book.title}">제목</a></h5>
           <p th:text="'저자: ' + ${book.author}">저자</p>
+          <p th:text="${book.publishDate}">발행연도</p>
           <p th:text="'조회수: ' + ${book.viewCount}">조회수</p>
         </div>
       </div>

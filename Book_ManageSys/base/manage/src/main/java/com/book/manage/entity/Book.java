@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +38,10 @@ public class Book {
     private String imagePath; // 이미지 경로를 저장하는 필드
 
     private int viewCount = 0; // 조회수 필드
+
+    @Column(name = "publish_date", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd") // HTML5 기본 날짜 형식
+    private LocalDate publishDate;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(

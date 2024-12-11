@@ -1,281 +1,288 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8">
-    <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .field-error {
-            color: #dc3545;
-            font-size: 0.875rem;
-        }
-        .form-control.is-invalid {
-            border-color: #dc3545;
-        }
-        .btn {
-            font-size: 1.125rem;
-            padding: 10px 20px;
-        }
-        .btn-lg {
-            padding: 12px;
-        }
-        hr {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        html, body {
-            height: 100%;
-            margin: 0; /* 기본 여백 제거 */
-            display: flex;
-            flex-direction: column; /* flex 컨테이너를 세로로 설정 */
-        }
+    <!DOCTYPE HTML>
+    <html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            .field-error {
+                color: #dc3545;
+                font-size: 0.875rem;
+            }
+            .form-control.is-invalid {
+                border-color: #dc3545;
+            }
+            .btn {
+                font-size: 1.125rem;
+                padding: 10px 20px;
+            }
+            .btn-lg {
+                padding: 12px;
+            }
+            hr {
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            html, body {
+                height: 100%;
+                margin: 0; /* 기본 여백 제거 */
+                display: flex;
+                flex-direction: column; /* flex 컨테이너를 세로로 설정 */
+            }
 
-        .footer {
-            background-color: #f8f9fa;
-            color: #333;
-            text-align: center;
-            padding: 20px 0;
-            width: 100%;
-        }
+            .footer {
+                background-color: #f8f9fa;
+                color: #333;
+                text-align: center;
+                padding: 20px 0;
+                width: 100%;
+            }
 
-        .container {
-            flex: 1; /* 컨텐츠가 차지할 공간 확장 */
-            max-width: 560px;
-            padding-bottom: 60px; /* footer 공간 확보 */
-        }
-        img {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 5px;
-            width: 100%;
-            max-width: 300px;
-        }
-    </style>
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">Book Manage</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <!-- 로그인 버튼 -->
-            <li class="nav-item" th:if="${loginMember == null}">
-                <a class="nav-link" th:href="@{/login(redirectURL=${redirectURL})}">로그인</a>
-            </li>
-            <!-- 로그아웃 버튼 -->
-            <li class="nav-item" th:if="${loginMember != null}">
-                <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
-                <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
-            </li>
-            <!-- 회원정보 -->
-            <li class="nav-item" th:if="${loginMember != null}">
-                <a class="nav-link" th:href="@{/members/edit(redirectURL=${redirectURL})}">회원정보</a>
-            </li>
-            <!-- 도서 목록 -->
-            <li class="nav-item">
-                <a class="nav-link" href="/bookList">도서 목록</a>
-            </li>
-            <!-- 대출 목록 -->
-            <li class="nav-item" th:if="${loginMember != null}">
-                <a class="nav-link" th:href="@{/rentalList}">도서 대여 현황 조회</a>
-            </li>
-        </ul>
-    </div>
-</nav>
-<div class="container">
-    <div class="py-5 text-center">
-        <!-- 포스트 제목을 h2 크기로 표시 -->
-        <h2 th:text="${book.title}">도서 상세</h2>
-    </div>
-    <!-- 대출/반납 성공 메시지 -->
-    <h2 th:if="${status}" th:text="${status}"></h2>
-    <div th:if="${message}" class="alert alert-success">
-        <span th:text="${message}"></span>
-    </div>
-    <div th:if="${error}" class="alert alert-danger">
-        <span th:text="${error}"></span>
-    </div>
-    <h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
-    <div>
-        <img th:src="@{${book.imagePath} + '?v=' + ${cacheBuster}}" alt="Book Image">
-    </div>
-    <div class="row">
+            .container {
+                flex: 1; /* 컨텐츠가 차지할 공간 확장 */
+                max-width: 560px;
+                padding-bottom: 60px; /* footer 공간 확보 */
+            }
+            img {
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 5px;
+                width: 100%;
+                max-width: 300px;
+            }
+        </style>
+    </head>
+    <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">Book Manage</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <!-- 로그인 버튼 -->
+                <li class="nav-item" th:if="${loginMember == null}">
+                    <a class="nav-link" th:href="@{/login(redirectURL=${redirectURL})}">로그인</a>
+                </li>
+                <!-- 로그아웃 버튼 -->
+                <li class="nav-item" th:if="${loginMember != null}">
+                    <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
+                    <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
+                </li>
+                <!-- 회원정보 -->
+                <li class="nav-item" th:if="${loginMember != null}">
+                    <a class="nav-link" th:href="@{/members/edit(redirectURL=${redirectURL})}">회원정보</a>
+                </li>
+                <!-- 도서 목록 -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/bookList">도서 목록</a>
+                </li>
+                <!-- 대출 목록 -->
+                <li class="nav-item" th:if="${loginMember != null}">
+                    <a class="nav-link" th:href="@{/rentalList}">도서 대여 현황 조회</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="py-5 text-center">
+            <!-- 포스트 제목을 h2 크기로 표시 -->
+            <h2 th:text="${book.title}">도서 상세</h2>
+        </div>
+        <!-- 대출/반납 성공 메시지 -->
+        <h2 th:if="${status}" th:text="${status}"></h2>
+        <div th:if="${message}" class="alert alert-success">
+            <span th:text="${message}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger">
+            <span th:text="${error}"></span>
+        </div>
+        <h2 th:if="${param.status}" th:text="'저장 완료!'"></h2>
+        <div>
+            <img th:src="@{${book.imagePath} + '?v=' + ${cacheBuster}}" alt="Book Image">
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>저자:</strong> <span th:text="${book.author}">author</span></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>출판사:</strong> <span th:text="${book.publisher}">publisher</span></p>
+            </div>
+        </div>
         <div class="col-md-6">
-            <p><strong>저자:</strong> <span th:text="${book.author}">author</span></p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <p><strong>출판사:</strong> <span th:text="${book.publisher}">publisher</span></p>
-        </div>
-    </div>
-    <div class="row align-items-center mb-3">
-        <p class="col-auto"><strong>대여 상태: </strong><span th:text="${rentalAbleBook ? '대여 가능' : '대여중'}">대여상황</span></p>
-        <div class="col">
-            <!-- 대여하기 버튼 -->
-            <form th:if="${rentalAbleBook or (!rentalAbleBook and loginMemberId != rentalMemberId)}"
-                  th:action="@{/bookList/{bookId}/rental(bookId=${book.bookId})}" method="post">
-                <button class="btn btn-primary" type="submit">대여하기</button>
-            </form>
-
-            <!-- 반납하기 버튼 -->
-            <form th:if="${!rentalAbleBook and loginMemberId == rentalMemberId}"
-                  th:action="@{/bookList/{bookId}/return(bookId=${book.bookId})}" method="post">
-                <input type="hidden" th:name="rentalId" th:value="${rentalId}" />
-                <button class="btn btn-warning btn-lg" type="submit">반납하기</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="row">
-        <p><strong>카테고리</strong></p>
-        <!-- 카테고리 출력 버튼으로 처리  -->
-        <div id="category-buttons">
-            <button type="button"
-                    class="btn btn-outline-primary category-btn"
-                    data-category="소설"
-                    disabled
-                    th:if="${book.categoriesFormatted.contains('소설')}">소설</button>
-            <button type="button"
-                    class="btn btn-outline-primary category-btn"
-                    data-category="역사"
-                    disabled
-                    th:if="${book.categoriesFormatted.contains('역사')}">역사</button>
-            <button type="button"
-                    class="btn btn-outline-primary category-btn"
-                    data-category="과학"
-                    disabled
-                    th:if="${book.categoriesFormatted.contains('과학')}">과학</button>
-            <button type="button"
-                    class="btn btn-outline-primary category-btn"
-                    data-category="기술"
-                    disabled
-                    th:if="${book.categoriesFormatted.contains('기술')}">기술</button>
-            <button type="button"
-                    class="btn btn-outline-primary category-btn"
-                    data-category="예술"
-                    disabled
-                    th:if="${book.categoriesFormatted.contains('예술')}">예술</button>
-        </div>
-    </div>
-
-    <hr class="my-4">
-    <div>
-        <h3><strong>상세 정보</strong></h3>
-        <p th:utext="${book.details}">여기에 도서 내용이 출력됩니다.</p>
-    </div>
-    <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
-
-    <!-- 댓글 목록 -->
-    <h3>댓글</h3>
-    <ul>
-        <li th:each="comment : ${comments}">
-            <p>
-                <strong th:text="${comment.writer}">작성자</strong>:
-                <span th:text="${comment.review}">댓글 내용</span>
-
-                <span th:if="${loginMember != null and comment.writer == loginMember.nickname}" style="float: right;">
-    <!-- 댓글 수정 -->
-    <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
-
-                    <!-- 댓글 삭제 -->
-    <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.commentId}').submit();|">삭제</a>
+            <p><strong>발행일:</strong>
+                <span th:text="${book.publishDate != null ? T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd').format(book.publishDate) : '발행일 정보 없음'}">
+                발행일 정보 없음
                 </span>
-
-                <!-- 삭제 폼 (POST 메서드로 제출) - 블록 요소를 span 외부에 배치 -->
-            <form th:id="|delete-comment-${comment.commentId}|" th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/delete'}" method="post" style="display:none;">
-                <input type="hidden" name="_method" value="delete">
-            </form>
             </p>
+        </div>
+        <div class="row align-items-center mb-3">
+            <p class="col-12"><strong>대여 상태:</strong> <span th:text="${rentalAbleBook ? '대여 가능' : '대여중'}">대여상황</span></p>
+            <div class="col-12">
+                <!-- 대여하기 버튼 -->
+                <form th:if="${rentalAbleBook or (!rentalAbleBook and loginMemberId != rentalMemberId)}"
+                      th:action="@{/bookList/{bookId}/rental(bookId=${book.bookId})}" method="post">
+                    <button class="btn btn-primary btn-lg mb-3" type="submit">대여하기</button>
+                </form>
 
-            <!-- 댓글 수정 폼 (숨김 처리되어 있으며 수정 링크 클릭 시 표시됨) -->
-            <div th:id="'edit-comment-form-' + ${comment.commentId}" style="display: none; margin-top: 10px;">
-                <form th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/edit'}" method="post">
-                    <div>
-                        <label th:for="'newReview-' + ${comment.commentId}">새 댓글 내용</label>
-                        <input type="text" th:id="'newComet-' + ${comment.commentId}" name="newReview" class="form-control" placeholder="새 댓글 내용" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-sm mt-2">수정</button>
+                <!-- 반납하기 버튼 -->
+                <form th:if="${!rentalAbleBook and loginMemberId == rentalMemberId}"
+                      th:action="@{/bookList/{bookId}/return(bookId=${book.bookId})}" method="post">
+                    <input type="hidden" th:name="rentalId" th:value="${rentalId}" />
+                    <button class="btn btn-warning btn-lg"  type="submit">반납하기</button>
                 </form>
             </div>
-        </li>
-    </ul>
-
-    <script>
-        function toggleEditForm(commentId) {
-            var formElement = document.getElementById('edit-comment-form-' + commentId);
-            if (formElement.style.display === 'none' || formElement.style.display === '') {
-                formElement.style.display = 'block';
-            } else {
-                formElement.style.display = 'none';
-            }
-        }
-    </script>
-
-    <h3 th:if="${loginMember == null}">
-        <a th:href="'/login?redirectURL=/bookList/' + ${book.bookId}" class="btn btn-primary btn-lg">댓글 작성</a>
-    </h3>
-    <div th:if="${loginMember != null}">
-        <button class="btn btn-primary btn-lg mb-3" type="button" onclick="toggleCommentForm()">댓글 작성</button>
-    </div>
-
-    <div th:if="${loginMember != null}" id="comment-form" style="display: none;">
-        <form th:action="@{'/bookList/' + ${book.bookId} + '/comments'}" method="post">
-            <div class="form-group">
-                <label for="writer">이름</label>
-                <input type="text" id="writer" name="writer" class="form-control" th:value="${loginMember.nickname}" readonly />
-            </div>
-            <div class="form-group">
-                <label for="review">댓글 내용</label>
-                <textarea id="review" name="review" class="form-control" required></textarea>
-            </div>
-            <button class="btn btn-primary btn-lg mt-3" type="submit">댓글 작성</button>
-        </form>
-    </div>
-
-    <script>
-        function toggleCommentForm() {
-            var commentForm = document.getElementById('comment-form');
-            if (commentForm.style.display === 'none') {
-                commentForm.style.display = 'block';
-            } else {
-                commentForm.style.display = 'none';
-            }
-        }
-    </script>
-
-    <hr class="my-4">
-    <div class="row">
-        <div class="col">
-            <button class="w-100 btn btn-secondary btn-lg"
-                    th:onclick="|location.href='@{/bookList}'|" type="button">목록으로</button>
-        </div>
-        <div class="col">
-            <!-- 수정 버튼, ADMIN 역할일 때만 표시 -->
-            <button class="w-100 btn btn-primary btn-lg"
-                    th:if="${loginMember != null and loginMember.role.name() == 'ADMIN'}"
-                    th:onclick="|location.href='@{/bookList/{bookId}/edit(bookId=${book.bookId})}'|"
-                    type="button">도서 수정
-            </button>
         </div>
 
-        <div class="col">
-            <!-- 삭제 버튼, ADMIN 역할일 때만 표시 -->
-            <form th:if="${loginMember != null and loginMember.role.name() == 'ADMIN'}"
-                  th:action="@{/bookList/{bookId}/delete(bookId=${book.bookId})}" method="post"
-                  onsubmit="return confirm('정말로 삭제하시겠습니까?');">
-                <button class="w-100 btn btn-danger btn-lg" type="submit">도서 삭제</button>
+        <div class="row">
+            <p><strong>카테고리</strong></p>
+            <!-- 카테고리 출력 버튼으로 처리  -->
+            <div id="category-buttons">
+                <button type="button"
+                        class="btn btn-outline-primary category-btn"
+                        data-category="소설"
+                        disabled
+                        th:if="${book.categoriesFormatted.contains('소설')}">소설</button>
+                <button type="button"
+                        class="btn btn-outline-primary category-btn"
+                        data-category="역사"
+                        disabled
+                        th:if="${book.categoriesFormatted.contains('역사')}">역사</button>
+                <button type="button"
+                        class="btn btn-outline-primary category-btn"
+                        data-category="과학"
+                        disabled
+                        th:if="${book.categoriesFormatted.contains('과학')}">과학</button>
+                <button type="button"
+                        class="btn btn-outline-primary category-btn"
+                        data-category="기술"
+                        disabled
+                        th:if="${book.categoriesFormatted.contains('기술')}">기술</button>
+                <button type="button"
+                        class="btn btn-outline-primary category-btn"
+                        data-category="예술"
+                        disabled
+                        th:if="${book.categoriesFormatted.contains('예술')}">예술</button>
+            </div>
+        </div>
+
+        <hr class="my-4">
+        <div>
+            <h3><strong>상세 정보</strong></h3>
+            <p th:utext="${book.details}">여기에 도서 내용이 출력됩니다.</p>
+        </div>
+        <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
+
+        <!-- 댓글 목록 -->
+        <h3>댓글</h3>
+        <ul>
+            <li th:each="comment : ${comments}">
+                <p>
+                    <strong th:text="${comment.writer}">작성자</strong>:
+                    <span th:text="${comment.review}">댓글 내용</span>
+
+                    <span th:if="${loginMember != null and comment.writer == loginMember.nickname}" style="float: right;">
+        <!-- 댓글 수정 -->
+        <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
+
+                        <!-- 댓글 삭제 -->
+        <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.commentId}').submit();|">삭제</a>
+                    </span>
+
+                    <!-- 삭제 폼 (POST 메서드로 제출) - 블록 요소를 span 외부에 배치 -->
+                <form th:id="|delete-comment-${comment.commentId}|" th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/delete'}" method="post" style="display:none;">
+                    <input type="hidden" name="_method" value="delete">
+                </form>
+                </p>
+
+                <!-- 댓글 수정 폼 (숨김 처리되어 있으며 수정 링크 클릭 시 표시됨) -->
+                <div th:id="'edit-comment-form-' + ${comment.commentId}" style="display: none; margin-top: 10px;">
+                    <form th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/edit'}" method="post">
+                        <div>
+                            <label th:for="'newReview-' + ${comment.commentId}">새 댓글 내용</label>
+                            <input type="text" th:id="'newComet-' + ${comment.commentId}" name="newReview" class="form-control" placeholder="새 댓글 내용" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm mt-2">수정</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+
+        <script>
+            function toggleEditForm(commentId) {
+                var formElement = document.getElementById('edit-comment-form-' + commentId);
+                if (formElement.style.display === 'none' || formElement.style.display === '') {
+                    formElement.style.display = 'block';
+                } else {
+                    formElement.style.display = 'none';
+                }
+            }
+        </script>
+
+        <h3 th:if="${loginMember == null}">
+            <a th:href="'/login?redirectURL=/bookList/' + ${book.bookId}" class="btn btn-primary btn-lg">댓글 작성</a>
+        </h3>
+        <div th:if="${loginMember != null}">
+            <button class="btn btn-primary btn-lg mb-3" type="button" onclick="toggleCommentForm()">댓글 작성</button>
+        </div>
+
+        <div th:if="${loginMember != null}" id="comment-form" style="display: none;">
+            <form th:action="@{'/bookList/' + ${book.bookId} + '/comments'}" method="post">
+                <div class="form-group">
+                    <label for="writer">이름</label>
+                    <input type="text" id="writer" name="writer" class="form-control" th:value="${loginMember.nickname}" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="review">댓글 내용</label>
+                    <textarea id="review" name="review" class="form-control" required></textarea>
+                </div>
+                <button class="btn btn-primary btn-lg mt-3" type="submit">댓글 작성</button>
             </form>
         </div>
+
+        <script>
+            function toggleCommentForm() {
+                var commentForm = document.getElementById('comment-form');
+                if (commentForm.style.display === 'none') {
+                    commentForm.style.display = 'block';
+                } else {
+                    commentForm.style.display = 'none';
+                }
+            }
+        </script>
+
+        <hr class="my-4">
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg"
+                        th:onclick="|location.href='@{/bookList}'|" type="button">목록으로</button>
+            </div>
+            <div class="col">
+                <!-- 수정 버튼, ADMIN 역할일 때만 표시 -->
+                <button class="w-100 btn btn-primary btn-lg"
+                        th:if="${loginMember != null and loginMember.role.name() == 'ADMIN'}"
+                        th:onclick="|location.href='@{/bookList/{bookId}/edit(bookId=${book.bookId})}'|"
+                        type="button">도서 수정
+                </button>
+            </div>
+
+            <div class="col">
+                <!-- 삭제 버튼, ADMIN 역할일 때만 표시 -->
+                <form th:if="${loginMember != null and loginMember.role.name() == 'ADMIN'}"
+                      th:action="@{/bookList/{bookId}/delete(bookId=${book.bookId})}" method="post"
+                      onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+                    <button class="w-100 btn btn-danger btn-lg" type="submit">도서 삭제</button>
+                </form>
+            </div>
+        </div>
+
     </div>
 
-</div>
-
-<div class="footer">
-    <p>Created by Kaarf_o</p>
-    <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
-</div>
-</body>
-</html>
+    <div class="footer">
+        <p>Created by Kaarf_o</p>
+        <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
+    </div>
+    </body>
+    </html>
