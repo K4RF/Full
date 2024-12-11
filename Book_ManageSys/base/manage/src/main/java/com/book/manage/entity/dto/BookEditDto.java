@@ -26,8 +26,9 @@ public class BookEditDto {
     private LocalDate publishDate;
 
     public BookEditDto() {}
+
     // 생성자
-    public BookEditDto(Long bookId, String title, String author, String publisher, String details, Set<Category> categories, String imagePath) {
+    public BookEditDto(Long bookId, String title, String author, String publisher, String details, Set<Category> categories, String imagePath, LocalDate publishDate) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
@@ -35,6 +36,7 @@ public class BookEditDto {
         this.details = details;
         this.categories = categories;
         this.imagePath = imagePath;
+        this.publishDate = getPublishDate();
     }
 
     public String getCategoryFormatted() {

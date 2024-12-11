@@ -203,7 +203,7 @@ public class BookController {
         }
 
         Book book = bookService.findById(bookId).orElseThrow();
-        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories(), book.getImagePath());
+        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories(), book.getImagePath(), book.getPublishDate());
         model.addAttribute("book", bookEditDto);
         return "book/editBookForm";
     }
