@@ -111,6 +111,13 @@
                 <p><strong>출판사:</strong> <span th:text="${book.publisher}">publisher</span></p>
             </div>
         </div>
+        <div class="col-md-6">
+            <p><strong>발행일:</strong>
+                <span th:text="${book.publishDate != null ? T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd').format(book.publishDate) : '발행일 정보 없음'}">
+                발행일 정보 없음
+                </span>
+            </p>
+        </div>
         <div class="row align-items-center mb-3">
             <p class="col-12"><strong>대여 상태:</strong> <span th:text="${rentalAbleBook ? '대여 가능' : '대여중'}">대여상황</span></p>
             <div class="col-12">

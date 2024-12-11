@@ -137,30 +137,29 @@ public class BookController {
         return "book/addBookForm";
     }
 
-    // 도서 등록 처리
     @PostMapping("/add")
     public String addBook(@ModelAttribute("book") @Valid Book book,
                           @RequestParam("categoriesFormatted") String categoriesFormatted,
-                          @RequestParam("imageFile") MultipartFile imageFile, // 이미지 파일 파라미터 추가
+                          @RequestParam("imageFile") MultipartFile imageFile,
                           Model model, BindingResult bindingResult,
                           RedirectAttributes redirectAttributes,
                           @SessionAttribute(value = "loginMember", required = false) Member loginMember,
                           HttpServletRequest request) {
+        if (bindingResult.hasErrors()) {
+            return "book/addBookForm";
+        }
 
-        // 도서 대출 가능 상태: 기본값
-        book.setRentalAbleBook(true); // 기본값을 true로 설정
+        book.setRentalAbleBook(true); // 기본값 설정
 
-        // 카테고리 입력값을 쉼표로 구분하여 Set<String>으로 변환
+        // 카테고리 입력값 처리
         Set<String> categories = new HashSet<>();
-        String[] categoryNames = categoriesFormatted.split(",");
-
-        for (String categoryName : categoryNames) {
-            categories.add(categoryName.trim());  // 각 카테고리명을 Set에 추가
+        for (String categoryName : categoriesFormatted.split(",")) {
+            categories.add(categoryName.trim());
         }
 
         // 이미지 업로드 처리
         if (!imageFile.isEmpty()) {
-            String uploadDir = "src/main/resources/static/uploads/images"; // static 폴더 내에 저장
+            String uploadDir = "src/main/resources/static/uploads/images";
             try {
                 String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
                 Path uploadPath = Paths.get(uploadDir);
@@ -169,7 +168,7 @@ public class BookController {
                     Files.createDirectories(uploadPath);
                 }
                 imageFile.transferTo(uploadPath.resolve(fileName));
-                book.setImagePath("/uploads/images/" + fileName + "?v=" + UUID.randomUUID()); // 캐시 무효화 쿼리 추가
+                book.setImagePath("/uploads/images/" + fileName + "?v=" + UUID.randomUUID());
             } catch (IOException e) {
                 log.error("Error occurred while uploading image: {}", e.getMessage());
                 model.addAttribute("error", "이미지 업로드에 실패했습니다.");
@@ -177,22 +176,21 @@ public class BookController {
             }
         }
 
-        // 도서 저장 및 카테고리 처리
+        // 도서 저장
         try {
             Book savedBook = bookService.save(book, categories);
-            String rentalStatus = rentalService.getRentalStatusByBookId(savedBook.getBookId()); // bookId를 기반으로 렌탈 상태 확인
+            String rentalStatus = rentalService.getRentalStatusByBookId(savedBook.getBookId());
             redirectAttributes.addAttribute("bookId", savedBook.getBookId());
             redirectAttributes.addAttribute("status", true);
-            redirectAttributes.addAttribute("rentalStatus", rentalStatus); // 렌탈 상태 추가
+            redirectAttributes.addAttribute("rentalStatus", rentalStatus);
             model.addAttribute("message", "도서 등록이 완료되었습니다.");
             return "redirect:/bookList/{bookId}";
         } catch (Exception e) {
             log.error("Error occurred while saving book: {}", e.getMessage());
             model.addAttribute("error", "도서 등록에 실패했습니다.");
-            return "book/addBookForm"; // 도서 등록 폼 페이지로 다시 돌아가기
+            return "book/addBookForm";
         }
     }
-
 
     @GetMapping("/{bookId}/edit")
     public String editBookReq(@PathVariable Long bookId, Model model, HttpServletRequest request, @SessionAttribute(value = "loginMember", required = false) Member loginMember) {

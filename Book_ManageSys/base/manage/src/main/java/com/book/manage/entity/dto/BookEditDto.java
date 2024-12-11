@@ -1,8 +1,12 @@
 package com.book.manage.entity.dto;
 
 import com.book.manage.entity.Category;
+import jakarta.persistence.Column;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,6 +21,9 @@ public class BookEditDto {
 
 
     private String imagePath; // 이미지 경로를 저장하는 필드
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd") // HTML5 기본 날짜 형식
+    private LocalDate publishDate;
 
     public BookEditDto() {}
     // 생성자
