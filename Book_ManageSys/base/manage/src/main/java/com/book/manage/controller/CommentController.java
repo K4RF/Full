@@ -17,8 +17,15 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-    public String getComments(@PathVariable Long bookId, Model model) {
+    public String getComments(@PathVariable Long bookId, Model model,
+                              @SessionAttribute(value = "loginMember", required = false) Member loginMember){
         List<Comment> comments = commentService.getCommentsByBookId(bookId);
+        // 댓글 작성 확인
+        long hasComment = commentService.hasUserCommented(bookId, loginMember);
+        if (hasComment > 0) {
+            model.addAttribute("error", "이미 작성된 도서입니다.");
+        }
+        model.addAttribute("hasComment", hasComment);
         model.addAttribute("comments", comments);
         return "book/bookInfo";
     }
@@ -32,11 +39,11 @@ public class CommentController {
         if (loginMember == null) {
             return "redirect:/login?redirectURL=/bookList/" + bookId;
         }
+
         // 댓글 작성 확인
-        boolean hasComment = commentService.hasUserCommented(bookId, loginMember);
-        if (hasComment) {
+        long hasComment = commentService.hasUserCommented(bookId, loginMember);
+        if (hasComment > 0) {
             model.addAttribute("error", "이미 작성된 도서입니다.");
-            return "redirect:/bookList/" + bookId; // 도서 상세 페이지로 리다이렉트
         }
         model.addAttribute("hasComment", hasComment);
         //댓글 작성

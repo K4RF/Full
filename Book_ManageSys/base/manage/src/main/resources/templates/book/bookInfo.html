@@ -227,11 +227,11 @@
         <!-- 댓글 작성 버튼 -->
         <div th:if="${loginMember != null}">
             <button class="btn btn-primary btn-lg mb-3"
-                    th:disabled="${hasComment}" type="button"
-                    th:onclick="|if (!${hasComment}) toggleCommentForm();|">
+                    type="button"
+                    th:onclick="|if (${hasComment} == 0) toggleCommentForm();|">
                 댓글 작성
             </button>
-            <p th:if="${error}" class="text-danger">이미 작성된 댓글이 있습니다.</p>
+            <p th:if="|if (${hasComment} != 0)|" class="text-danger">이미 작성된 댓글이 있습니다.</p>
         </div>
 
         <div th:if="${loginMember != null}" id="comment-form" style="display: none;">
@@ -251,6 +251,7 @@
         <script>
             function toggleCommentForm() {
                 var commentForm = document.getElementById('comment-form');
+
                 if (commentForm.style.display === 'none') {
                     commentForm.style.display = 'block';
                 } else {

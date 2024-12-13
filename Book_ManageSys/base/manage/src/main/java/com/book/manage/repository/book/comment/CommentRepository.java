@@ -19,6 +19,6 @@ public interface CommentRepository {
 
     List<Comment> findByWriter(String writer);  // 사용자로 댓글 조회
 
-    boolean existsByBookIdAndWriter(Long bookId, Member loginMember);
+    long existsByBookIdAndWriter(Long bookId, Member loginMember);
 
 }
