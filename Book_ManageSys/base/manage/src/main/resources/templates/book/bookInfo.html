@@ -227,7 +227,7 @@
         <div th:if="${loginMember != null}"> <!-- 로그인 여부 확인 -->
             <button class="btn btn-primary btn-lg mb-3"
                     type="button"
-                    th:onclick="|if (!(${hasComment})) toggleCommentForm();|">
+                    th:onclick="|handleCommentButton(${hasComment})|">
                 댓글 작성
             </button>
         </div>
@@ -260,6 +260,13 @@
                     commentForm.style.display = 'block';
                 } else {
                     commentForm.style.display = 'none';
+                }
+            }
+            function handleCommentButton(hasComment) {
+                if (hasComment) {
+                    alert('리뷰 작성이 완료된 도서입니다.');
+                } else {
+                    toggleCommentForm();
                 }
             }
         </script>
