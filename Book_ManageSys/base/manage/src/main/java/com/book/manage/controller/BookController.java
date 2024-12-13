@@ -107,6 +107,14 @@ public class BookController {
         // 댓글 불러오기
         List<Comment> comments = commentService.getCommentsByBookId(bookId);
 
+        // 댓글 작성 여부 확인
+        boolean hasComment = false;
+        if (loginMember != null) {
+            hasComment = commentService.hasUserCommented(bookId, loginMember);
+        }
+
+        model.addAttribute("hasComment", hasComment);
+
         // 모델에 데이터 추가
         model.addAttribute("book", book);
         model.addAttribute("rentalStatus", rentalStatus);

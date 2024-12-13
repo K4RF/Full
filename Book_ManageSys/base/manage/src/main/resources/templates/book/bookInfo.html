@@ -224,14 +224,12 @@
         <h3 th:if="${loginMember == null}">
             <a th:href="'/login?redirectURL=/bookList/' + ${book.bookId}" class="btn btn-primary btn-lg">댓글 작성</a>
         </h3>
-        <!-- 댓글 작성 버튼 -->
-        <div th:if="${loginMember != null}">
+        <div th:if="${loginMember != null}"> <!-- 로그인 여부 확인 -->
             <button class="btn btn-primary btn-lg mb-3"
-                    th:disabled="${hasComment}" type="button"
-                    th:onclick="|if (!${hasComment}) toggleCommentForm();|">
+                    type="button"
+                    th:onclick="|if (!(${hasComment})) toggleCommentForm();|">
                 댓글 작성
             </button>
-            <p th:if="${error}" class="text-danger">이미 작성된 댓글이 있습니다.</p>
         </div>
 
         <div th:if="${loginMember != null}" id="comment-form" style="display: none;">
@@ -251,6 +249,13 @@
         <script>
             function toggleCommentForm() {
                 var commentForm = document.getElementById('comment-form');
+                var hasComment = /*[[${hasComment}]]*/ false; // 서버에서 전달된 hasComment 값을 사용
+
+                if (hasComment) {
+                    alert('이미 댓글을 작성하셨습니다.');
+                    return; // 폼 표시 동작 중단
+                }
+
                 if (commentForm.style.display === 'none') {
                     commentForm.style.display = 'block';
                 } else {
