@@ -17,15 +17,9 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-    public String getComments(@PathVariable Long bookId, Model model,
-                              @SessionAttribute(value = "loginMember", required = false) Member loginMember){
+    public String getComments(@PathVariable Long bookId, Model model){
         List<Comment> comments = commentService.getCommentsByBookId(bookId);
-        // 댓글 작성 확인
-        long hasComment = commentService.hasUserCommented(bookId, loginMember);
-        if (hasComment > 0) {
-            model.addAttribute("error", "이미 작성된 도서입니다.");
-        }
-        model.addAttribute("hasComment", hasComment);
+
         model.addAttribute("comments", comments);
         return "book/bookInfo";
     }
@@ -41,8 +35,8 @@ public class CommentController {
         }
 
         // 댓글 작성 확인
-        long hasComment = commentService.hasUserCommented(bookId, loginMember);
-        if (hasComment > 0) {
+        boolean hasComment = commentService.hasUserCommented(bookId, loginMember);
+        if (hasComment) {
             model.addAttribute("error", "이미 작성된 도서입니다.");
         }
         model.addAttribute("hasComment", hasComment);

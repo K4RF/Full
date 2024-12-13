@@ -20,5 +20,5 @@ public interface CommentService {
 
     // 사용자로 댓글 조회
     List<Comment> getCommentsByWriter(String writer);
-    long hasUserCommented(Long bookId, Member loginMember);
+    boolean hasUserCommented(Long bookId, Member loginMember);
 }

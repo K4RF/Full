@@ -83,20 +83,19 @@ public class CommentJpaRepository implements CommentRepository{
     }
 
     @Override
-    public long existsByBookIdAndWriter(Long bookId, Member loginMember) {
-        long count = 0;
+    public boolean existsByBookIdAndWriter(Long bookId, Member loginMember) {
         if(loginMember == null){
-            return count;
+            return false;
         }
         QComment qComment = QComment.comment;
         log.info("Checking if comment exists for bookId: {} and writer: {}", bookId, loginMember);
 
-        count = queryFactory.selectFrom(qComment)
+        long count = queryFactory.selectFrom(qComment)
                 .where(qComment.book.bookId.eq(bookId)
                         .and(qComment.writer.eq(loginMember.getNickname())))
                 .fetchCount();
 
         log.info("Existence check completed, count: {}", count);
-        return count;
+        return count > 0;
     }
 }

@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService{
         return commentRepository.findByWriter(writer);
     }
 
-    public long hasUserCommented(Long bookId, Member loginMember) {
+    public boolean hasUserCommented(Long bookId, Member loginMember) {
         return commentRepository.existsByBookIdAndWriter(bookId, loginMember);
     }
 }
