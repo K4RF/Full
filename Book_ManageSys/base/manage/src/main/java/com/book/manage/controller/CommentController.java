@@ -26,11 +26,19 @@ public class CommentController {
     @PostMapping
     public String addComment(@PathVariable Long bookId,
                              @RequestParam String review,
+                             Model model,
                              @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
         // 로그인 여부 확인
         if (loginMember == null) {
             return "redirect:/login?redirectURL=/bookList/" + bookId;
         }
+        // 댓글 작성 확인
+        boolean hasComment = commentService.hasUserCommented(bookId, loginMember);
+        if (hasComment) {
+            model.addAttribute("error", "이미 작성된 도서입니다.");
+            return "redirect:/bookList/" + bookId; // 도서 상세 페이지로 리다이렉트
+        }
+        model.addAttribute("hasComment", hasComment);
         //댓글 작성
         commentService.addComment(bookId, loginMember.getNickname(), review);
         return "redirect:/bookList/" + bookId;

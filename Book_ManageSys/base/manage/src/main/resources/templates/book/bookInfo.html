@@ -224,8 +224,14 @@
         <h3 th:if="${loginMember == null}">
             <a th:href="'/login?redirectURL=/bookList/' + ${book.bookId}" class="btn btn-primary btn-lg">댓글 작성</a>
         </h3>
+        <!-- 댓글 작성 버튼 -->
         <div th:if="${loginMember != null}">
-            <button class="btn btn-primary btn-lg mb-3" type="button" onclick="toggleCommentForm()">댓글 작성</button>
+            <button class="btn btn-primary btn-lg mb-3"
+                    th:disabled="${hasComment}" type="button"
+                    th:onclick="|if (!${hasComment}) toggleCommentForm();|">
+                댓글 작성
+            </button>
+            <p th:if="${error}" class="text-danger">이미 작성된 댓글이 있습니다.</p>
         </div>
 
         <div th:if="${loginMember != null}" id="comment-form" style="display: none;">

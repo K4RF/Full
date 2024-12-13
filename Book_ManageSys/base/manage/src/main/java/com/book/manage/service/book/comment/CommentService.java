@@ -1,6 +1,7 @@
 package com.book.manage.service.book.comment;
 
 import com.book.manage.entity.Comment;
+import com.book.manage.entity.Member;
 
 import java.util.List;
 
@@ -19,4 +20,5 @@ public interface CommentService {
 
     // 사용자로 댓글 조회
     List<Comment> getCommentsByWriter(String writer);
+    boolean hasUserCommented(Long bookId, Member loginMember);
 }

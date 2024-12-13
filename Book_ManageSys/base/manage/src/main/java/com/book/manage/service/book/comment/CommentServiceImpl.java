@@ -2,6 +2,7 @@ package com.book.manage.service.book.comment;
 
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Comment;
+import com.book.manage.entity.Member;
 import com.book.manage.repository.book.BookRepository;
 import com.book.manage.repository.book.comment.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,5 +57,9 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public List<Comment> getCommentsByWriter(String writer) {
         return commentRepository.findByWriter(writer);
+    }
+
+    public boolean hasUserCommented(Long bookId, Member loginMember) {
+        return commentRepository.existsByBookIdAndWriter(bookId, loginMember);
     }
 }

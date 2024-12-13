@@ -1,6 +1,7 @@
 package com.book.manage.repository.book.comment;
 
 import com.book.manage.entity.Comment;
+import com.book.manage.entity.Member;
 import com.book.manage.entity.QComment;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -79,5 +80,22 @@ public class CommentJpaRepository implements CommentRepository{
 
         log.info("Query executed successfully, found {} comments for writer: {}", results.size(), writer);
         return results;
+    }
+
+    @Override
+    public boolean existsByBookIdAndWriter(Long bookId, Member loginMember) {
+        if(loginMember == null){
+            return false;
+        }
+        QComment qComment = QComment.comment;
+        log.info("Checking if comment exists for bookId: {} and writer: {}", bookId, loginMember);
+
+        long count = queryFactory.selectFrom(qComment)
+                .where(qComment.book.bookId.eq(bookId)
+                        .and(qComment.writer.eq(loginMember.getNickname())))
+                .fetchCount();
+
+        log.info("Existence check completed, count: {}", count);
+        return count > 0;
     }
 }
