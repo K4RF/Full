@@ -175,34 +175,40 @@
         </div>
         <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
 
-        <!-- 댓글 목록 -->
+        <!-- 댓글 섹션 -->
         <h3>댓글</h3>
         <ul>
             <li th:each="comment : ${comments}">
                 <p>
                     <strong th:text="${comment.writer}">작성자</strong>:
                     <span th:text="${comment.review}">댓글 내용</span>
+                    <span> - 별점: <span th:text="${comment.rating}">0</span>/5</span>
 
                     <span th:if="${loginMember != null and comment.writer == loginMember.nickname}" style="float: right;">
-        <!-- 댓글 수정 -->
-        <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
+                    <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
+                    <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.commentId}').submit();|">삭제</a>
+                </span>
 
-                        <!-- 댓글 삭제 -->
-        <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.commentId}').submit();|">삭제</a>
-                    </span>
-
-                    <!-- 삭제 폼 (POST 메서드로 제출) - 블록 요소를 span 외부에 배치 -->
                 <form th:id="|delete-comment-${comment.commentId}|" th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/delete'}" method="post" style="display:none;">
                     <input type="hidden" name="_method" value="delete">
                 </form>
                 </p>
 
-                <!-- 댓글 수정 폼 (숨김 처리되어 있으며 수정 링크 클릭 시 표시됨) -->
                 <div th:id="'edit-comment-form-' + ${comment.commentId}" style="display: none; margin-top: 10px;">
                     <form th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/edit'}" method="post">
                         <div>
                             <label th:for="'newReview-' + ${comment.commentId}">새 댓글 내용</label>
-                            <input type="text" th:id="'newComet-' + ${comment.commentId}" name="newReview" class="form-control" placeholder="새 댓글 내용" required>
+                            <input type="text" th:id="'newReview-' + ${comment.commentId}" name="newReview" class="form-control" required>
+                        </div>
+                        <div>
+                            <label th:for="'newRating-' + ${comment.commentId}">새 별점</label>
+                            <select th:id="'newRating-' + ${comment.commentId}" name="newRating" class="form-control" required>
+                                <option value="1">1점</option>
+                                <option value="2">2점</option>
+                                <option value="3">3점</option>
+                                <option value="4">4점</option>
+                                <option value="5">5점</option>
+                            </select>
                         </div>
                         <button type="submit" class="btn btn-primary btn-sm mt-2">수정</button>
                     </form>
@@ -241,6 +247,16 @@
                 <div class="form-group">
                     <label for="review">댓글 내용</label>
                     <textarea id="review" name="review" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="rating">별점</label>
+                    <select id="rating" name="rating" class="form-control" required>
+                        <option value="1">1점</option>
+                        <option value="2">2점</option>
+                        <option value="3">3점</option>
+                        <option value="4">4점</option>
+                        <option value="5">5점</option>
+                    </select>
                 </div>
                 <button class="btn btn-primary btn-lg mt-3" type="submit">댓글 작성</button>
             </form>

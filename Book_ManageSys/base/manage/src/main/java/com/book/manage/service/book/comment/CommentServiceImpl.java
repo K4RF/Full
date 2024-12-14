@@ -22,9 +22,9 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public void addComment(Long bookId, String writer, String review) {
+    public void addComment(Long bookId, String writer, String review, int rating) {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new IllegalArgumentException("Book not found with id: " + bookId));
-        Comment comment = new Comment(book, writer, review);
+        Comment comment = new Comment(book, writer, review, rating);
         commentRepository.save(comment);
     }
 

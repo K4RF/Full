@@ -8,7 +8,7 @@ import java.util.List;
 public interface CommentService {
     List<Comment> getCommentsByBookId(Long bookId);
 
-    void addComment(Long bookId, String writer, String review);
+    void addComment(Long bookId, String writer, String review, int rating);
 
     void deleteByBookId(Long bookId);
 

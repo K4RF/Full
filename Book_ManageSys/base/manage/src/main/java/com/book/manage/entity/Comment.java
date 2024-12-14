@@ -1,6 +1,8 @@
 package com.book.manage.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,13 +25,20 @@ public class Comment {
     @NotEmpty
     private String review;
 
+    @Min(1)
+    @Max(5)
+    @Column(nullable = false) // 별점은 1~5 사이 값
+    private int rating;
+
+
     public Comment(){
 
     }
 
-    public Comment(Book book, String writer, String review) {
+    public Comment(Book book, String writer, String review, int rating) {
         this.book = book;
         this.writer = writer;
         this.review = review;
+        this.rating = rating;
     }
 }

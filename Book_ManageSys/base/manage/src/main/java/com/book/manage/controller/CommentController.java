@@ -27,6 +27,7 @@ public class CommentController {
     @PostMapping
     public String addComment(@PathVariable Long bookId,
                              @RequestParam String review,
+                             @RequestParam int rating,
                              Model model,
                              @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
         // 로그인 여부 확인
@@ -41,7 +42,7 @@ public class CommentController {
         }
         model.addAttribute("hasComment", hasComment);
         //댓글 작성
-        commentService.addComment(bookId, loginMember.getNickname(), review);
+        commentService.addComment(bookId, loginMember.getNickname(), review, rating);
         return "redirect:/bookList/" + bookId;
     }
 

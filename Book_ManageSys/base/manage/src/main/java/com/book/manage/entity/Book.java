@@ -53,6 +53,11 @@ public class Book {
     @OrderColumn(name = "cate_order")
     private Set<Category> categories = new HashSet<>();  // Set으로 변경
 
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Comment> comments = new ArrayList<>();
+
     public String getCategoriesFormatted() {
         return categories.stream()
                 .map(Category::getCate)
@@ -67,6 +72,14 @@ public class Book {
     }
     public void incrementViewCount() {
         this.viewCount++;
+    }
+
+    // 평균 별점 계산
+    public double calculateAverageRating() {
+        return comments.stream()
+                .mapToInt(Comment::getRating)
+                .average()
+                .orElse(0.0);
     }
 
 }

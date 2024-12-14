@@ -13,17 +13,17 @@ CREATE TABLE member (
 -- 기존 book 테이블 삭제
 DROP TABLE IF EXISTS book CASCADE;
 
--- book 테이블 생성 (imagePath 필드 추가)
+-- book 테이블 생성
 CREATE TABLE book (
                       BOOK_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
                       TITLE VARCHAR(50) NOT NULL,
                       AUTHOR VARCHAR(255) NOT NULL,
                       PUBLISHER VARCHAR(255) NOT NULL,
                       DETAILS TEXT NOT NULL,
-                      RENTAL_ABLE_BOOK BOOLEAN DEFAULT TRUE, -- 대출 가능 여부 필드 추가
-                      IMAGE_PATH VARCHAR(255), -- 이미지 경로 필드 추가
-                      view_count INT DEFAULT 0, -- 조회수 필드 추가
-                      publish_year INT NOT NULL -- 발행년도 필드 추가
+                      RENTAL_ABLE_BOOK BOOLEAN DEFAULT TRUE, -- 대출 가능 여부 필드
+                      IMAGE_PATH VARCHAR(255),              -- 이미지 경로 필드
+                      VIEW_COUNT INT DEFAULT 0,             -- 조회수 필드
+                      PUBLISH_DATE DATE NOT NULL            -- 발행일 필드
 );
 
 -- 기존 rental 테이블 삭제
@@ -74,5 +74,7 @@ CREATE TABLE comment (
                          COMMENT_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
                          BOOK_ID BIGINT NOT NULL,
                          WRITER VARCHAR(255) NOT NULL,
-                         REVIEW TEXT NOT NULL
+                         REVIEW TEXT NOT NULL,
+                         RATING INT CHECK (RATING BETWEEN 1 AND 5), -- 1~5 사이의 평점
+                         FOREIGN KEY (BOOK_ID) REFERENCES book(BOOK_ID) ON DELETE CASCADE -- book과의 관계 설정
 );
