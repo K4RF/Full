@@ -138,6 +138,7 @@
           <p th:text="'저자: ' + ${book.author}">저자</p>
           <p th:text="${book.publishDate}">발행연도</p>
           <p th:text="'조회수: ' + ${book.viewCount}">조회수</p>
+          <p th:text="'평균 별점: ' + ${book.calculateAverageRating()}">평균 별점</p> <!-- 평균 별점 추가 -->
         </div>
       </div>
       <hr class="my-4">

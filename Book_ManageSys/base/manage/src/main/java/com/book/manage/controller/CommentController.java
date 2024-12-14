@@ -50,11 +50,12 @@ public class CommentController {
     public String editComment(@PathVariable Long bookId,
                               @PathVariable Long commentId,
                               @RequestParam String newReview,
+                              @RequestParam int newRating,
                               @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
         if (loginMember == null) {
             return "redirect:/login?redirectURL=/bookList/" + bookId;
         }
-        commentService.updateComment(commentId, newReview, loginMember.getNickname());
+        commentService.updateComment(commentId, newReview, loginMember.getNickname(), newRating);
         return "redirect:/bookList/" + bookId;
     }
 

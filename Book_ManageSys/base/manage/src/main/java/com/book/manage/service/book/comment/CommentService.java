@@ -13,7 +13,7 @@ public interface CommentService {
     void deleteByBookId(Long bookId);
 
     // 댓글 수정
-    void updateComment(Long commentId, String newReview, String loginMemberNickname);
+    void updateComment(Long commentId, String newReview, String loginMemberNickname, int rating);
 
     // 댓글 삭제
     void deleteComment(Long commentId, String loginMemberNickname);

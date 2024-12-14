@@ -34,13 +34,14 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public void updateComment(Long commentId, String newReview, String loginMemberNickname) {
+    public void updateComment(Long commentId, String newReview, String loginMemberNickname, int rating) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not Found"));
         if (!comment.getWriter().equals(loginMemberNickname)) {
             throw new RuntimeException("댓글 수정 권한이 없습니다");
         }
         comment.setReview(newReview);
+        comment.setRating(rating);
         commentRepository.save(comment);
     }
 
