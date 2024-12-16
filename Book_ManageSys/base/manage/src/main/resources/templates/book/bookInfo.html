@@ -197,19 +197,20 @@
         </div>
         <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
 
+        <!-- 댓글 섹션 -->
+        <h3>댓글 (<span th:text="${comments.size()}">0</span>)</h3>
         <ul>
             <li th:each="comment : ${comments}">
                 <p>
                     <strong th:text="${comment.writer}">작성자</strong>:
-                    <span th:text="${comment.review}">댓글 내용</span>
-                    <span> - 별점:
-                        <span class="star-rating">
+                    <span th:text="${comment.review} + ' - '">댓글 내용</span>
+                    <span class="star-rating">
                             <!-- 별점 표시, 숫자가 아닌 별 개수로 표시 -->
                             <span class="star" th:each="i : ${#numbers.sequence(1, 5)}"
                                   th:classappend="${i <= comment.rating ? 'selected' : ''}"
                                   style="pointer-events: none;">&#9733;</span>
-                        </span>
                     </span>
+
 
                     <span th:if="${loginMember != null and comment.writer == loginMember.nickname}" style="float: right;">
                         <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
