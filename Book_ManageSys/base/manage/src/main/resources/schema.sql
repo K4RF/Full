@@ -23,7 +23,8 @@ CREATE TABLE book (
                       RENTAL_ABLE_BOOK BOOLEAN DEFAULT TRUE, -- 대출 가능 여부 필드
                       IMAGE_PATH VARCHAR(255),              -- 이미지 경로 필드
                       VIEW_COUNT INT DEFAULT 0,             -- 조회수 필드
-                      PUBLISH_DATE DATE NOT NULL            -- 발행일 필드
+                      PUBLISH_DATE DATE NOT NULL,            -- 발행일 필드
+                      TOTAL_COMMENT INT DEFAULT 0           -- 댓글 갯수 필드
 );
 
 -- 기존 rental 테이블 삭제
