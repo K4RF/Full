@@ -58,6 +58,9 @@ public class Book {
     @ToString.Exclude
     private List<Comment> comments = new ArrayList<>();
 
+    @Column(name = "total_comment")
+    private int totalComment;  // 댓글 갯수를 저장하는 필드
+
     public String getCategoriesFormatted() {
         return categories.stream()
                 .map(Category::getCate)
@@ -82,4 +85,11 @@ public class Book {
                 .orElse(0.0);
     }
 
+
+    // 댓글 갯수 업데이트 메서드
+    @PrePersist
+    @PreUpdate
+    public void updateTotalComment() {
+        this.totalComment = comments.size();  // 댓글 갯수를 업데이트
+    }
 }
