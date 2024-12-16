@@ -49,6 +49,28 @@
                 width: 100%;
                 max-width: 300px;
             }
+            .star-rating {
+                display: flex;
+                direction: row-reverse;
+                justify-content: flex-end;
+                cursor: pointer;
+            }
+
+            .star {
+                font-size: 24px;
+                color: gray; /* 기본 색상 */
+                cursor: pointer;
+                transition: color 0.2s;
+            }
+
+            .star.selected {
+                color: gold; /* 강조된 별 색상 */
+            }
+
+            /* 마우스가 위치한 별까지 색상 변경 */
+            .star:hover {
+                color: #ffc107;
+            }
         </style>
     </head>
     <body>
@@ -175,47 +197,54 @@
         </div>
         <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
 
-        <!-- 댓글 섹션 -->
-        <h3>댓글</h3>
         <ul>
             <li th:each="comment : ${comments}">
                 <p>
                     <strong th:text="${comment.writer}">작성자</strong>:
                     <span th:text="${comment.review}">댓글 내용</span>
-                    <span> - 별점: <span th:text="${comment.rating}">0</span></span>
+                    <span> - 별점:
+                        <span class="star-rating">
+                            <!-- 별점 표시, 숫자가 아닌 별 개수로 표시 -->
+                            <span class="star" th:each="i : ${#numbers.sequence(1, 5)}"
+                                  th:classappend="${i <= comment.rating ? 'selected' : ''}"
+                                  style="pointer-events: none;">&#9733;</span>
+                        </span>
+                    </span>
 
                     <span th:if="${loginMember != null and comment.writer == loginMember.nickname}" style="float: right;">
-                    <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
-                    <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.commentId}').submit();|">삭제</a>
-                </span>
+                        <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
+                        <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.commentId}').submit();|">삭제</a>
+                    </span>
 
-                <form th:id="|delete-comment-${comment.commentId}|" th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/delete'}" method="post" style="display:none;">
-                    <input type="hidden" name="_method" value="delete">
-                </form>
-                </p>
+                    <form th:id="|delete-comment-${comment.commentId}|" th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/delete'}" method="post" style="display:none;">
+                        <input type="hidden" name="_method" value="delete">
+                    </form>
+                    </p>
 
+                <!-- 댓글 수정 폼 -->
                 <div th:id="'edit-comment-form-' + ${comment.commentId}" style="display: none; margin-top: 10px;">
                     <form th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/edit'}" method="post">
                         <div>
                             <label th:for="'newReview-' + ${comment.commentId}">새 댓글 내용</label>
-                            <input type="text" th:id="'newReview-' + ${comment.commentId}" name="newReview" class="form-control" required>
+                            <input type="text" th:id="'newReview-' + ${comment.commentId}" name="newReview" class="form-control" required />
                         </div>
                         <div>
                             <label th:for="'newRating-' + ${comment.commentId}">새 별점</label>
-                            <select th:id="'newRating-' + ${comment.commentId}" name="newRating" class="form-control" required>
-                                <option value="1">1점</option>
-                                <option value="2">2점</option>
-                                <option value="3">3점</option>
-                                <option value="4">4점</option>
-                                <option value="5">5점</option>
-                            </select>
+                            <div class="star-rating" id="starRatingEdit-${comment.commentId}">
+                                <!-- 별 아이콘 (별점 선택용) -->
+                                <span class="star" data-value="1">&#9733;</span>
+                                <span class="star" data-value="2">&#9733;</span>
+                                <span class="star" data-value="3">&#9733;</span>
+                                <span class="star" data-value="4">&#9733;</span>
+                                <span class="star" data-value="5">&#9733;</span>
+                            </div>
+                            <input type="hidden" th:id="'newRating-' + ${comment.commentId}" name="newRating" required />
                         </div>
                         <button type="submit" class="btn btn-primary btn-sm mt-2">수정</button>
                     </form>
                 </div>
             </li>
         </ul>
-
         <script>
             function toggleEditForm(commentId) {
                 var formElement = document.getElementById('edit-comment-form-' + commentId);
@@ -249,18 +278,22 @@
                     <textarea id="review" name="review" class="form-control" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="rating">별점</label>
-                    <select id="rating" name="rating" class="form-control" required>
-                        <option value="1">1점</option>
-                        <option value="2">2점</option>
-                        <option value="3">3점</option>
-                        <option value="4">4점</option>
-                        <option value="5">5점</option>
-                    </select>
+                    <label>별점</label>
+                    <div class="star-rating" id="starRating">
+                        <!-- 별 아이콘 -->
+                        <span class="star" data-value="1">&#9733;</span>
+                        <span class="star" data-value="2">&#9733;</span>
+                        <span class="star" data-value="3">&#9733;</span>
+                        <span class="star" data-value="4">&#9733;</span>
+                        <span class="star" data-value="5">&#9733;</span>
+                    </div>
+                    <!-- 별점 값 저장 -->
+                    <input type="hidden" id="rating" name="rating" required />
                 </div>
                 <button class="btn btn-primary btn-lg mt-3" type="submit">댓글 작성</button>
             </form>
         </div>
+
 
         <script>
             function toggleCommentForm() {
@@ -285,6 +318,63 @@
                     toggleCommentForm();
                 }
             }
+            document.addEventListener('DOMContentLoaded', function () {
+                // 댓글 수정 폼에서 별점 선택 기능 추가
+                const editStars = document.querySelectorAll('.star-rating .star');
+
+                // 각 댓글 수정 폼에 대해 별점을 동적으로 설정하는 함수
+                document.querySelectorAll('.star-rating').forEach(function(starRating) {
+                    const stars = starRating.querySelectorAll('.star');
+                    const ratingInput = starRating.parentElement.querySelector('input[type="hidden"]');
+
+                    // 마우스 오버 및 클릭 이벤트 처리
+                    stars.forEach(star => {
+                        // 마우스 오버 이벤트로 별 강조
+                        star.addEventListener('mouseover', () => {
+                            clearSelection(stars);
+                            highlightStars(star);
+                        });
+
+                        // 마우스가 벗어나면 원래 상태로 복원
+                        star.addEventListener('mouseout', () => {
+                            clearSelection(stars);
+                            const rating = ratingInput.value;
+                            if (rating) {
+                                highlightStars(stars[rating - 1]);
+                            }
+                        });
+
+                        // 클릭 시 별점 값 설정
+                        star.addEventListener('click', () => {
+                            const rating = star.getAttribute('data-value');
+                            ratingInput.value = rating;  // 클릭한 별점 값을 hidden input에 설정
+                        });
+                    });
+
+                    function clearSelection(stars) {
+                        stars.forEach(star => star.classList.remove('selected'));
+                    }
+
+                    function highlightStars(star) {
+                        star.classList.add('selected');
+                        let previousSibling = star.previousElementSibling;
+                        while (previousSibling) {
+                            previousSibling.classList.add('selected');
+                            previousSibling = previousSibling.previousElementSibling;
+                        }
+                    }
+                });
+
+                // 댓글 수정 버튼 클릭 시 폼 토글 기능
+                function toggleEditForm(commentId) {
+                    var formElement = document.getElementById('edit-comment-form-' + commentId);
+                    if (formElement.style.display === 'none' || formElement.style.display === '') {
+                        formElement.style.display = 'block';
+                    } else {
+                        formElement.style.display = 'none';
+                    }
+                }
+            });
         </script>
 
         <hr class="my-4">
