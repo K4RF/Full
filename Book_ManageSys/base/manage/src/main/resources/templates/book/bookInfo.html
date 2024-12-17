@@ -71,6 +71,20 @@
             .star:hover {
                 color: #ffc107;
             }
+            .reviewedStar {
+                display: inline-block; /* 한 줄에 표시되도록 설정 */
+                font-size: 20px; /* 별의 크기 조정 */
+                color: gold; /* 선택된 별의 색상 */
+                pointer-events: none; /* 사용자 상호작용 비활성화 */
+            }
+
+            .reviewedStar .star {
+                color: gray; /* 기본 별 색상 */
+            }
+
+            .reviewedStar .star.selected {
+                color: gold; /* 선택된 별의 색상 */
+            }
         </style>
     </head>
     <body>
@@ -202,25 +216,19 @@
         <ul>
             <li th:each="comment : ${comments}">
                 <p>
-                    <strong th:text="${comment.writer}">작성자</strong>:
-                    <span th:text="${comment.review} + ' - '">댓글 내용</span>
-                    <span class="star-rating">
-                            <!-- 별점 표시, 숫자가 아닌 별 개수로 표시 -->
-                            <span class="star" th:each="i : ${#numbers.sequence(1, 5)}"
-                                  th:classappend="${i <= comment.rating ? 'selected' : ''}"
-                                  style="pointer-events: none;">&#9733;</span>
+                    <!-- 작성자와 별점 표시 -->
+                    <strong th:text="${comment.writer}">작성자</strong>
+                    <span class="reviewedStar" style="margin-left: 10px;">
+                        <!-- 별점 표시 -->
+                        <span class="star" th:each="i : ${#numbers.sequence(1, 5)}"
+                              th:classappend="${i <= comment.rating ? 'selected' : ''}">&#9733;</span>
                     </span>
+                </p>
+                <p style="margin: 5px 0;">
+                            <!-- 리뷰 내용 표시 -->
+                    <span th:text="${comment.review}">댓글 내용</span>
+                </p>
 
-
-                    <span th:if="${loginMember != null and comment.writer == loginMember.nickname}" style="float: right;">
-                        <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
-                        <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.commentId}').submit();|">삭제</a>
-                    </span>
-
-                    <form th:id="|delete-comment-${comment.commentId}|" th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/delete'}" method="post" style="display:none;">
-                        <input type="hidden" name="_method" value="delete">
-                    </form>
-                    </p>
 
                 <!-- 댓글 수정 폼 -->
                 <div th:id="'edit-comment-form-' + ${comment.commentId}" style="display: none; margin-top: 10px;">
@@ -244,6 +252,7 @@
                         <button type="submit" class="btn btn-primary btn-sm mt-2">수정</button>
                     </form>
                 </div>
+                <hr class="my-4">
             </li>
         </ul>
         <script>
