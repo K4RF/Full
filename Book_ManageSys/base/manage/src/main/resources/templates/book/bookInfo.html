@@ -228,6 +228,18 @@
                             <!-- 리뷰 내용 표시 -->
                     <span th:text="${comment.review}">댓글 내용</span>
                 </p>
+                <!-- 수정 및 삭제 링크 (작성자만 볼 수 있음) -->
+                <span th:if="${loginMember != null and comment.writer == loginMember.nickname}" style="float: right;">
+                    <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
+                    <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.commentId}').submit();|">삭제</a>
+                </span>
+
+                <!-- 삭제를 위한 폼 -->
+                <form th:id="|delete-comment-${comment.commentId}|"
+                      th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/delete'}"
+                      method="post" style="display:none;">
+                    <input type="hidden" name="_method" value="delete">
+                </form>
 
 
                 <!-- 댓글 수정 폼 -->
@@ -252,7 +264,7 @@
                         <button type="submit" class="btn btn-primary btn-sm mt-2">수정</button>
                     </form>
                 </div>
-                <hr class="my-4">
+                <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
             </li>
         </ul>
         <script>
