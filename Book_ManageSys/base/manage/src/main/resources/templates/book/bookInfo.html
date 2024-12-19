@@ -49,46 +49,10 @@
                 width: 100%;
                 max-width: 300px;
             }
-            .star-rating {
-                display: flex;
-                align-items: center;
-                cursor: pointer;
-            }
-
-            .star-rating {
-                display: flex;
-                align-items: center;
-                cursor: pointer;
-            }
-
-            .star {
-                font-size: 2rem; /* 별 크기 */
-                color: gray; /* 기본 색상 */
-                position: relative;
-                display: inline-block;
-                transition: color 0.3s ease-in-out;
-            }
-
-            .star.selected {
-                color: gold; /* 완전히 채운 별 */
-            }
-
-            .star.half-selected {
-                position: relative;
-                color: gray; /* 기본 별 색상 */
-                overflow: hidden;
-            }
-
-            .star.half-selected::after {
-                content: "\u2605"; /* 별 모양 */
-                position: absolute;
-                color: gold; /* 반쪽 별 색상 */
-                width: 50%; /* 반쪽만 채움 */
-                left: 0; /* 왼쪽 정렬 */
-                top: 0;
-                height: 100%;
-                z-index: 1;
-            }
+            .star-rating { display: flex; align-items: center; cursor: pointer; }
+            .star { font-size: 2rem; /* 별 크기 */ color: gray; /* 기본 별 색상 */ position: relative; display: inline-block; transition: color 0.3s; }
+            .star.selected { color: gold; /* 완전 채워진 별 색상 */ }
+            .star.half-selected::after { content: "★"; /* 별 아이콘 */ position: absolute; color: gold; /* 채워진 별 색상 */ left: 0; top: 0; width: 50%; /* 왼쪽 절반만 채움 */ overflow: hidden; height: 100%;
         </style>
     </head>
     <body>
@@ -390,7 +354,7 @@
                     });
                 }
 
-                // 댓글 수정 버튼 클릭 시 폼 토글 기능
+            // 댓글 수정 버튼 클릭 시 폼 토글 기능
                 function toggleEditForm(commentId) {
                     var formElement = document.getElementById('edit-comment-form-' + commentId);
                     if (formElement.style.display === 'none' || formElement.style.display === '') {
