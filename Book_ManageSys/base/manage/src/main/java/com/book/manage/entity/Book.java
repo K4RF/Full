@@ -81,15 +81,20 @@ public class Book {
 
     // 평균 별점 계산
     public BigDecimal calculateAverageRating() {
+        if (comments.isEmpty()) {
+            return BigDecimal.ZERO.setScale(1, RoundingMode.HALF_UP); // 댓글이 없을 경우 0.0 반환
+        }
+
         return comments.stream()
                 .map(Comment::getRating) // BigDecimal 스트림 생성
                 .reduce(BigDecimal.ZERO, BigDecimal::add) // 합계를 계산
                 .divide(
                         new BigDecimal(comments.size()), // 개수로 나누기
-                        2, // 소수점 2자리까지
+                        1, // 소수점 1자리까지
                         RoundingMode.HALF_UP // 반올림 방식 설정
                 );
     }
+
 
     // 댓글 갯수 업데이트 메서드
     @PrePersist

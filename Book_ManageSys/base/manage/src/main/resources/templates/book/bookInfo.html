@@ -52,7 +52,7 @@
             .star-rating { display: flex; align-items: center; cursor: pointer; }
             .star { font-size: 2rem; /* 별 크기 */ color: gray; /* 기본 별 색상 */ position: relative; display: inline-block; transition: color 0.3s; }
             .star.selected { color: gold; /* 완전 채워진 별 색상 */ }
-            .star.half-selected::after { content: "★"; /* 별 아이콘 */ position: absolute; color: gold; /* 채워진 별 색상 */ left: 0; top: 0; width: 50%; /* 왼쪽 절반만 채움 */ overflow: hidden; height: 100%;
+            .star.half-selected::after { content: "★"; /* 별 아이콘 */ position: absolute; color: gold; /* 채워진 별 색상 */ left: 0; top: 0; width: 50%; /* 왼쪽 절반만 채움 */ overflow: hidden; height: 100%;}
         </style>
     </head>
     <body>
@@ -187,21 +187,22 @@
                     <!-- 작성자와 별점 표시 -->
                     <strong th:text="${comment.writer}">작성자</strong>
                     <span class="reviewedStar" style="margin-left: 10px;">
-                <span class="star" th:each="i : ${#numbers.sequence(1, 5)}"
-                      th:classappend="${i <= comment.rating ? 'selected' : (i - 0.5 == comment.rating ? 'half-selected' : '')}">
-                    &#9733;
+                    <span class="star" th:each="i : ${#numbers.sequence(1, 5)}"
+                          th:classappend="${i <= comment.rating ? 'selected' : (i - 0.5 == comment.rating ? 'half-selected' : '')}">
+                        &#9733;
+                    </span>
                 </span>
-            </span>
                 </p>
                 <p style="margin: 5px 0;">
-                            <!-- 리뷰 내용 표시 -->
+                    <!-- 리뷰 내용 표시 -->
                     <span th:text="${comment.review}">댓글 내용</span>
-                </p>
+
                 <!-- 수정 및 삭제 링크 (작성자만 볼 수 있음) -->
-                <span th:if="${loginMember != null and comment.writer == loginMember.nickname}" style="float: right;">
-                    <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
-                    <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.commentId}').submit();|">삭제</a>
-                </span>
+                    <span th:if="${loginMember != null and comment.writer == loginMember.nickname}" style="float: right;">
+                        <a href="javascript:void(0);" th:onclick="|toggleEditForm(${comment.commentId})|">수정</a> |
+                        <a href="#" th:onclick="|if(confirm('정말 삭제하시겠습니까?')) document.getElementById('delete-comment-' + '${comment.commentId}').submit();|">삭제</a>
+                    </span>
+                </p>
 
                 <!-- 삭제를 위한 폼 -->
                 <form th:id="|delete-comment-${comment.commentId}|"
@@ -209,7 +210,6 @@
                       method="post" style="display:none;">
                     <input type="hidden" name="_method" value="delete">
                 </form>
-
 
                 <!-- 댓글 수정 폼 -->
                 <div th:id="'edit-comment-form-' + ${comment.commentId}" style="display: none; margin-top: 10px;">
@@ -233,9 +233,13 @@
                         <button type="submit" class="btn btn-primary btn-sm mt-2">수정</button>
                     </form>
                 </div>
-                <hr class="hr-spacing"> <!-- 내용 후의 구분선 -->
+
+                <!-- 구분선 -->
+                <hr class="hr-spacing">
             </li>
         </ul>
+
+
         <script>
             function toggleEditForm(commentId) {
                 var formElement = document.getElementById('edit-comment-form-' + commentId);
@@ -310,51 +314,52 @@
                 }
             }
             document.addEventListener('DOMContentLoaded', function () {
-                const starRating = document.getElementById('starRating');
-                const stars = starRating.querySelectorAll('.star');
-                const ratingInput = document.getElementById('rating');
+                document.querySelectorAll('.star-rating').forEach((starRating) => {
+                    const stars = starRating.querySelectorAll('.star');
+                    const ratingInput = starRating.parentElement.querySelector('input[name="newRating"]'); // input[name="newRating"]로 탐색
 
-                stars.forEach((star, index) => {
-                    const value = index + 1; // 각 별의 정수 값 (1~5)
+                    stars.forEach((star, index) => {
+                        const value = index + 1; // 각 별의 정수 값 (1~5)
 
-                    // 마우스 이동 시 반쪽/전체 별 강조
-                    star.addEventListener('mousemove', (event) => {
-                        const { offsetX, target } = event;
-                        const isHalf = offsetX < target.offsetWidth / 2; // 반쪽 여부 확인
-                        const rating = value - (isHalf ? 0.5 : 0);
-                        highlightStars(rating);
+                        // 마우스 이동 시 반쪽/전체 별 강조
+                        star.addEventListener('mousemove', (event) => {
+                            const { offsetX, target } = event;
+                            const isHalf = offsetX < target.offsetWidth / 2; // 반쪽 여부 확인
+                            const rating = value - (isHalf ? 0.5 : 0);
+                            highlightStars(rating, stars);
+                        });
+
+                        // 클릭 시 별점 값 저장
+                        star.addEventListener('click', (event) => {
+                            const { offsetX, target } = event;
+                            const isHalf = offsetX < target.offsetWidth / 2; // 반쪽 여부 확인
+                            const rating = value - (isHalf ? 0.5 : 0);
+                            ratingInput.value = rating.toFixed(1); // 별점 값을 저장
+                        });
+
+                        // 마우스가 벗어나면 기존 선택 상태로 복원
+                        star.addEventListener('mouseleave', () => {
+                            const rating = parseFloat(ratingInput.value) || 0; // 현재 저장된 별점 값
+                            highlightStars(rating, stars);
+                        });
                     });
 
-                    // 클릭 시 별점 값 저장
-                    star.addEventListener('click', (event) => {
-                        const { offsetX, target } = event;
-                        const isHalf = offsetX < target.offsetWidth / 2; // 반쪽 여부 확인
-                        const rating = value - (isHalf ? 0.5 : 0);
-                        ratingInput.value = rating.toFixed(1); // 별점 값 저장
-                    });
+                    // 별점 강조 함수
+                    function highlightStars(rating, stars) {
+                        stars.forEach((star, index) => {
+                            const value = index + 1; // 별의 정수 값
+                            star.classList.remove('selected', 'half-selected');
 
-                    // 마우스가 벗어나면 기존 선택 상태로 복원
-                    star.addEventListener('mouseleave', () => {
-                        const rating = parseFloat(ratingInput.value) || 0; // 현재 저장된 별점 값
-                        highlightStars(rating);
-                    });
+                            if (rating >= value) {
+                                star.classList.add('selected'); // 완전히 채운 별
+                            } else if (rating > value - 1 && rating < value) {
+                                star.classList.add('half-selected'); // 반쪽 채운 별
+                            }
+                        });
+                    }
                 });
 
-                // 별점 강조 함수
-                function highlightStars(rating) {
-                    stars.forEach((star, index) => {
-                        const value = index + 1; // 별의 정수 값
-                        star.classList.remove('selected', 'half-selected');
-
-                        if (rating >= value) {
-                            star.classList.add('selected'); // 완전히 채운 별
-                        } else if (rating > value - 1 && rating < value) {
-                            star.classList.add('half-selected'); // 반쪽 채운 별
-                        }
-                    });
-                }
-
-            // 댓글 수정 버튼 클릭 시 폼 토글 기능
+                // 댓글 수정 버튼 클릭 시 폼 토글 기능
                 function toggleEditForm(commentId) {
                     var formElement = document.getElementById('edit-comment-form-' + commentId);
                     if (formElement.style.display === 'none' || formElement.style.display === '') {
