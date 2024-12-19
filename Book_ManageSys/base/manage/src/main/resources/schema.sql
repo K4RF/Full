@@ -78,5 +78,7 @@ CREATE TABLE comment (
                          WRITER VARCHAR(255) NOT NULL,
                          REVIEW TEXT NOT NULL,
                          RATING DECIMAL(2, 1) CHECK (RATING BETWEEN 0.0 AND 5.0), -- 별점 0.0~5.0 사이, 소수점 한 자리
-                         FOREIGN KEY (BOOK_ID) REFERENCES book(BOOK_ID) ON DELETE CASCADE -- book과의 관계 설정
+                         FOREIGN KEY (BOOK_ID) REFERENCES book(BOOK_ID) ON DELETE CASCADE, -- book과의 관계 설정
+                         REVIEW_DATE DATE NOT NULL           -- 발행일 필드
+
 );

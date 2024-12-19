@@ -187,6 +187,9 @@
                     <!-- 작성자와 별점 표시 -->
                     <strong th:text="${comment.writer}">작성자</strong>
                     <span class="reviewedStar" style="margin-left: 10px;">
+                        <span th:text="${comment.reviewDate!=null ? comment.reviewDate : '작성일 정보 없음'}" style="margin-left: 10px; font-size: 0.9rem; color: gray;">
+                            2024-12-20
+                        </span>
                     <span class="star" th:each="i : ${#numbers.sequence(1, 5)}"
                           th:classappend="${i <= comment.rating ? 'selected' : (i - 0.5 == comment.rating ? 'half-selected' : '')}">
                         &#9733;
@@ -316,7 +319,7 @@
             document.addEventListener('DOMContentLoaded', function () {
                 document.querySelectorAll('.star-rating').forEach((starRating) => {
                     const stars = starRating.querySelectorAll('.star');
-                    const ratingInput = starRating.parentElement.querySelector('input[name="newRating"]'); // input[name="newRating"]로 탐색
+                    const ratingInput = starRating.closest('form').querySelector('input[name="rating"], input[name="newRating"]');
 
                     stars.forEach((star, index) => {
                         const value = index + 1; // 각 별의 정수 값 (1~5)
