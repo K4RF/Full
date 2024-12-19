@@ -8,6 +8,7 @@ import com.book.manage.repository.book.comment.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -22,7 +23,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public void addComment(Long bookId, String writer, String review, int rating) {
+    public void addComment(Long bookId, String writer, String review, BigDecimal rating) {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new IllegalArgumentException("Book not found with id: " + bookId));
         Comment comment = new Comment(book, writer, review, rating);
         commentRepository.save(comment);
@@ -34,7 +35,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public void updateComment(Long commentId, String newReview, String loginMemberNickname, int rating) {
+    public void updateComment(Long commentId, String newReview, String loginMemberNickname, BigDecimal rating) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not Found"));
         if (!comment.getWriter().equals(loginMemberNickname)) {

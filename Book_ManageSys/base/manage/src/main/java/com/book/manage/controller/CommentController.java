@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -27,7 +28,7 @@ public class CommentController {
     @PostMapping
     public String addComment(@PathVariable Long bookId,
                              @RequestParam String review,
-                             @RequestParam int rating,
+                             @RequestParam BigDecimal rating,
                              Model model,
                              @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
         // 로그인 여부 확인
@@ -50,7 +51,7 @@ public class CommentController {
     public String editComment(@PathVariable Long bookId,
                               @PathVariable Long commentId,
                               @RequestParam String newReview,
-                              @RequestParam int newRating,
+                              @RequestParam BigDecimal newRating,
                               @SessionAttribute(value = "loginMember", required = false) Member loginMember) {
         if (loginMember == null) {
             return "redirect:/login?redirectURL=/bookList/" + bookId;

@@ -3,17 +3,18 @@ package com.book.manage.service.book.comment;
 import com.book.manage.entity.Comment;
 import com.book.manage.entity.Member;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface CommentService {
     List<Comment> getCommentsByBookId(Long bookId);
 
-    void addComment(Long bookId, String writer, String review, int rating);
+    void addComment(Long bookId, String writer, String review, BigDecimal rating);
 
     void deleteByBookId(Long bookId);
 
     // 댓글 수정
-    void updateComment(Long commentId, String newReview, String loginMemberNickname, int rating);
+    void updateComment(Long commentId, String newReview, String loginMemberNickname, BigDecimal rating);
 
     // 댓글 삭제
     void deleteComment(Long commentId, String loginMemberNickname);
