@@ -251,12 +251,17 @@
                         </div>
                         <div>
                             <label th:for="'newRating-' + ${comment.commentId}">새 별점</label>
-                            <div class="star-rating" id="starRatingEdit-${comment.commentId}">
-                                <!-- 별 아이콘 (별점 선택용) -->
+                            <div class="star-rating" id="starRating">
+                                <!-- 별 아이콘 (0.5 단위 값 추가) -->
+                                <span class="star" data-value="0.5">&#9733;</span>
                                 <span class="star" data-value="1">&#9733;</span>
+                                <span class="star" data-value="1.5">&#9733;</span>
                                 <span class="star" data-value="2">&#9733;</span>
+                                <span class="star" data-value="2.5">&#9733;</span>
                                 <span class="star" data-value="3">&#9733;</span>
+                                <span class="star" data-value="3.5">&#9733;</span>
                                 <span class="star" data-value="4">&#9733;</span>
+                                <span class="star" data-value="4.5">&#9733;</span>
                                 <span class="star" data-value="5">&#9733;</span>
                             </div>
                             <input type="hidden" th:id="'newRating-' + ${comment.commentId}" name="newRating" required />
@@ -302,11 +307,16 @@
                 <div class="form-group">
                     <label>별점</label>
                     <div class="star-rating" id="starRating">
-                        <!-- 별 아이콘 -->
+                        <!-- 별 아이콘 (0.5 단위 값 추가) -->
+                        <span class="star" data-value="0.5">&#9733;</span>
                         <span class="star" data-value="1">&#9733;</span>
+                        <span class="star" data-value="1.5">&#9733;</span>
                         <span class="star" data-value="2">&#9733;</span>
+                        <span class="star" data-value="2.5">&#9733;</span>
                         <span class="star" data-value="3">&#9733;</span>
+                        <span class="star" data-value="3.5">&#9733;</span>
                         <span class="star" data-value="4">&#9733;</span>
+                        <span class="star" data-value="4.5">&#9733;</span>
                         <span class="star" data-value="5">&#9733;</span>
                     </div>
                     <!-- 별점 값 저장 -->
@@ -341,15 +351,12 @@
                 }
             }
             document.addEventListener('DOMContentLoaded', function () {
-                // 댓글 수정 폼에서 별점 선택 기능 추가
-                const editStars = document.querySelectorAll('.star-rating .star');
+                const starRatings = document.querySelectorAll('.star-rating');
 
-                // 각 댓글 수정 폼에 대해 별점을 동적으로 설정하는 함수
-                document.querySelectorAll('.star-rating').forEach(function(starRating) {
+                starRatings.forEach(starRating => {
                     const stars = starRating.querySelectorAll('.star');
                     const ratingInput = starRating.parentElement.querySelector('input[type="hidden"]');
 
-                    // 마우스 오버 및 클릭 이벤트 처리
                     stars.forEach(star => {
                         // 마우스 오버 이벤트로 별 강조
                         star.addEventListener('mouseover', () => {
@@ -360,16 +367,16 @@
                         // 마우스가 벗어나면 원래 상태로 복원
                         star.addEventListener('mouseout', () => {
                             clearSelection(stars);
-                            const rating = ratingInput.value;
+                            const rating = parseFloat(ratingInput.value);
                             if (rating) {
-                                highlightStars(stars[rating - 1]);
+                                highlightStarsByValue(stars, rating);
                             }
                         });
 
                         // 클릭 시 별점 값 설정
                         star.addEventListener('click', () => {
-                            const rating = star.getAttribute('data-value');
-                            ratingInput.value = rating;  // 클릭한 별점 값을 hidden input에 설정
+                            const rating = parseFloat(star.getAttribute('data-value'));
+                            ratingInput.value = rating.toFixed(1); // 0.5 단위 값 저장
                         });
                     });
 
@@ -378,14 +385,23 @@
                     }
 
                     function highlightStars(star) {
-                        star.classList.add('selected');
-                        let previousSibling = star.previousElementSibling;
-                        while (previousSibling) {
-                            previousSibling.classList.add('selected');
-                            previousSibling = previousSibling.previousElementSibling;
-                        }
+                        const value = parseFloat(star.getAttribute('data-value'));
+                        stars.forEach(s => {
+                            if (parseFloat(s.getAttribute('data-value')) <= value) {
+                                s.classList.add('selected');
+                            }
+                        });
+                    }
+
+                    function highlightStarsByValue(stars, value) {
+                        stars.forEach(s => {
+                            if (parseFloat(s.getAttribute('data-value')) <= value) {
+                                s.classList.add('selected');
+                            }
+                        });
                     }
                 });
+
 
                 // 댓글 수정 버튼 클릭 시 폼 토글 기능
                 function toggleEditForm(commentId) {

@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.*;
@@ -78,13 +80,16 @@ public class Book {
     }
 
     // 평균 별점 계산
-    public double calculateAverageRating() {
+    public BigDecimal calculateAverageRating() {
         return comments.stream()
-                .mapToInt(Comment::getRating)
-                .average()
-                .orElse(0.0);
+                .map(Comment::getRating) // BigDecimal 스트림 생성
+                .reduce(BigDecimal.ZERO, BigDecimal::add) // 합계를 계산
+                .divide(
+                        new BigDecimal(comments.size()), // 개수로 나누기
+                        2, // 소수점 2자리까지
+                        RoundingMode.HALF_UP // 반올림 방식 설정
+                );
     }
-
 
     // 댓글 갯수 업데이트 메서드
     @PrePersist

@@ -10,6 +10,7 @@ CREATE TABLE member (
                         ROLE VARCHAR(20) NOT NULL DEFAULT 'USER' -- 역할 필드 추가 (기본값: USER)
 );
 
+
 -- 기존 book 테이블 삭제
 DROP TABLE IF EXISTS book CASCADE;
 
@@ -70,12 +71,12 @@ CREATE TABLE book_category (
 -- 기존 comment 테이블 삭제
 DROP TABLE IF EXISTS comment CASCADE;
 
--- comment 테이블 생성
+-- comment 테이블 생성 (별점 수정 적용)
 CREATE TABLE comment (
                          COMMENT_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
                          BOOK_ID BIGINT NOT NULL,
                          WRITER VARCHAR(255) NOT NULL,
                          REVIEW TEXT NOT NULL,
-                         RATING INT CHECK (RATING BETWEEN 1 AND 5), -- 1~5 사이의 평점
+                         RATING DECIMAL(2, 1) CHECK (RATING BETWEEN 0.0 AND 5.0), -- 별점 0.0~5.0 사이, 소수점 한 자리
                          FOREIGN KEY (BOOK_ID) REFERENCES book(BOOK_ID) ON DELETE CASCADE -- book과의 관계 설정
 );
