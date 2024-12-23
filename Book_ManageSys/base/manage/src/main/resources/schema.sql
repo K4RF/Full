@@ -38,9 +38,11 @@ CREATE TABLE rental (
                         MEMBER_ID BIGINT NOT NULL,
                         RENTAL_STATUS VARCHAR(20) NOT NULL,
                         RENTAL_DATE DATE NOT NULL,
-                        RETURN_DATE DATE, -- NULL 허용
-                        FOREIGN KEY (BOOK_ID) REFERENCES book(BOOK_ID),
-                        FOREIGN KEY (MEMBER_ID) REFERENCES member(MEMBER_ID)
+                        DUE_DATE DATE NOT NULL,                    -- 반납 마감일 필드 추가
+                        RETURN_DATE DATE,                          -- 반납일
+                        EXTENSION_COUNT INT DEFAULT 0 NOT NULL,    -- 연장 횟수
+                        FOREIGN KEY (BOOK_ID) REFERENCES book(BOOK_ID) ON DELETE CASCADE,
+                        FOREIGN KEY (MEMBER_ID) REFERENCES member(MEMBER_ID) ON DELETE CASCADE
 );
 
 -- 기존 category 테이블 삭제

@@ -85,6 +85,10 @@ public class BookController {
         // 대출 상태 및 대출 기록 가져오기
         String rentalStatus = rentalService.getRentalStatusByBookId(bookId);
         Rental rental = rentalService.findActiveRentalByBookId(bookId);
+
+        // 대출 연장 횟수 가져오기
+        int extensionCount = (rental != null) ? rentalService.getExtensionCount(rental.getRentalId()) : 0;
+
         // 카테고리 순서대로 정렬
         List<Category> sortedCategories = book.getCategories().stream()
                 .sorted(Comparator.comparingInt(Category::getCateOrder))  // cateOrder 기준으로 정렬
@@ -121,6 +125,7 @@ public class BookController {
         model.addAttribute("rentalId", rental != null ? rental.getRentalId() : null);
         model.addAttribute("rentalAbleBook", book.getRentalAbleBook()); // rentalAbleBook 값을 모델에 추가
         model.addAttribute("rentalMemberId", rentalMemberId);
+        model.addAttribute("extensionCount", extensionCount); // 대출 연장 횟수 추가
         model.addAttribute("loginMemberId", loginMemberId); // 로그인된 사용자 ID 추가
         model.addAttribute("cacheBuster", System.currentTimeMillis()); // 캐시 방지용 무작위 값
         model.addAttribute("sortedCategories", sortedCategories);
@@ -391,7 +396,7 @@ public class BookController {
             redirectAttributes.addFlashAttribute("message", "도서를 성공적으로 대출했습니다.");
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("status", "대출 실패");
-            redirectAttributes.addFlashAttribute("message", "이미 대출된 도서입니다.");
+            redirectAttributes.addFlashAttribute("error", "이미 대출된 도서입니다.");
         }
         return "redirect:/bookList/{bookId}";
     }
@@ -420,8 +425,44 @@ public class BookController {
             redirectAttributes.addFlashAttribute("message", "도서를 성공적으로 반납했습니다.");
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("status", "반납 실패");
-            redirectAttributes.addFlashAttribute("message", "반납할 대출 기록이 없습니다.");
+            redirectAttributes.addFlashAttribute("error", "반납할 대출 기록이 없습니다.");
         }
         return "redirect:/bookList/{bookId}";
+    }
+
+    // 도서 대출 연장에 대한 GET 방식 처리
+    @GetMapping("/{bookId}/extend")
+    public String extendRentalGet(@PathVariable Long bookId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, RedirectAttributes redirectAttributes) {
+        String redirect = handleLoginRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
+        }
+
+        redirectAttributes.addFlashAttribute("error", "대출 연장은 POST 요청으로만 가능합니다.");
+        return "redirect:/bookList/" + bookId;
+    }
+
+    // 도서 대출 연장 처리
+    @PostMapping("/{bookId}/extend")
+    public String extendRental(@PathVariable Long bookId, @SessionAttribute(value = "loginMember", required = false) Member loginMember, RedirectAttributes redirectAttributes) {
+        String redirect = handleLoginRedirect(loginMember, bookId);
+        if (redirect != null) {
+            return redirect;
+        }
+
+        try {
+            boolean success = rentalService.extendRental(bookId, loginMember.getMemberId());
+            if (success) {
+                redirectAttributes.addFlashAttribute("status", "연장 성공");
+                redirectAttributes.addFlashAttribute("message", "대출 기간이 성공적으로 연장되었습니다.");
+            } else {
+                redirectAttributes.addFlashAttribute("status", "연장 실패");
+                redirectAttributes.addFlashAttribute("error", "연장 가능 횟수를 초과했습니다.");
+            }
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("status", "연장 실패");
+            redirectAttributes.addFlashAttribute("error", "연장 중 오류가 발생했습니다: " + e.getMessage());
+        }
+        return "redirect:/bookList/" + bookId;
     }
 }

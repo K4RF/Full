@@ -85,6 +85,7 @@
                 <th>#</th>
                 <th>도서 제목</th>
                 <th>대여 날짜</th>
+                <th>반납 기한</th> <!-- 반납 기한 추가 -->
                 <th>반납 날짜</th>
                 <th>대여 상태</th>
             </tr>
@@ -95,6 +96,7 @@
                 <td th:text="${iterStat.index + 1}"></td>
                 <td th:text="${rental.book.title}"></td>
                 <td th:text="${rental.rentalDate}"></td>
+                <td th:text="${rental.dueDate}"></td> <!-- 반납 기한 표시 -->
                 <td th:text="${rental.returnDate != null ? rental.returnDate : '반납전'}"></td>
                 <td th:text="${rental.rentalStatus}"></td>
             </tr>
