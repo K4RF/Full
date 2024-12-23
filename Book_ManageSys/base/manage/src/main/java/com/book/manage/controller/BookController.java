@@ -396,7 +396,7 @@ public class BookController {
             redirectAttributes.addFlashAttribute("message", "도서를 성공적으로 대출했습니다.");
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("status", "대출 실패");
-            redirectAttributes.addFlashAttribute("message", "이미 대출된 도서입니다.");
+            redirectAttributes.addFlashAttribute("error", "이미 대출된 도서입니다.");
         }
         return "redirect:/bookList/{bookId}";
     }
@@ -425,7 +425,7 @@ public class BookController {
             redirectAttributes.addFlashAttribute("message", "도서를 성공적으로 반납했습니다.");
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("status", "반납 실패");
-            redirectAttributes.addFlashAttribute("message", "반납할 대출 기록이 없습니다.");
+            redirectAttributes.addFlashAttribute("error", "반납할 대출 기록이 없습니다.");
         }
         return "redirect:/bookList/{bookId}";
     }
@@ -457,11 +457,11 @@ public class BookController {
                 redirectAttributes.addFlashAttribute("message", "대출 기간이 성공적으로 연장되었습니다.");
             } else {
                 redirectAttributes.addFlashAttribute("status", "연장 실패");
-                redirectAttributes.addFlashAttribute("message", "연장 가능 횟수를 초과했습니다.");
+                redirectAttributes.addFlashAttribute("error", "연장 가능 횟수를 초과했습니다.");
             }
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("status", "연장 실패");
-            redirectAttributes.addFlashAttribute("message", "연장 중 오류가 발생했습니다: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "연장 중 오류가 발생했습니다: " + e.getMessage());
         }
         return "redirect:/bookList/" + bookId;
     }

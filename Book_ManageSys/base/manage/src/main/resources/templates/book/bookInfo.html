@@ -140,14 +140,14 @@
 
                 <!-- 대출 연장 버튼 -->
                 <form th:if="${!rentalAbleBook and loginMemberId == rentalMemberId}"
-                      th:action="@{/bookList/{bookId}/extend(bookId=${book.bookId})}" method="post" style="display: inline;">
+                      th:action="@{/bookList/{bookId}/extend(bookId=${book.bookId})}"
+                      method="post" id="extend-form" style="display: inline;">
                     <input type="hidden" th:name="rentalId" th:value="${rentalId}" />
-                    <button class="btn btn-success btn-lg" type="submit"
-                            th:disabled="${extensionCount >= 2}">대출 연장</button>
+                    <button class="btn btn-success btn-lg" type="button"
+                            onclick="handleExtend(/*[[${extensionCount}]]*/)">대출 연장</button>
                 </form>
             </div>
         </div>
-
 
         <div class="row">
             <p><strong>카테고리</strong></p>
@@ -252,17 +252,6 @@
         </ul>
 
 
-        <script>
-            function toggleEditForm(commentId) {
-                var formElement = document.getElementById('edit-comment-form-' + commentId);
-                if (formElement.style.display === 'none' || formElement.style.display === '') {
-                    formElement.style.display = 'block';
-                } else {
-                    formElement.style.display = 'none';
-                }
-            }
-        </script>
-
         <h3 th:if="${loginMember == null}">
             <a th:href="'/login?redirectURL=/bookList/' + ${book.bookId}" class="btn btn-primary btn-lg">댓글 작성</a>
         </h3>
@@ -303,6 +292,15 @@
 
 
         <script>
+            function handleExtend(extensionCount) {
+                if (extensionCount >= 2) {
+                    alert('대출 연장은 최대 2번까지만 가능합니다.');
+                    return;
+                }
+                if (confirm('정말 대출을 연장하시겠습니까?')) {
+                    document.getElementById('extend-form').submit();
+                }
+            }
             function toggleCommentForm() {
                 var commentForm = document.getElementById('comment-form');
                 var hasComment = /*[[${hasComment}]]*/ false; // 서버에서 전달된 hasComment 값을 사용
@@ -370,7 +368,6 @@
                         });
                     }
                 });
-
                 // 댓글 수정 버튼 클릭 시 폼 토글 기능
                 function toggleEditForm(commentId) {
                     var formElement = document.getElementById('edit-comment-form-' + commentId);
