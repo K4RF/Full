@@ -90,15 +90,14 @@ public class RentalJpaRepository implements RentalRepository {
         for (Rental rental : rentals) {
             if (rental.getReturnDate() != null) {
                 rental.setRentalStatus("반납완료");
-            } else if (rental.getRentalDate().plusDays(14).isBefore(LocalDate.now())) { // 2주 후 연체 처리
+            } else if (rental.getDueDate().isBefore(LocalDate.now())) { // dueDate를 기준으로 연체 처리
                 rental.setRentalStatus("연체");
             } else {
                 rental.setRentalStatus("대출중");
             }
-            save(rental);  // 상태 갱신
+            save(rental); // 상태 갱신
         }
     }
-
     @Override
     public Optional<Rental> findByBookIdAndRentalStatus(Long bookId, String rentalStatus) {
         QRental qRental = QRental.rental;

@@ -33,15 +33,16 @@ DROP TABLE IF EXISTS rental CASCADE;
 
 -- rental 테이블 생성
 CREATE TABLE rental (
-                        RENTAL_ID BIGINT AUTO_INCREMENT PRIMARY KEY, -- 대출 ID (기본 키)
-                        BOOK_ID BIGINT NOT NULL,                    -- 대출된 도서 ID
-                        MEMBER_ID BIGINT NOT NULL,                  -- 대출한 회원 ID
-                        RENTAL_STATUS VARCHAR(20) NOT NULL,         -- 대출 상태 (예: 대출중, 연체, 반납완료)
-                        RENTAL_DATE DATE NOT NULL,                  -- 대출 날짜
-                        RETURN_DATE DATE,                           -- 반납 날짜 (NULL 허용)
-                        EXTENSION_COUNT INT DEFAULT 0 NOT NULL,     -- 대출 연장 횟수 (최대 2회)
-                        FOREIGN KEY (BOOK_ID) REFERENCES book(BOOK_ID) ON DELETE CASCADE, -- book 테이블 외래 키
-                        FOREIGN KEY (MEMBER_ID) REFERENCES member(MEMBER_ID) ON DELETE CASCADE -- member 테이블 외래 키
+                        RENTAL_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        BOOK_ID BIGINT NOT NULL,
+                        MEMBER_ID BIGINT NOT NULL,
+                        RENTAL_STATUS VARCHAR(20) NOT NULL,
+                        RENTAL_DATE DATE NOT NULL,
+                        DUE_DATE DATE NOT NULL,                    -- 반납 마감일 필드 추가
+                        RETURN_DATE DATE,                          -- 반납일
+                        EXTENSION_COUNT INT DEFAULT 0 NOT NULL,    -- 연장 횟수
+                        FOREIGN KEY (BOOK_ID) REFERENCES book(BOOK_ID) ON DELETE CASCADE,
+                        FOREIGN KEY (MEMBER_ID) REFERENCES member(MEMBER_ID) ON DELETE CASCADE
 );
 
 -- 기존 category 테이블 삭제

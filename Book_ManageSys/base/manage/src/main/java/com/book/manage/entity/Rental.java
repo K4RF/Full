@@ -27,6 +27,9 @@ public class Rental {
     @Column(name = "rental_date", nullable = false)
     private LocalDate rentalDate;
 
+    @Column(name = "due_date", nullable = false) // 반납 마감일 추가
+    private LocalDate dueDate;
+
     @Column(name = "return_date")
     private LocalDate returnDate;
 

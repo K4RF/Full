@@ -68,6 +68,7 @@ public class RentalServiceImpl implements RentalService {
         rental.setBook(book);
         rental.setMember(member);
         rental.setRentalDate(LocalDate.now());
+        rental.setDueDate(LocalDate.now().plusDays(14)); // 반납 마감일 설정
         rental.setRentalStatus("대출중");  // 대출 상태 설정
 
         // 책의 대출 가능 여부를 false로 설정
@@ -160,7 +161,7 @@ public class RentalServiceImpl implements RentalService {
             }
 
             // 연장 처리
-            rental.setRentalDate(rental.getRentalDate().plusDays(7)); // 기본 7일 연장
+            rental.setDueDate(rental.getDueDate().plusDays(7)); // 기본 7일 연장
             rental.setExtensionCount(rental.getExtensionCount() + 1);
             rentalRepository.save(rental);
 
