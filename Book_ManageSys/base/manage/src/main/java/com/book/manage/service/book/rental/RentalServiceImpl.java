@@ -145,4 +145,34 @@ public class RentalServiceImpl implements RentalService {
             rentalRepository.delete(rental); // 대출 기록 삭제
         }
     }
+
+    @Override
+    // 대출 연장 처리
+    public boolean extendRental(Long bookId, Long memberId) {
+        Optional<Rental> rentalOptional = rentalRepository.findLatestRental(bookId, memberId);
+
+        if (rentalOptional.isPresent()) {
+            Rental rental = rentalOptional.get();
+
+            // 연장 가능 여부 확인
+            if (rental.getExtensionCount() >= 2) {
+                throw new IllegalStateException("최대 연장 횟수를 초과했습니다.");
+            }
+
+            // 연장 처리
+            rental.setRentalDate(rental.getRentalDate().plusDays(7)); // 기본 7일 연장
+            rental.setExtensionCount(rental.getExtensionCount() + 1);
+            rentalRepository.save(rental);
+
+            return true;
+        }
+        throw new IllegalStateException("대출 기록을 찾을 수 없습니다.");
+    }
+
+    // 대출 연장 횟수 조회
+    public int getExtensionCount(Long rentalId) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new IllegalArgumentException("대출 기록을 찾을 수 없습니다."));
+        return rental.getExtensionCount(); // Rental 엔티티의 extensionCount 반환
+    }
 }

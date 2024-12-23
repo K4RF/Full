@@ -18,4 +18,6 @@ public interface RentalService {
     void deleteRentalsByBookId(Long bookId);
     List<Rental> findRentals(RentalSearchDto searchParam);
     void deleteRentalsByMemberId(Long memberId);
+    boolean extendRental(Long bookId, Long rentalId);
+    int getExtensionCount(Long rentalId);
 }

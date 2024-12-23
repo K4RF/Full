@@ -29,4 +29,7 @@ public class Rental {
 
     @Column(name = "return_date")
     private LocalDate returnDate;
+
+    @Column(nullable = false)
+    private int extensionCount = 0; // 연장 횟수
 }
