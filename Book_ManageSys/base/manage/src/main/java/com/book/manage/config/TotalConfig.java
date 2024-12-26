@@ -15,12 +15,14 @@ import com.book.manage.repository.member.MemberRepository;
 
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.book.BookServiceImpl;
-import com.book.manage.service.book.comment.CommentService;
-import com.book.manage.service.book.comment.CommentServiceImpl;
-import com.book.manage.service.book.rental.RentalService;
-import com.book.manage.service.book.rental.RentalServiceImpl;
-import com.book.manage.service.book.category.CategoryService;
-import com.book.manage.service.book.category.CategoryServiceImpl;
+import com.book.manage.service.comment.CommentService;
+import com.book.manage.service.comment.CommentServiceImpl;
+import com.book.manage.service.order.OrderService;
+import com.book.manage.service.order.OrderServiceImpl;
+import com.book.manage.service.rental.RentalService;
+import com.book.manage.service.rental.RentalServiceImpl;
+import com.book.manage.service.category.CategoryService;
+import com.book.manage.service.category.CategoryServiceImpl;
 import com.book.manage.service.member.MemberService;
 import com.book.manage.service.member.MemberServiceImpl;
 import jakarta.persistence.EntityManager;
@@ -88,5 +90,10 @@ public class TotalConfig {
     @Bean
     public OrderRepository orderRepository(){
         return new OrderJpaRepository(em);
+    }
+
+    @Bean
+    public OrderService orderService(){
+        return new OrderServiceImpl(orderRepository(), memberRepository(), bookRepository());
     }
 }

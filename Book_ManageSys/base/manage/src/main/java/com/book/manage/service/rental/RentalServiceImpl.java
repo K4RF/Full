@@ -1,4 +1,4 @@
-package com.book.manage.service.book.rental;
+package com.book.manage.service.rental;
 
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;

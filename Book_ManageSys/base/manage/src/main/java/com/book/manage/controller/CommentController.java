@@ -2,7 +2,7 @@ package com.book.manage.controller;
 
 import com.book.manage.entity.Comment;
 import com.book.manage.entity.Member;
-import com.book.manage.service.book.comment.CommentService;
+import com.book.manage.service.comment.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

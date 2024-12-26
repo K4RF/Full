@@ -1,4 +1,4 @@
-package com.book.manage.service.book.comment;
+package com.book.manage.service.comment;
 
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Comment;
