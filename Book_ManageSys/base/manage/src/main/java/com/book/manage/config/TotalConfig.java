@@ -2,23 +2,27 @@ package com.book.manage.config;
 
 import com.book.manage.repository.book.BookJpaRepository;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.comment.CommentJpaRepository;
-import com.book.manage.repository.book.comment.CommentRepository;
-import com.book.manage.repository.book.rental.RentalJpaRepository;
-import com.book.manage.repository.book.rental.RentalRepository;
-import com.book.manage.repository.book.category.CategoryRepository;
-import com.book.manage.repository.book.category.CategoryJpaRepository;
+import com.book.manage.repository.comment.CommentJpaRepository;
+import com.book.manage.repository.comment.CommentRepository;
+import com.book.manage.repository.order.OrderJpaRepository;
+import com.book.manage.repository.order.OrderRepository;
+import com.book.manage.repository.rental.RentalJpaRepository;
+import com.book.manage.repository.rental.RentalRepository;
+import com.book.manage.repository.category.CategoryRepository;
+import com.book.manage.repository.category.CategoryJpaRepository;
 import com.book.manage.repository.member.MemberJpaRepository;
 import com.book.manage.repository.member.MemberRepository;
 
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.book.BookServiceImpl;
-import com.book.manage.service.book.comment.CommentService;
-import com.book.manage.service.book.comment.CommentServiceImpl;
-import com.book.manage.service.book.rental.RentalService;
-import com.book.manage.service.book.rental.RentalServiceImpl;
-import com.book.manage.service.book.category.CategoryService;
-import com.book.manage.service.book.category.CategoryServiceImpl;
+import com.book.manage.service.comment.CommentService;
+import com.book.manage.service.comment.CommentServiceImpl;
+import com.book.manage.service.order.OrderService;
+import com.book.manage.service.order.OrderServiceImpl;
+import com.book.manage.service.rental.RentalService;
+import com.book.manage.service.rental.RentalServiceImpl;
+import com.book.manage.service.category.CategoryService;
+import com.book.manage.service.category.CategoryServiceImpl;
 import com.book.manage.service.member.MemberService;
 import com.book.manage.service.member.MemberServiceImpl;
 import jakarta.persistence.EntityManager;
@@ -81,5 +85,15 @@ public class TotalConfig {
     @Bean
     public CommentService commentService(){
         return new CommentServiceImpl(commentRepository(), bookRepository());
+    }
+
+    @Bean
+    public OrderRepository orderRepository(){
+        return new OrderJpaRepository(em);
+    }
+
+    @Bean
+    public OrderService orderService(){
+        return new OrderServiceImpl(orderRepository(), memberRepository(), bookRepository());
     }
 }

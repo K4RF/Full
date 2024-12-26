@@ -1,4 +1,4 @@
-package com.book.manage.repository.book.category;
+package com.book.manage.repository.category;
 
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Category;

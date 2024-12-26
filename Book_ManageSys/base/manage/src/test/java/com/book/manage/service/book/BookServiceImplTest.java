@@ -4,7 +4,7 @@ import com.book.manage.entity.Book;
 import com.book.manage.entity.Category;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.category.CategoryRepository;
+import com.book.manage.repository.category.CategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

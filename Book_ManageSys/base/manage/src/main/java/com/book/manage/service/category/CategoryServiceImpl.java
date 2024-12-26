@@ -1,8 +1,8 @@
-package com.book.manage.service.book.category;
+package com.book.manage.service.category;
 
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Category;
-import com.book.manage.repository.book.category.CategoryRepository;
+import com.book.manage.repository.category.CategoryRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

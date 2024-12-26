@@ -2,14 +2,12 @@ package com.book.manage.service.book;
 
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Category;
-import com.book.manage.entity.Member;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.category.CategoryRepository;
-import com.book.manage.service.book.category.CategoryService;
-import com.book.manage.service.book.category.CategoryServiceImpl;
-import com.book.manage.service.book.comment.CommentService;
+import com.book.manage.repository.category.CategoryRepository;
+import com.book.manage.service.category.CategoryService;
+import com.book.manage.service.comment.CommentService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
