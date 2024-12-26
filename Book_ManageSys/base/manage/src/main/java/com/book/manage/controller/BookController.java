@@ -5,6 +5,7 @@ import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.comment.CommentService;
+import com.book.manage.service.order.OrderService;
 import com.book.manage.service.rental.RentalService;
 import com.book.manage.service.category.CategoryService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +37,8 @@ public class BookController {
     private final RentalService rentalService;
     private final CategoryService categoryService;
     private final CommentService commentService;
+
+    private final OrderService orderService;
 
     // 모든 요청에서 loginMember 모델을 추가
     @ModelAttribute
@@ -462,6 +465,26 @@ public class BookController {
             redirectAttributes.addFlashAttribute("status", "연장 실패");
             redirectAttributes.addFlashAttribute("error", "연장 중 오류가 발생했습니다: " + e.getMessage());
         }
+        return "redirect:/bookList/" + bookId;
+    }
+
+    @PostMapping("/{bookId}/order")
+    public String createOrder(
+            @PathVariable Long bookId,
+            @RequestParam double bookPrice,
+            @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+            Model model) {
+        if (loginMember == null) {
+            return "redirect:/login?redirectURL=/bookList/" + bookId;
+        }
+
+        try {
+            orderService.createOrder(loginMember.getMemberId(), bookId, bookPrice);
+            model.addAttribute("message", "도서 주문이 완료되었습니다!");
+        } catch (Exception e) {
+            model.addAttribute("error", "도서 주문에 실패했습니다: " + e.getMessage());
+        }
+
         return "redirect:/bookList/" + bookId;
     }
 }

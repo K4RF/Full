@@ -11,4 +11,5 @@ public interface OrderService {
     List<Order> getOrdersByBook(Long bookId); // 도서 ID로 주문 조회
     List<Order> getOrdersByDateRange(LocalDate startDate, LocalDate endDate); // 날짜 범위로 주문 조회
     void cancelOrder(Long orderId); // 주문 취소
+    Order getOrderById(Long orderId);
 }

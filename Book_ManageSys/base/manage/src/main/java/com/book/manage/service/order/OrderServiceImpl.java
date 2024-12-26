@@ -55,4 +55,10 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 주문을 찾을 수 없습니다."));
         orderRepository.delete(order);
     }
+
+    @Override
+    public Order getOrderById(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 주문을 찾을 수 없습니다."));
+    }
 }
