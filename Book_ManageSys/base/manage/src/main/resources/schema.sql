@@ -84,3 +84,16 @@ CREATE TABLE comment (
                          REVIEW_DATE DATE NOT NULL           -- 발행일 필드
 
 );
+
+-- order 테이블 생성
+DROP TABLE IF EXISTS orders CASCADE;
+
+CREATE TABLE orders (
+                        order_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        member_id BIGINT NOT NULL,
+                        book_id BIGINT NOT NULL,
+                        book_price DOUBLE NOT NULL,
+                        order_date DATE NOT NULL,
+                        FOREIGN KEY (member_id) REFERENCES member(member_id),
+                        FOREIGN KEY (book_id) REFERENCES book(book_id)
+);
