@@ -41,15 +41,20 @@ class OrderServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        // 테스트용 기본 데이터 생성
+        // 회원 기본 데이터 생성
         defaultMember = new Member();
-        defaultMember.setNickname("Test User");
+        defaultMember.setLoginId("testUser");
+        defaultMember.setPassword("password123");
+        defaultMember.setNickname("Test Nickname");
         defaultMember = memberRepository.save(defaultMember);
 
+        // 도서 기본 데이터 생성
         defaultBook = new Book();
         defaultBook.setTitle("Test Book");
         defaultBook.setAuthor("Author Name");
         defaultBook.setPublisher("Publisher Name");
+        defaultBook.setDetails("Sample details for testing.");
+        defaultBook.setPublishDate(LocalDate.now());
         defaultBook = bookRepository.save(defaultBook);
 
         log.info("Created default member: {}", defaultMember);

@@ -14,7 +14,6 @@ import java.util.Optional;
 import static com.book.manage.entity.QOrder.order;
 
 @Repository
-@RequiredArgsConstructor
 public class OrderJpaRepository implements OrderRepository {
 
     private final EntityManager em;
