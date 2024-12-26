@@ -3,7 +3,6 @@ package com.book.manage.controller;
 import com.book.manage.entity.*;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
-import com.book.manage.repository.book.category.CategoryRepository;
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.book.comment.CommentService;
 import com.book.manage.service.book.rental.RentalService;

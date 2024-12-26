@@ -1,4 +1,4 @@
-package com.book.manage.repository.book.comment;
+package com.book.manage.repository.comment;
 
 import com.book.manage.entity.Comment;
 import com.book.manage.entity.Member;

@@ -4,7 +4,7 @@ import com.book.manage.entity.Book;
 import com.book.manage.entity.Comment;
 import com.book.manage.entity.Member;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.comment.CommentRepository;
+import com.book.manage.repository.comment.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

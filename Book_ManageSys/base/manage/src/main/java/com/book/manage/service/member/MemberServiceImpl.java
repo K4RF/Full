@@ -2,10 +2,8 @@ package com.book.manage.service.member;
 
 import com.book.manage.entity.Comment;
 import com.book.manage.entity.Member;
-import com.book.manage.entity.Rental;
 import com.book.manage.entity.Role;
 import com.book.manage.entity.dto.MemberEditDto;
-import com.book.manage.repository.book.rental.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
 import com.book.manage.service.book.comment.CommentService;
 import com.book.manage.service.book.rental.RentalService;

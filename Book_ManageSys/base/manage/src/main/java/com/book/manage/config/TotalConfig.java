@@ -2,12 +2,14 @@ package com.book.manage.config;
 
 import com.book.manage.repository.book.BookJpaRepository;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.comment.CommentJpaRepository;
-import com.book.manage.repository.book.comment.CommentRepository;
-import com.book.manage.repository.book.rental.RentalJpaRepository;
-import com.book.manage.repository.book.rental.RentalRepository;
-import com.book.manage.repository.book.category.CategoryRepository;
-import com.book.manage.repository.book.category.CategoryJpaRepository;
+import com.book.manage.repository.comment.CommentJpaRepository;
+import com.book.manage.repository.comment.CommentRepository;
+import com.book.manage.repository.order.OrderJpaRepository;
+import com.book.manage.repository.order.OrderRepository;
+import com.book.manage.repository.rental.RentalJpaRepository;
+import com.book.manage.repository.rental.RentalRepository;
+import com.book.manage.repository.category.CategoryRepository;
+import com.book.manage.repository.category.CategoryJpaRepository;
 import com.book.manage.repository.member.MemberJpaRepository;
 import com.book.manage.repository.member.MemberRepository;
 
@@ -81,5 +83,10 @@ public class TotalConfig {
     @Bean
     public CommentService commentService(){
         return new CommentServiceImpl(commentRepository(), bookRepository());
+    }
+
+    @Bean
+    public OrderRepository orderRepository(){
+        return new OrderJpaRepository(em);
     }
 }
