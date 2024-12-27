@@ -78,7 +78,7 @@
       <tr th:each="order, iterStat : ${orders}" th:if="${!#lists.isEmpty(orders)}">
         <td th:text="${iterStat.index + 1}"></td>
         <td th:text="${order.book.title}"></td>
-        <td th:text="${order.bookPrice}"></td>
+        <td th:text="${order.book.price}"></td>
         <td th:text="${order.orderDate}"></td>
         <td>
           <form th:action="@{/orders/{orderId}/cancel(orderId=${order.orderId})}" method="post">

@@ -8,36 +8,35 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "orders") // 테이블 이름을 orders로 설정
+@Table(name = "orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId; // 고유 주문 ID
+    private Long orderId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Member member; // 주문한 회원 정보
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
-    private Book book; // 주문한 도서 정보
+    private Book book;
 
     @Column(name = "book_price", nullable = false)
-    private double bookPrice; // 도서 가격
+    private double bookPrice;
 
     @Column(name = "order_date", nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate orderDate; // 주문 날짜
+    private LocalDate orderDate;
 
     public Order() {
-        // 기본 생성자
     }
 
-    public Order(Member member, Book book, double bookPrice, LocalDate orderDate) {
+    public Order(Member member, Book book, LocalDate orderDate) {
         this.member = member;
         this.book = book;
-        this.bookPrice = bookPrice;
+        this.bookPrice = book.getPrice(); // 도서 가격을 Book 엔티티에서 가져옴
         this.orderDate = orderDate;
     }
 }

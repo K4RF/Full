@@ -218,7 +218,7 @@ public class BookController {
         }
 
         Book book = bookService.findById(bookId).orElseThrow();
-        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories(), book.getImagePath(), book.getPublishDate());
+        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories(), book.getImagePath(), book.getPublishDate(), book.getPrice());
         model.addAttribute("book", bookEditDto);
         return "book/editBookForm";
     }
@@ -300,6 +300,7 @@ public class BookController {
         existingBook.setDetails(bookEditDto.getDetails());
         existingBook.setImagePath(bookEditDto.getImagePath());
         existingBook.setPublishDate(bookEditDto.getPublishDate());
+        existingBook.setPrice(bookEditDto.getPrice());
 
         // 카테고리 처리
         bookService.edit(bookId, bookEditDto);
@@ -471,7 +472,6 @@ public class BookController {
     @PostMapping("/{bookId}/order")
     public String createOrder(
             @PathVariable Long bookId,
-            @RequestParam double bookPrice,
             @SessionAttribute(value = "loginMember", required = false) Member loginMember,
             Model model) {
         if (loginMember == null) {
@@ -479,7 +479,7 @@ public class BookController {
         }
 
         try {
-            orderService.createOrder(loginMember.getMemberId(), bookId, bookPrice);
+            orderService.createOrder(loginMember.getMemberId(), bookId);
             model.addAttribute("message", "도서 주문이 완료되었습니다!");
         } catch (Exception e) {
             model.addAttribute("error", "도서 주문에 실패했습니다: " + e.getMessage());

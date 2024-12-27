@@ -77,6 +77,7 @@ public class BookServiceImpl implements BookService {
         book.setDetails(bookEditDto.getDetails());
         book.setImagePath(bookEditDto.getImagePath());
         book.setPublishDate(bookEditDto.getPublishDate());
+        book.setPrice(bookEditDto.getPrice());
 
         // 카테고리 처리: 기존 카테고리 삭제 후 새로운 카테고리 추가
         Set<Category> updatedCategories = new HashSet<>();

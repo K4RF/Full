@@ -63,6 +63,9 @@ public class Book {
     @Column(name = "total_comment")
     private int totalComment;  // 댓글 갯수를 저장하는 필드
 
+    @Column(nullable = false)
+    private double price; // 가격 필드 추가
+
     public String getCategoriesFormatted() {
         return categories.stream()
                 .map(Category::getCate)
