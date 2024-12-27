@@ -30,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 도서를 찾을 수 없습니다."));
 
-        Order order = new Order(member, book, bookPrice, LocalDate.now());
+        Order order = new Order(member, book, LocalDate.now());
         return orderRepository.save(order);
     }
 
