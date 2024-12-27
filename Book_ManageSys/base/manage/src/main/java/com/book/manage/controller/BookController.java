@@ -218,7 +218,7 @@ public class BookController {
         }
 
         Book book = bookService.findById(bookId).orElseThrow();
-        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories(), book.getImagePath(), book.getPublishDate());
+        BookEditDto bookEditDto = new BookEditDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDetails(), book.getCategories(), book.getImagePath(), book.getPublishDate(), book.getPrice());
         model.addAttribute("book", bookEditDto);
         return "book/editBookForm";
     }
@@ -300,6 +300,7 @@ public class BookController {
         existingBook.setDetails(bookEditDto.getDetails());
         existingBook.setImagePath(bookEditDto.getImagePath());
         existingBook.setPublishDate(bookEditDto.getPublishDate());
+        existingBook.setPrice(bookEditDto.getPrice());
 
         // 카테고리 처리
         bookService.edit(bookId, bookEditDto);
