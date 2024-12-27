@@ -137,6 +137,10 @@
       <label for="publishDate">발행일자</label>
       <input type="date" id="publishDate" th:field="*{publishDate}" class="form-control">
     </div>
+    <div>
+      <label for="price">가격</label>
+      <input type="number" id="price" th:field="*{price}" class="form-control" step="0.01" min="0">
+    </div>
     <div class="form-group">
       <label for="imageFile">이미지</label>
       <div class="mb-3">

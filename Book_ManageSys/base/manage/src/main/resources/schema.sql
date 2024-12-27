@@ -16,17 +16,19 @@ DROP TABLE IF EXISTS book CASCADE;
 
 -- book 테이블 생성
 CREATE TABLE book (
-                      BOOK_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
-                      TITLE VARCHAR(50) NOT NULL,
-                      AUTHOR VARCHAR(255) NOT NULL,
-                      PUBLISHER VARCHAR(255) NOT NULL,
-                      DETAILS TEXT NOT NULL,
-                      RENTAL_ABLE_BOOK BOOLEAN DEFAULT TRUE, -- 대출 가능 여부 필드
-                      IMAGE_PATH VARCHAR(255),              -- 이미지 경로 필드
-                      VIEW_COUNT INT DEFAULT 0,             -- 조회수 필드
-                      PUBLISH_DATE DATE NOT NULL,            -- 발행일 필드
-                      TOTAL_COMMENT INT DEFAULT 0           -- 댓글 갯수 필드
+                      book_id BIGINT AUTO_INCREMENT PRIMARY KEY,  -- 고유 ID
+                      title VARCHAR(50) NOT NULL,                 -- 도서 제목
+                      author VARCHAR(255) NOT NULL,               -- 저자
+                      publisher VARCHAR(255) NOT NULL,            -- 출판사
+                      details TEXT NOT NULL,                      -- 도서 상세 설명
+                      rental_able_book BOOLEAN DEFAULT TRUE,      -- 대출 가능 여부
+                      image_path VARCHAR(255),                    -- 이미지 경로
+                      view_count INT DEFAULT 0,                   -- 조회수
+                      publish_date DATE NOT NULL,                 -- 발행일
+                      total_comment INT DEFAULT 0,                -- 댓글 갯수
+                      price DECIMAL(10, 2) NOT NULL               -- 도서 가격 (소수점 2자리까지)
 );
+
 
 -- 기존 rental 테이블 삭제
 DROP TABLE IF EXISTS rental CASCADE;
@@ -85,15 +87,16 @@ CREATE TABLE comment (
 
 );
 
--- order 테이블 생성
+-- orders 테이블 삭제 (기존 테이블이 존재하면 삭제)
 DROP TABLE IF EXISTS orders CASCADE;
 
+-- orders 테이블 생성
 CREATE TABLE orders (
-                        order_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                        member_id BIGINT NOT NULL,
-                        book_id BIGINT NOT NULL,
-                        book_price DOUBLE NOT NULL,
-                        order_date DATE NOT NULL,
-                        FOREIGN KEY (member_id) REFERENCES member(member_id),
-                        FOREIGN KEY (book_id) REFERENCES book(book_id)
+                        order_id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 고유 주문 ID
+                        member_id BIGINT NOT NULL,                  -- 회원 ID
+                        book_id BIGINT NOT NULL,                    -- 도서 ID
+                        book_price DECIMAL(10, 2) NOT NULL,         -- 도서 가격 (소수점 2자리까지)
+                        order_date DATE NOT NULL,                   -- 주문 날짜
+                        FOREIGN KEY (member_id) REFERENCES member(member_id) ON DELETE CASCADE, -- 회원 외래키
+                        FOREIGN KEY (book_id) REFERENCES book(book_id) ON DELETE CASCADE        -- 도서 외래키
 );

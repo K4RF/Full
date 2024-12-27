@@ -24,7 +24,7 @@ public class OrderServiceImpl implements OrderService {
     private final BookRepository bookRepository;
 
     @Override
-    public Order createOrder(Long memberId, Long bookId, double bookPrice) {
+    public Order createOrder(Long memberId, Long bookId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다."));
         Book book = bookRepository.findById(bookId)
