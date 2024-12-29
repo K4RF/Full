@@ -1,4 +1,4 @@
-package com.book.manage.service.book.category;
+package com.book.manage.service.category;
 
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Category;

@@ -135,6 +135,15 @@
             <input type="text" id="publisher" th:field="*{publisher}" class="form-control">
         </div>
         <div>
+            <label for="publishDate">발행일자</label>
+            <input type="date" id="publishDate" name="publishDate"
+                   class="form-control" required>
+        </div>
+        <div>
+            <label for="price">가격</label>
+            <input type="number" id="price" name="price" step="0.01" th:field="*{price}" class="form-control" required>
+        </div>
+        <div>
             <label for="categoriesFormatted">카테고리 (버튼을 눌러 선택하세요)</label>
             <input type="hidden" id="categoriesFormatted" name="categoriesFormatted" th:field="*{categoriesFormatted}" class="form-control"
                    th:classappend="${#fields.hasErrors('categoriesFormatted')} ? 'is-invalid' : ''">

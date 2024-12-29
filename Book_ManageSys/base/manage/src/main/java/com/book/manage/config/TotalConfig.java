@@ -2,19 +2,27 @@ package com.book.manage.config;
 
 import com.book.manage.repository.book.BookJpaRepository;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.RentalJpaRepository;
-import com.book.manage.repository.book.RentalRepository;
-import com.book.manage.repository.book.category.CategoryRepository;
-import com.book.manage.repository.book.category.CategoryJpaRepository;
+import com.book.manage.repository.comment.CommentJpaRepository;
+import com.book.manage.repository.comment.CommentRepository;
+import com.book.manage.repository.order.OrderJpaRepository;
+import com.book.manage.repository.order.OrderRepository;
+import com.book.manage.repository.rental.RentalJpaRepository;
+import com.book.manage.repository.rental.RentalRepository;
+import com.book.manage.repository.category.CategoryRepository;
+import com.book.manage.repository.category.CategoryJpaRepository;
 import com.book.manage.repository.member.MemberJpaRepository;
 import com.book.manage.repository.member.MemberRepository;
 
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.book.BookServiceImpl;
-import com.book.manage.service.book.RentalService;
-import com.book.manage.service.book.RentalServiceImpl;
-import com.book.manage.service.book.category.CategoryService;
-import com.book.manage.service.book.category.CategoryServiceImpl;
+import com.book.manage.service.comment.CommentService;
+import com.book.manage.service.comment.CommentServiceImpl;
+import com.book.manage.service.order.OrderService;
+import com.book.manage.service.order.OrderServiceImpl;
+import com.book.manage.service.rental.RentalService;
+import com.book.manage.service.rental.RentalServiceImpl;
+import com.book.manage.service.category.CategoryService;
+import com.book.manage.service.category.CategoryServiceImpl;
 import com.book.manage.service.member.MemberService;
 import com.book.manage.service.member.MemberServiceImpl;
 import jakarta.persistence.EntityManager;
@@ -37,7 +45,7 @@ public class TotalConfig {
 
     @Bean(name = "memberService")
     public MemberService memberService() {
-        return new MemberServiceImpl(memberRepository(),rentalRepository(), passwordEncoder);
+        return new MemberServiceImpl(memberRepository(),rentalService(), passwordEncoder, commentService());
     }
 
     @Bean
@@ -47,7 +55,7 @@ public class TotalConfig {
 
     @Bean
     public BookService bookService() {
-        return new BookServiceImpl(bookRepository(), categoryService(),categoryRepository());
+        return new BookServiceImpl(bookRepository(), categoryService(),categoryRepository(), commentService());
     }
 
     @Bean
@@ -67,5 +75,25 @@ public class TotalConfig {
     @Bean
     public CategoryService categoryService() {
         return new CategoryServiceImpl(categoryRepository());
+    }
+
+    @Bean
+    public CommentRepository commentRepository(){
+        return new CommentJpaRepository(em);
+    }
+
+    @Bean
+    public CommentService commentService(){
+        return new CommentServiceImpl(commentRepository(), bookRepository());
+    }
+
+    @Bean
+    public OrderRepository orderRepository(){
+        return new OrderJpaRepository(em);
+    }
+
+    @Bean
+    public OrderService orderService(){
+        return new OrderServiceImpl(orderRepository(), memberRepository(), bookRepository());
     }
 }

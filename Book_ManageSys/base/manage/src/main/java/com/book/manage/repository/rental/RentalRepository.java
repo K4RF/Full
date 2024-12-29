@@ -1,4 +1,4 @@
-package com.book.manage.repository.book;
+package com.book.manage.repository.rental;
 
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.dto.RentalSearchDto;

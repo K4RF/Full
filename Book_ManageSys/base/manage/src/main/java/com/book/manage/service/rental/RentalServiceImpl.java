@@ -1,11 +1,11 @@
-package com.book.manage.service.book;
+package com.book.manage.service.rental;
 
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.dto.RentalSearchDto;
 import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.RentalRepository;
+import com.book.manage.repository.rental.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -66,6 +66,7 @@ public class RentalServiceImpl implements RentalService {
         rental.setBook(book);
         rental.setMember(member);
         rental.setRentalDate(LocalDate.now());
+        rental.setDueDate(LocalDate.now().plusDays(14)); // 반납 마감일 설정
         rental.setRentalStatus("대출중");  // 대출 상태 설정
 
         // 책의 대출 가능 여부를 false로 설정
@@ -134,5 +135,43 @@ public class RentalServiceImpl implements RentalService {
     @Override
     public List<Rental> findRentals(RentalSearchDto searchParam) {
         return rentalRepository.findAll(searchParam);
+    }
+
+    @Override
+    public void deleteRentalsByMemberId(Long memberId) {
+        List<Rental> rentals = rentalRepository.findByMemberMemberId(memberId); // 책 ID로 대출 목록 조회
+        for (Rental rental : rentals) {
+            rentalRepository.delete(rental); // 대출 기록 삭제
+        }
+    }
+
+    @Override
+    // 대출 연장 처리
+    public boolean extendRental(Long bookId, Long memberId) {
+        Optional<Rental> rentalOptional = rentalRepository.findLatestRental(bookId, memberId);
+
+        if (rentalOptional.isPresent()) {
+            Rental rental = rentalOptional.get();
+
+            // 연장 가능 여부 확인
+            if (rental.getExtensionCount() >= 2) {
+                throw new IllegalStateException("최대 연장 횟수를 초과했습니다.");
+            }
+
+            // 연장 처리
+            rental.setDueDate(rental.getDueDate().plusDays(7)); // 기본 7일 연장
+            rental.setExtensionCount(rental.getExtensionCount() + 1);
+            rentalRepository.save(rental);
+
+            return true;
+        }
+        throw new IllegalStateException("대출 기록을 찾을 수 없습니다.");
+    }
+
+    // 대출 연장 횟수 조회
+    public int getExtensionCount(Long rentalId) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new IllegalArgumentException("대출 기록을 찾을 수 없습니다."));
+        return rental.getExtensionCount(); // Rental 엔티티의 extensionCount 반환
     }
 }

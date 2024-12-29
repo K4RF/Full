@@ -1,13 +1,12 @@
 package com.book.manage.service.member;
 
-import com.book.manage.entity.Book;
+import com.book.manage.entity.Comment;
 import com.book.manage.entity.Member;
-import com.book.manage.entity.Rental;
 import com.book.manage.entity.Role;
 import com.book.manage.entity.dto.MemberEditDto;
-import com.book.manage.repository.book.BookRepository;
-import com.book.manage.repository.book.RentalRepository;
 import com.book.manage.repository.member.MemberRepository;
+import com.book.manage.service.comment.CommentService;
+import com.book.manage.service.rental.RentalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,13 +23,16 @@ import java.util.Optional;
 @Slf4j
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
-    private final RentalRepository rentalRepository;
+    private final RentalService rentalService;
     private final PasswordEncoder passwordEncoder;
 
-    public MemberServiceImpl(MemberRepository memberRepository, RentalRepository rentalRepository, PasswordEncoder passwordEncoder) {
+    private final CommentService commentService;
+
+    public MemberServiceImpl(MemberRepository memberRepository, RentalService rentalService, PasswordEncoder passwordEncoder, CommentService commentService) {
         this.memberRepository = memberRepository;
-        this.rentalRepository = rentalRepository;
+        this.rentalService = rentalService;
         this.passwordEncoder = passwordEncoder;
+        this.commentService = commentService;
     }
 
 
@@ -79,15 +81,22 @@ public class MemberServiceImpl implements MemberService{
     @Override
     @Transactional
     public void deleteMember(Long memberId) {
+        // 회원 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다"));
+
+        String nickname = member.getNickname(); // 댓글 삭제를 위해 회원의 닉네임 가져오기
+
         // 해당 회원의 대출 정보를 삭제
-        List<Rental> Rentals = rentalRepository.findByMemberMemberId(memberId);
-        for (Rental Rental : Rentals) {
-            rentalRepository.delete(Rental);
+        rentalService.deleteRentalsByMemberId(memberId);
+
+        // 해당 회원이 작성한 댓글 삭제
+        List<Comment> comments = commentService.getCommentsByWriter(nickname);
+        for (Comment comment : comments) {
+            commentService.deleteComment(comment.getCommentId(), nickname);
         }
 
         // 최종적으로 회원 삭제
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다"));
         memberRepository.deleteById(member.getMemberId());
     }
 

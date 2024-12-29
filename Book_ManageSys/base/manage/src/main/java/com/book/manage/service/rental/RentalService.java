@@ -1,4 +1,4 @@
-package com.book.manage.service.book;
+package com.book.manage.service.rental;
 
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.dto.RentalSearchDto;
@@ -17,4 +17,7 @@ public interface RentalService {
     Rental findActiveRentalByBookId(Long bookId);
     void deleteRentalsByBookId(Long bookId);
     List<Rental> findRentals(RentalSearchDto searchParam);
+    void deleteRentalsByMemberId(Long memberId);
+    boolean extendRental(Long bookId, Long rentalId);
+    int getExtensionCount(Long rentalId);
 }

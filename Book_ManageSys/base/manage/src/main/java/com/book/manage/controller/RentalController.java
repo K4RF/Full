@@ -3,7 +3,7 @@ package com.book.manage.controller;
 import com.book.manage.entity.Rental;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.dto.RentalSearchDto;
-import com.book.manage.service.book.RentalService;
+import com.book.manage.service.rental.RentalService;
 import com.book.manage.login.session.SessionConst;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

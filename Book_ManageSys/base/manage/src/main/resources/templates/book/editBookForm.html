@@ -133,6 +133,14 @@
       <label for="publisher">출판사</label>
       <input type="text" id="publisher" th:field="*{publisher}" class="form-control">
     </div>
+    <div>
+      <label for="publishDate">발행일자</label>
+      <input type="date" id="publishDate" th:field="*{publishDate}" class="form-control">
+    </div>
+    <div>
+      <label for="price">가격</label>
+      <input type="number" id="price" th:field="*{price}" class="form-control" step="0.01" min="0">
+    </div>
     <div class="form-group">
       <label for="imageFile">이미지</label>
       <div class="mb-3">
@@ -148,11 +156,21 @@
     </div>
     <div class="form-group">
       <label class="form-header">카테고리</label>
-      <input type="hidden" id="categoryFormatted" th:field="*{categoryFormatted}" class="form-control">
+      <!-- 히든 필드 -->
+      <input type="hidden" id="categoryFormatted" th:field="*{categoryFormatted}" class="form-control"
+             th:classappend="${#fields.hasErrors('categoryFormatted')} ? 'is-invalid' : ''">
+
+      <!-- 카테고리 버튼 그룹 -->
       <div id="category-buttons">
         <button type="button" class="btn btn-outline-primary category-btn" data-category="소설">소설</button>
         <button type="button" class="btn btn-outline-primary category-btn" data-category="역사">역사</button>
+        <button type="button" class="btn btn-outline-primary category-btn" data-category="과학">과학</button>
+        <button type="button" class="btn btn-outline-primary category-btn" data-category="기술">기술</button>
+        <button type="button" class="btn btn-outline-primary category-btn" data-category="예술">예술</button>
       </div>
+
+      <!-- 카테고리 오류 메시지 -->
+      <div class="text-danger" th:if="${#fields.hasErrors('categoryFormatted')}" th:errors="*{categoryFormatted}"></div>
     </div>
     <div class="form-group">
       <label for="details" class="form-header">내용</label>

@@ -1,8 +1,12 @@
 package com.book.manage.entity.dto;
 
 import com.book.manage.entity.Category;
+import jakarta.persistence.Column;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,12 +19,17 @@ public class BookEditDto {
     private String details;
     private Set<Category> categories = new HashSet<>();  // Set<Category>로 변경
 
-
     private String imagePath; // 이미지 경로를 저장하는 필드
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd") // HTML5 기본 날짜 형식
+    private LocalDate publishDate;
+
+    private double price; // 가격 필드 추가
+
     public BookEditDto() {}
+
     // 생성자
-    public BookEditDto(Long bookId, String title, String author, String publisher, String details, Set<Category> categories, String imagePath) {
+    public BookEditDto(Long bookId, String title, String author, String publisher, String details, Set<Category> categories, String imagePath, LocalDate publishDate, double price) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
@@ -28,6 +37,8 @@ public class BookEditDto {
         this.details = details;
         this.categories = categories;
         this.imagePath = imagePath;
+        this.publishDate = getPublishDate();
+        this.price = price;
     }
 
     public String getCategoryFormatted() {
