@@ -26,7 +26,7 @@ CREATE TABLE book (
                       view_count INT DEFAULT 0,                   -- 조회수
                       publish_date DATE NOT NULL,                 -- 발행일
                       total_comment INT DEFAULT 0,                -- 댓글 갯수
-                      price DECIMAL(10, 2) NOT NULL               -- 도서 가격 (소수점 2자리까지)
+                      price int DEFAULT 0              -- 도서 가격 (소수점 2자리까지)
 );
 
 
@@ -95,7 +95,7 @@ CREATE TABLE orders (
                         order_id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 고유 주문 ID
                         member_id BIGINT NOT NULL,                  -- 회원 ID
                         book_id BIGINT NOT NULL,                    -- 도서 ID
-                        book_price DECIMAL(10, 2) NOT NULL,         -- 도서 가격 (소수점 2자리까지)
+                        book_price int NOT NULL,         -- 도서 가격 (소수점 2자리까지)
                         order_date DATE NOT NULL,                   -- 주문 날짜
                         FOREIGN KEY (member_id) REFERENCES member(member_id) ON DELETE CASCADE, -- 회원 외래키
                         FOREIGN KEY (book_id) REFERENCES book(book_id) ON DELETE CASCADE        -- 도서 외래키

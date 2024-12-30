@@ -24,7 +24,7 @@ public class Order {
     private Book book;
 
     @Column(name = "book_price", nullable = false)
-    private double bookPrice;
+    private int bookPrice;
 
     @Column(name = "order_date", nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")

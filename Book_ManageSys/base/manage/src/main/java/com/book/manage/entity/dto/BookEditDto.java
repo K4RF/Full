@@ -24,12 +24,12 @@ public class BookEditDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd") // HTML5 기본 날짜 형식
     private LocalDate publishDate;
 
-    private double price; // 가격 필드 추가
+    private int price; // 가격 필드 추가
 
     public BookEditDto() {}
 
     // 생성자
-    public BookEditDto(Long bookId, String title, String author, String publisher, String details, Set<Category> categories, String imagePath, LocalDate publishDate, double price) {
+    public BookEditDto(Long bookId, String title, String author, String publisher, String details, Set<Category> categories, String imagePath, LocalDate publishDate, int price) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
