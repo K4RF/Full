@@ -89,7 +89,8 @@
         <td th:text="${order.totalPrice}"></td>
         <td th:text="${order.orderDate}"></td>
         <td>
-          <form th:action="@{/orderList/{orderId}/cancel(orderId=${order.orderId})}" method="post">
+          <form th:action="@{/orderList/{orderId}/cancel(orderId=${order.orderId})}" method="post"
+                onsubmit="return confirm('정말로 주문을 취소하시겠습니까?');">
             <button class="btn btn-danger btn-sm" type="submit">취소</button>
           </form>
         </td>

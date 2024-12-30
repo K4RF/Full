@@ -5,32 +5,103 @@
   <link th:href="@{/css/bootstrap.min.css}" href="/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
-    .container { max-width: 600px; margin-top: 50px; }
-    .price { font-size: 1.25rem; font-weight: bold; }
+    .form-control {
+      border-radius: 0.375rem;
+      padding: 10px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      font-size: 1.125rem;
+      padding: 12px;
+      border-radius: 0.375rem;
+    }
+
+    .btn-lg {
+      padding: 14px 20px;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .container {
+      max-width: 560px;
+      padding-bottom: 60px;
+      margin-top: 50px;
+    }
+
+    .price {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/">Book Manage</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto">
+      <!-- 로그인 버튼 -->
+      <li class="nav-item" th:if="${loginMember == null}">
+        <a class="nav-link" th:href="@{/login(redirectURL=${redirectURL})}">로그인</a>
+      </li>
+      <!-- 로그아웃 버튼 -->
+      <li class="nav-item" th:if="${loginMember != null}">
+        <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
+        <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
+      </li>
+      <!-- 회원정보 -->
+      <li class="nav-item" th:if="${loginMember != null}">
+        <a class="nav-link" th:href="@{/members/edit(redirectURL=${redirectURL})}">회원정보</a>
+      </li>
+      <!-- 도서 목록 -->
+      <li class="nav-item">
+        <a class="nav-link" href="/bookList">도서 목록</a>
+      </li>
+      <!-- 주문 목록 -->
+      <li class="nav-item" th:if="${loginMember != null}">
+        <a class="nav-link" th:href="@{/orderList}">주문 목록</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
 <div class="container">
-  <h2>도서 주문</h2>
+  <div class="py-5 text-center">
+    <h2>도서 주문</h2>
+  </div>
   <form th:action="@{/bookList/{bookId}/order(bookId=${book.bookId})}" method="post">
-    <div class="form-group">
+    <div>
       <label for="bookTitle">도서 제목</label>
       <input type="text" id="bookTitle" th:value="${book.title}" class="form-control" readonly>
     </div>
-    <div class="form-group">
+    <div>
       <label for="bookPrice">가격 (1권)</label>
       <input type="text" id="bookPrice" th:value="${book.price} + '원'" class="form-control price" readonly>
     </div>
-    <div class="form-group">
+    <div>
       <label for="quantity">수량</label>
       <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1">
     </div>
-    <div class="form-group">
+    <div>
       <label for="totalPrice">총 가격</label>
       <input type="text" id="totalPrice" class="form-control price" readonly>
     </div>
-    <button type="submit" class="btn btn-primary btn-block">주문하기</button>
-    <button type="button" class="btn btn-secondary btn-block" th:onclick="|location.href='@{/bookList}'|">취소</button>
+    <hr class="my-4">
+    <div class="row">
+      <div class="col">
+        <button class="w-100 btn btn-primary btn-lg" type="submit">주문하기</button>
+      </div>
+      <div class="col">
+        <button class="w-100 btn btn-secondary btn-lg" type="button" th:onclick="|location.href='@{/bookList}'|">취소</button>
+      </div>
+    </div>
   </form>
 </div>
 
@@ -41,7 +112,7 @@
     const $totalPriceInput = $("#totalPrice");
 
     function updateTotalPrice() {
-      const quantity = parseInt($quantityInput.val());
+      const quantity = parseInt($quantityInput.val()) || 1;
       const totalPrice = pricePerBook * quantity;
       $totalPriceInput.val(totalPrice.toLocaleString() + "원");
     }
