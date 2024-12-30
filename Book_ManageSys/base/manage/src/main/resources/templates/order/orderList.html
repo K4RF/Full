@@ -51,6 +51,14 @@
       <li class="nav-item">
         <a class="nav-link" href="/bookList">도서 목록</a>
       </li>
+      <!-- 대출 목록 -->
+      <li class="nav-item" th:if="${loginMember != null}">
+        <a class="nav-link" th:href="@{/rentalList}">도서 대여 현황 조회</a>
+      </li>
+      <!-- 주문 목록 -->
+      <li class="nav-item" th:if="${loginMember != null}">
+        <a class="nav-link" th:href="@{/orderList}">주문 목록</a>
+      </li>
     </ul>
   </div>
 </nav>
@@ -78,10 +86,10 @@
       <tr th:each="order, iterStat : ${orders}" th:if="${!#lists.isEmpty(orders)}">
         <td th:text="${iterStat.index + 1}"></td>
         <td th:text="${order.book.title}"></td>
-        <td th:text="${order.book.price}"></td>
+        <td th:text="${order.totalPrice}"></td>
         <td th:text="${order.orderDate}"></td>
         <td>
-          <form th:action="@{/orders/{orderId}/cancel(orderId=${order.orderId})}" method="post">
+          <form th:action="@{/orderList/{orderId}/cancel(orderId=${order.orderId})}" method="post">
             <button class="btn btn-danger btn-sm" type="submit">취소</button>
           </form>
         </td>

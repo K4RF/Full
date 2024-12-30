@@ -114,6 +114,10 @@
             <li class="nav-item" th:if="${loginMember != null}">
                 <a class="nav-link" th:href="@{/rentalList}">도서 대여 현황 조회</a>
             </li>
+            <!-- 주문 목록 -->
+            <li class="nav-item" th:if="${loginMember != null}">
+                <a class="nav-link" th:href="@{/orderList}">주문 목록</a>
+            </li>
         </ul>
     </div>
 </nav>
@@ -141,7 +145,7 @@
         </div>
         <div>
             <label for="price">가격</label>
-            <input type="number" id="price" name="price" step="0.01" th:field="*{price}" class="form-control" required>
+            <input type="number" id="price" name="price" step="0" th:field="*{price}" class="form-control" required>
         </div>
         <div>
             <label for="categoriesFormatted">카테고리 (버튼을 눌러 선택하세요)</label>

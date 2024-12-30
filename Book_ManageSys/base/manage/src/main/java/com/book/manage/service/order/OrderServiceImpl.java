@@ -24,13 +24,13 @@ public class OrderServiceImpl implements OrderService {
     private final BookRepository bookRepository;
 
     @Override
-    public Order createOrder(Long memberId, Long bookId) {
+    public Order createOrder(Long memberId, Long bookId, int quantity) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다."));
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 도서를 찾을 수 없습니다."));
 
-        Order order = new Order(member, book, LocalDate.now());
+        Order order = new Order(member, book, LocalDate.now(), quantity);
         return orderRepository.save(order);
     }
 
