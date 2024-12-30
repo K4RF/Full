@@ -38,6 +38,7 @@ class OrderServiceImplTest {
 
     private Member defaultMember;
     private Book defaultBook;
+    private static int quantity = 2;
 
     @BeforeEach
     void setUp() {
@@ -69,7 +70,7 @@ class OrderServiceImplTest {
         log.info("Creating order for member {} and book {}", defaultMember.getMemberId(), defaultBook.getBookId());
 
         // When
-        Order createdOrder = orderService.createOrder(defaultMember.getMemberId(), defaultBook.getBookId());
+        Order createdOrder = orderService.createOrder(defaultMember.getMemberId(), defaultBook.getBookId(), quantity);
 
         // Then
         assertThat(createdOrder).isNotNull();
@@ -85,7 +86,7 @@ class OrderServiceImplTest {
     void getOrdersByMember_shouldReturnOrdersForMember() {
         // Given
         double bookPrice = 19.99;
-        orderService.createOrder(defaultMember.getMemberId(), defaultBook.getBookId());
+        orderService.createOrder(defaultMember.getMemberId(), defaultBook.getBookId(), quantity);
 
         log.info("Fetching orders for member {}", defaultMember.getMemberId());
 
@@ -103,7 +104,7 @@ class OrderServiceImplTest {
     void getOrdersByBook_shouldReturnOrdersForBook() {
         // Given
         double bookPrice = 39.99;
-        orderService.createOrder(defaultMember.getMemberId(), defaultBook.getBookId());
+        orderService.createOrder(defaultMember.getMemberId(), defaultBook.getBookId(), quantity);
 
         log.info("Fetching orders for book {}", defaultBook.getBookId());
 
@@ -121,7 +122,7 @@ class OrderServiceImplTest {
     void cancelOrder_shouldDeleteOrderSuccessfully() {
         // Given
         double bookPrice = 49.99;
-        Order createdOrder = orderService.createOrder(defaultMember.getMemberId(), defaultBook.getBookId());
+        Order createdOrder = orderService.createOrder(defaultMember.getMemberId(), defaultBook.getBookId(), quantity);
         Long orderId = createdOrder.getOrderId();
 
         log.info("Cancelling order with ID {}", orderId);
@@ -140,7 +141,7 @@ class OrderServiceImplTest {
     void getOrdersByDateRange_shouldReturnOrdersWithinDateRange() {
         // Given
         double bookPrice = 15.99;
-        orderService.createOrder(defaultMember.getMemberId(), defaultBook.getBookId());
+        orderService.createOrder(defaultMember.getMemberId(), defaultBook.getBookId(), quantity);
 
         log.info("Fetching orders within date range");
 

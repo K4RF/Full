@@ -86,17 +86,18 @@ CREATE TABLE comment (
                          REVIEW_DATE DATE NOT NULL           -- 발행일 필드
 
 );
-
 -- orders 테이블 삭제 (기존 테이블이 존재하면 삭제)
 DROP TABLE IF EXISTS orders CASCADE;
 
 -- orders 테이블 생성
 CREATE TABLE orders (
-                        order_id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 고유 주문 ID
-                        member_id BIGINT NOT NULL,                  -- 회원 ID
-                        book_id BIGINT NOT NULL,                    -- 도서 ID
-                        book_price int NOT NULL,         -- 도서 가격 (소수점 2자리까지)
-                        order_date DATE NOT NULL,                   -- 주문 날짜
+                        order_id BIGINT AUTO_INCREMENT PRIMARY KEY,     -- 고유 주문 ID
+                        member_id BIGINT NOT NULL,                      -- 회원 ID (외래키)
+                        book_id BIGINT NOT NULL,                        -- 도서 ID (외래키)
+                        book_price INT NOT NULL,                        -- 도서 단가
+                        quantity INT NOT NULL,                          -- 주문 수량
+                        total_price INT NOT NULL,                       -- 총 가격 (book_price * quantity)
+                        order_date DATE NOT NULL,                       -- 주문 날짜
                         FOREIGN KEY (member_id) REFERENCES member(member_id) ON DELETE CASCADE, -- 회원 외래키
                         FOREIGN KEY (book_id) REFERENCES book(book_id) ON DELETE CASCADE        -- 도서 외래키
 );
