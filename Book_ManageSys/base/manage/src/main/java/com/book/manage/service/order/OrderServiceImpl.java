@@ -3,6 +3,9 @@ package com.book.manage.service.order;
 import com.book.manage.entity.Book;
 import com.book.manage.entity.Member;
 import com.book.manage.entity.Order;
+import com.book.manage.entity.Rental;
+import com.book.manage.entity.dto.OrderSearchDto;
+import com.book.manage.entity.dto.RentalSearchDto;
 import com.book.manage.repository.book.BookRepository;
 import com.book.manage.repository.member.MemberRepository;
 import com.book.manage.repository.order.OrderRepository;
@@ -61,4 +64,11 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 주문을 찾을 수 없습니다."));
     }
+
+    // 검색 조건에 따른 대출 목록 조회
+    @Override
+    public List<Order> findOrders(OrderSearchDto searchParam) {
+        return orderRepository.findAll(searchParam);
+    }
+
 }

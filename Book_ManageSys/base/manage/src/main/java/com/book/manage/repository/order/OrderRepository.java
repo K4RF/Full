@@ -1,6 +1,7 @@
 package com.book.manage.repository.order;
 
 import com.book.manage.entity.Order;
+import com.book.manage.entity.dto.OrderSearchDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,4 +15,5 @@ public interface OrderRepository {
     List<Order> findByDateRange(LocalDate startDate, LocalDate endDate); // 날짜 범위로 조회
     List<Order> findAll(); // 전체 주문 조회
     void delete(Order order); // 주문 삭제
+    List<Order> findAll(OrderSearchDto searchParam); // 주문 검색
 }
