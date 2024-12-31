@@ -26,10 +26,10 @@
     </style>
 </head>
 <body>
-<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
 
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>

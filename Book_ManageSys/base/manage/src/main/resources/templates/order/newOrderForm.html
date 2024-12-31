@@ -39,7 +39,7 @@
   </style>
 </head>
 <body>
-<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="container">
   <div class="py-5 text-center">
     <h2>도서 주문</h2>
@@ -94,7 +94,7 @@
     });
   });
 </script>
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>
