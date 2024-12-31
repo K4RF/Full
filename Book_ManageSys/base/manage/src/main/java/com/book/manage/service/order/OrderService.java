@@ -1,6 +1,8 @@
 package com.book.manage.service.order;
 
 import com.book.manage.entity.Order;
+import com.book.manage.entity.Rental;
+import com.book.manage.entity.dto.OrderSearchDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,4 +14,5 @@ public interface OrderService {
     List<Order> getOrdersByDateRange(LocalDate startDate, LocalDate endDate); // 날짜 범위로 주문 조회
     void cancelOrder(Long orderId); // 주문 취소
     Order getOrderById(Long orderId);
+    List<Order> findOrders(OrderSearchDto searchParam); // 주문 검색 로직
 }

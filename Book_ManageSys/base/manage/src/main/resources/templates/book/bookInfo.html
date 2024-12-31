@@ -56,42 +56,8 @@
         </style>
     </head>
     <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">Book Manage</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <!-- 로그인 버튼 -->
-                <li class="nav-item" th:if="${loginMember == null}">
-                    <a class="nav-link" th:href="@{/login(redirectURL=${redirectURL})}">로그인</a>
-                </li>
-                <!-- 로그아웃 버튼 -->
-                <li class="nav-item" th:if="${loginMember != null}">
-                    <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
-                    <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
-                </li>
-                <!-- 회원정보 -->
-                <li class="nav-item" th:if="${loginMember != null}">
-                    <a class="nav-link" th:href="@{/members/edit(redirectURL=${redirectURL})}">회원정보</a>
-                </li>
-                <!-- 도서 목록 -->
-                <li class="nav-item">
-                    <a class="nav-link" href="/bookList">도서 목록</a>
-                </li>
-                <!-- 대출 목록 -->
-                <li class="nav-item" th:if="${loginMember != null}">
-                    <a class="nav-link" th:href="@{/rentalList}">도서 대여 현황 조회</a>
-                </li>
-                <!-- 주문 목록 -->
-                <li class="nav-item" th:if="${loginMember != null}">
-                    <a class="nav-link" th:href="@{/orderList}">주문 목록</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
     <div class="container">
         <div class="py-5 text-center">
             <!-- 포스트 제목을 h2 크기로 표시 -->
@@ -423,9 +389,7 @@
 
     </div>
 
-    <div class="footer">
-        <p>Created by Kaarf_o</p>
-        <a href="https://github.com/K4RF/Full/tree/main/Book_ManageSys/base/manage" target="_blank">GitHub</a>
-    </div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
     </body>
     </html>
