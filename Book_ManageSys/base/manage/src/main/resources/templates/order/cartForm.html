@@ -1,0 +1,180 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <link th:href="@{/css/bootstrap.min.css}" href="/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .footer {
+      background-color: #f8f9fa;
+      color: #333;
+      text-align: center;
+      padding: 20px 0;
+      margin-top: auto;
+      width: 100%;
+    }
+
+    .container {
+      padding-bottom: 60px;
+      max-width: 800px;
+      margin-top: 50px;
+      flex-grow: 1; /* Remaining space allocated to the container */
+    }
+
+    .form-control {
+      border-radius: 0.375rem;
+      padding: 10px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      font-size: 1.125rem;
+      padding: 12px;
+      border-radius: 0.375rem;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .price {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+
+    .total-price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .table > tbody > tr > td {
+      vertical-align: middle;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px; /* 간격 */
+      justify-content: center; /* 가운데 정렬 */
+    }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+  <div class="py-5 text-center">
+    <h2>장바구니</h2>
+  </div>
+  <form th:action="@{/cart/update}" method="post">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>도서 제목</th>
+        <th>수량</th>
+        <th>가격 (1권)</th>
+        <th>합계</th>
+        <th>작업</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item : ${cart}">
+        <td th:text="${item.title}"></td>
+        <td>
+          <input type="number" class="form-control quantity"
+                 th:value="${item.quantity}"
+                 min="1"
+                 th:data-book-id="${item.bookId}"
+                 th:data-price="${item.price}">
+        </td>
+        <td th:text="${item.price} + '원'" class="price-per-book"></td>
+        <td th:text="${item.totalPrice} + '원'" class="price"></td>
+        <td>
+          <form th:action="@{/cart/{bookId}/remove(bookId=${item.bookId})}" method="post">
+            <button class="btn btn-danger btn-sm" type="submit">삭제</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </form>
+  <div class="mt-4 text-center">
+    <p><strong>총 합계:</strong> <span class="total-price">0원</span></p>
+    <div class="button-group">
+      <form th:action="@{/cart/checkout}" method="post">
+        <button class="btn btn-primary btn-lg" type="submit">전체 주문하기</button>
+      </form>
+      <form th:action="@{/cart/checkout}" method="get">
+        <button class="btn btn-primary btn-lg" type="submit">주문하기</button>
+      </form>
+      <form th:action="@{/cart/clear}" method="post">
+        <button class="btn btn-danger btn-lg" type="submit">장바구니 비우기</button>
+      </form>
+      <button class="btn btn-secondary btn-lg" th:onclick="|location.href='@{/bookList}'|">쇼핑 계속하기</button>
+    </div>
+  </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+  $(document).ready(function () {
+    const $cartTable = $("table tbody");
+    const $totalPriceSpan = $(".total-price");
+
+    function updateItemTotal($row) {
+      const quantity = parseInt($row.find(".quantity").val()) || 1;
+      const pricePerBook = parseFloat($row.find(".quantity").data("price"));
+      const totalPrice = pricePerBook * quantity;
+
+      $row.find(".price").text(totalPrice.toLocaleString() + "원");
+      return totalPrice;
+    }
+
+    function updateTotalPrice() {
+      let totalPrice = 0;
+
+      $cartTable.find("tr").each(function () {
+        const itemTotal = updateItemTotal($(this));
+        totalPrice += itemTotal;
+      });
+
+      $totalPriceSpan.text(totalPrice.toLocaleString() + "원");
+    }
+
+    // 수량 변경 시 AJAX 요청
+    $cartTable.on("input", ".quantity", function () {
+      const $this = $(this);
+      const bookId = $this.data("book-id");
+      const quantity = parseInt($this.val()) || 1;
+
+      $.ajax({
+        url: "/cart/update-quantity",
+        method: "POST",
+        data: {
+          bookId: bookId,
+          quantity: quantity
+        },
+        success: function (response) {
+          console.log(response); // 디버깅용 메시지
+          updateTotalPrice();
+        },
+        error: function (xhr) {
+          alert("수량 업데이트에 실패했습니다.");
+          console.error(xhr.responseText);
+        }
+      });
+    });
+
+    // 초기 총 가격 설정
+    updateTotalPrice();
+  });
+</script>
+</body>
+</html>

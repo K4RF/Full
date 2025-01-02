@@ -468,40 +468,4 @@ public class BookController {
         }
         return "redirect:/bookList/" + bookId;
     }
-
-    @GetMapping("/{bookId}/order")
-    public String showOrderForm(
-            @PathVariable Long bookId,
-            @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-            Model model) {
-        if (loginMember == null) {
-            return "redirect:/login?redirectURL=/bookList/" + bookId;
-        }
-
-        Book book = bookService.findById(bookId)
-                .orElseThrow(() -> new IllegalArgumentException("도서를 찾을 수 없습니다."));
-        model.addAttribute("book", book);
-
-        return "order/newOrderForm"; // 주문 폼 페이지
-    }
-
-    @PostMapping("/{bookId}/order")
-    public String createOrder(
-            @PathVariable Long bookId,
-            @RequestParam int quantity,
-            @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-            Model model) {
-        if (loginMember == null) {
-            return "redirect:/login?redirectURL=/bookList/" + bookId;
-        }
-
-        try {
-            orderService.createOrder(loginMember.getMemberId(), bookId, quantity);
-            model.addAttribute("message", "도서 주문이 완료되었습니다!");
-        } catch (Exception e) {
-            model.addAttribute("error", "도서 주문에 실패했습니다: " + e.getMessage());
-        }
-
-        return "redirect:/orderList";
-    }
 }
