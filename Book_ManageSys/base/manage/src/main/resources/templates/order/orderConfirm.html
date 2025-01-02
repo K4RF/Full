@@ -8,7 +8,8 @@
     html, body {
       height: 100%;
       margin: 0;
-      position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
     .footer {
@@ -16,13 +17,8 @@
       color: #333;
       text-align: center;
       padding: 20px 0;
-      position: absolute;
-      bottom: 0;
+      margin-top: auto;
       width: 100%;
-    }
-
-    .container {
-      padding-bottom: 60px;
     }
 
     .container {
@@ -75,7 +71,7 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="container">
   <div class="py-5 text-center">
-    <h2>장바구니</h2>
+    <h2>구매 확인</h2>
   </div>
   <form th:action="@{/cart/checkout}" method="post">
     <table class="table table-striped">
@@ -85,37 +81,29 @@
         <th>수량</th>
         <th>가격 (1권)</th>
         <th>합계</th>
-        <th>작업</th>
       </tr>
       </thead>
       <tbody>
       <tr th:each="item : ${cart}">
         <td th:text="${item.title}"></td>
         <td>
-          <input type="number" class="form-control quantity"
+          <input type="number" class="form-control"
                  th:value="${item.quantity}"
-                 min="1"
-                 th:data-book-id="${item.bookId}"
-                 th:data-price="${item.price}">
+                 readonly>
         </td>
         <td th:text="${item.price} + '원'" class="price-per-book"></td>
         <td th:text="${item.quantity * item.price} + '원'" class="price"></td>
-        <td>
-          <form th:action="@{/cart/{bookId}/remove(bookId=${item.bookId})}" method="post">
-            <button class="btn btn-danger btn-sm" type="submit">삭제</button>
-          </form>
-        </td>
       </tr>
       </tbody>
     </table>
+    <div class="mt-4 text-center">
+      <p><strong>총 합계:</strong> <span th:text="${totalPrice} + '원'" class="total-price">0원</span></p>
+      <div class="button-group">
+        <button class="btn btn-primary btn-lg" type="submit">구매 확정</button>
+        <button class="btn btn-secondary btn-lg" th:onclick="|location.href='@{/bookList}'|">목록으로</button>
+      </div>
+    </div>
   </form>
-  <div class="mt-4 text-center">
-    <p><strong>총 합계:</strong> <span th:text="${totalPrice} + '원'" class="total-price">0원</span></p>
-    <div class="button-group">
-      <form th:action="@{/cart/checkout}" method="post">
-        <button class="btn btn-primary btn-lg" type="submit">주문하기</button>
-      </form>
-  </div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
