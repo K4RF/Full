@@ -7,6 +7,7 @@ import com.book.manage.service.book.BookService;
 import com.book.manage.service.order.OrderService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -97,6 +98,30 @@ public class CartController {
             session.removeAttribute("cart"); // 장바구니 비우기
         }
         return "redirect:/orderList";
+    }
+    @PostMapping("/update-quantity")
+    @ResponseBody
+    public ResponseEntity<String> updateQuantity(
+            @RequestParam Long bookId,
+            @RequestParam int quantity,
+            @SessionAttribute(value = "cart", required = false) List<Cart> cart,
+            HttpSession session) {
+
+        if (cart == null) {
+            return ResponseEntity.badRequest().body("장바구니가 비어 있습니다.");
+        }
+
+        // 장바구니에서 해당 도서를 찾고 수량 업데이트
+        cart.stream()
+                .filter(item -> item.getBookId().equals(bookId))
+                .findFirst()
+                .ifPresent(item -> {
+                    item.setQuantity(quantity);
+                    item.setTotalPrice(item.getPrice() * quantity); // 총 가격 업데이트
+                });
+
+        session.setAttribute("cart", cart); // 업데이트된 장바구니 세션에 저장
+        return ResponseEntity.ok("수량이 업데이트되었습니다.");
     }
 
 }

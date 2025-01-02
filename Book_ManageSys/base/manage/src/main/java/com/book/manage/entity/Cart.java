@@ -8,8 +8,5 @@ public class Cart{
     private String title;
     private int price;
     private int quantity;
-
-    public int getTotalPrice() {
-        return price * quantity;
-    }
+    private int totalPrice;
 }
