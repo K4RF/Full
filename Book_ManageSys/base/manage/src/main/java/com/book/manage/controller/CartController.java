@@ -85,6 +85,16 @@ public class CartController {
         return "redirect:/cart";
     }
 
+    @GetMapping("/checkout")
+    public String viewCartCheck(HttpSession session, @SessionAttribute(value = "cart", required = false) List<Cart> cart, Model model) {
+        if (cart == null) {
+            cart = new ArrayList<>();
+            session.setAttribute("cart", cart);
+        }
+        model.addAttribute("cart", cart);
+        model.addAttribute("totalPrice", cart.stream().mapToInt(Cart::getTotalPrice).sum());
+        return "order/orderConfirm"; // 장바구니 페이지
+    }
     @PostMapping("/checkout")
     public String checkout(
             @SessionAttribute(value = "cart", required = false) List<Cart> cart,
