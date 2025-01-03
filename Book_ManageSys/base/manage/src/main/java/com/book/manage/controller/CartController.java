@@ -91,10 +91,15 @@ public class CartController {
             cart = new ArrayList<>();
             session.setAttribute("cart", cart);
         }
+
+        // 총 합계 계산
+        int totalPrice = cart.stream().mapToInt(item -> item.getPrice() * item.getQuantity()).sum();
+
         model.addAttribute("cart", cart);
-        model.addAttribute("totalPrice", cart.stream().mapToInt(Cart::getTotalPrice).sum());
+        model.addAttribute("totalPrice", totalPrice); // 모델에 totalPrice 추가
         return "order/orderConfirm"; // 장바구니 페이지
     }
+
     @PostMapping("/checkout")
     public String checkout(
             @SessionAttribute(value = "cart", required = false) List<Cart> cart,
