@@ -97,9 +97,8 @@
         <td th:text="${item.price} + '원'" class="price-per-book"></td>
         <td th:text="${item.totalPrice} + '원'" class="price"></td>
         <td>
-          <form th:action="@{/cart/{bookId}/remove(bookId=${item.bookId})}" method="post">
-            <button class="btn btn-danger btn-sm" type="submit">삭제</button>
-          </form>
+          <!-- 삭제 버튼 -->
+          <button class="btn btn-danger btn-sm delete-button" th:data-book-id="${item.bookId}">삭제</button>
         </td>
       </tr>
       </tbody>
@@ -108,9 +107,6 @@
   <div class="mt-4 text-center">
     <p><strong>총 합계:</strong> <span class="total-price">0원</span></p>
     <div class="button-group">
-      <form th:action="@{/cart/checkout}" method="post">
-        <button class="btn btn-primary btn-lg" type="submit">전체 주문하기</button>
-      </form>
       <form th:action="@{/cart/checkout}" method="get">
         <button class="btn btn-primary btn-lg" type="submit">주문하기</button>
       </form>
@@ -147,19 +143,37 @@
 
       $totalPriceSpan.text(totalPrice.toLocaleString() + "원");
     }
+    $(document).on("click", ".delete-button", function () {
+      const bookId = $(this).data("book-id"); // 삭제하려는 도서 ID 가져오기
+
+      $.ajax({
+        url: `/cart/${bookId}/remove`, // 컨트롤러에 요청을 보냄
+        method: "POST", // POST 요청으로 삭제 처리
+        success: function (response) {
+          alert("삭제되었습니다."); // 성공 메시지
+          location.reload(); // 페이지 새로고침
+        },
+        error: function (xhr) {
+          alert("삭제에 실패했습니다."); // 실패 메시지
+          console.error(xhr.responseText);
+        }
+      });
+    });
 
     // 수량 변경 시 AJAX 요청
     $cartTable.on("input", ".quantity", function () {
       const $this = $(this);
-      const bookId = $this.data("book-id");
-      const quantity = parseInt($this.val()) || 1;
+      const bookId = $this.data("book-id");  // bookId를 전달
+      const quantity = parseInt($this.val()) || 1; // quantity가 제대로 전달되는지 확인
+
+      console.log("bookId: " + bookId + ", quantity: " + quantity);
 
       $.ajax({
-        url: "/cart/update-quantity",
+        url: "/cart/update",  // 여전히 /update URL로 요청
         method: "POST",
         data: {
-          bookId: bookId,
-          quantity: quantity
+          bookId: bookId,  // bookId를 전달
+          quantity: quantity // quantity 값을 전달
         },
         success: function (response) {
           console.log(response); // 디버깅용 메시지
@@ -176,5 +190,6 @@
     updateTotalPrice();
   });
 </script>
+
 </body>
 </html>
