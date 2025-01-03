@@ -71,31 +71,30 @@ public class CartController {
     }
 
     @PostMapping("/{bookId}/remove")
-    public String removeFromCart(
+    @ResponseBody
+    public ResponseEntity<String> removeFromCart(
             @PathVariable Long bookId,
             @SessionAttribute(value = "cart", required = false) List<Cart> cart,
             HttpSession session) {
 
-        // 장바구니가 비어있으면 처리하지 않음
         if (cart == null || cart.isEmpty()) {
-            return "redirect:/cart"; // 장바구니가 비었을 때 장바구니 페이지로 리다이렉트
+            return ResponseEntity.badRequest().body("장바구니가 비어 있습니다.");
         }
 
-        // 장바구니에서 해당 도서를 삭제
-        cart.removeIf(item -> item.getBookId().equals(bookId));
+        boolean isRemoved = cart.removeIf(item -> item.getBookId().equals(bookId));
 
-        // 장바구니가 비어있으면 세션에서 장바구니를 제거하고 리다이렉트
+        if (!isRemoved) {
+            return ResponseEntity.badRequest().body("해당 도서가 장바구니에 없습니다.");
+        }
+
         if (cart.isEmpty()) {
-            session.removeAttribute("cart");  // 세션에서 장바구니를 제거
-            return "redirect:/cart";  // 장바구니 페이지로 리다이렉트
+            session.removeAttribute("cart"); // 장바구니 비우기
+        } else {
+            session.setAttribute("cart", cart); // 세션에 업데이트된 장바구니 저장
         }
 
-        // 세션에 업데이트된 장바구니 저장
-        session.setAttribute("cart", cart);
-
-        return "redirect:/cart"; // 삭제 후 장바구니 페이지로 리다이렉트
+        return ResponseEntity.ok("장바구니에서 삭제되었습니다.");
     }
-
 
     @PostMapping("/clear")
     public String clearCart(HttpSession session) {
@@ -144,7 +143,7 @@ public class CartController {
             @RequestParam Long bookId,
             @RequestParam int quantity,  // quantity를 @RequestParam으로 받기
             @SessionAttribute(value = "cart", required = false) List<Cart> cart,
-            HttpSession session) {
+            HttpSession session, Model model) {
 
         // 장바구니가 비어있는 경우
         if (cart == null || cart.isEmpty()) {
