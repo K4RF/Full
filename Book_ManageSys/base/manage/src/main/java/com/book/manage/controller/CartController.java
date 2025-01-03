@@ -73,12 +73,29 @@ public class CartController {
     @PostMapping("/{bookId}/remove")
     public String removeFromCart(
             @PathVariable Long bookId,
-            @SessionAttribute(value = "cart", required = false) List<Cart> cart) {
-        if (cart != null) {
-            cart.removeIf(item -> item.getBookId().equals(bookId));
+            @SessionAttribute(value = "cart", required = false) List<Cart> cart,
+            HttpSession session) {
+
+        // 장바구니가 비어있으면 처리하지 않음
+        if (cart == null || cart.isEmpty()) {
+            return "redirect:/cart"; // 장바구니가 비었을 때 장바구니 페이지로 리다이렉트
         }
-        return "redirect:/cart";
+
+        // 장바구니에서 해당 도서를 삭제
+        cart.removeIf(item -> item.getBookId().equals(bookId));
+
+        // 장바구니가 비어있으면 세션에서 장바구니를 제거하고 리다이렉트
+        if (cart.isEmpty()) {
+            session.removeAttribute("cart");  // 세션에서 장바구니를 제거
+            return "redirect:/cart";  // 장바구니 페이지로 리다이렉트
+        }
+
+        // 세션에 업데이트된 장바구니 저장
+        session.setAttribute("cart", cart);
+
+        return "redirect:/cart"; // 삭제 후 장바구니 페이지로 리다이렉트
     }
+
 
     @PostMapping("/clear")
     public String clearCart(HttpSession session) {
@@ -121,29 +138,33 @@ public class CartController {
         }
         return "redirect:/orderList";
     }
-    @PostMapping("/update-quantity")
+    @PostMapping("/update")
     @ResponseBody
     public ResponseEntity<String> updateQuantity(
             @RequestParam Long bookId,
-            @RequestParam int quantity,
+            @RequestParam int quantity,  // quantity를 @RequestParam으로 받기
             @SessionAttribute(value = "cart", required = false) List<Cart> cart,
             HttpSession session) {
 
-        if (cart == null) {
+        // 장바구니가 비어있는 경우
+        if (cart == null || cart.isEmpty()) {
             return ResponseEntity.badRequest().body("장바구니가 비어 있습니다.");
         }
 
         // 장바구니에서 해당 도서를 찾고 수량 업데이트
-        cart.stream()
+        Optional<Cart> itemToUpdate = cart.stream()
                 .filter(item -> item.getBookId().equals(bookId))
-                .findFirst()
-                .ifPresent(item -> {
-                    item.setQuantity(quantity);
-                    item.setTotalPrice(item.getPrice() * quantity); // 총 가격 업데이트
-                });
+                .findFirst();
 
-        session.setAttribute("cart", cart); // 업데이트된 장바구니 세션에 저장
+        if (!itemToUpdate.isPresent()) {
+            return ResponseEntity.badRequest().body("장바구니에 해당 도서가 없습니다.");
+        }
+
+        Cart item = itemToUpdate.get();
+        item.setQuantity(quantity);  // 수량 업데이트
+        item.setTotalPrice(item.getPrice() * quantity); // 총 가격 업데이트
+
+        session.setAttribute("cart", cart);  // 업데이트된 장바구니 세션에 저장
         return ResponseEntity.ok("수량이 업데이트되었습니다.");
     }
-
 }

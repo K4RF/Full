@@ -97,7 +97,10 @@
         <td th:text="${item.price} + '원'" class="price-per-book"></td>
         <td th:text="${item.totalPrice} + '원'" class="price"></td>
         <td>
-          <form th:action="@{/cart/{bookId}/remove(bookId=${item.bookId})}" method="post">
+          <!-- 장바구니가 비었을 때 삭제 버튼 숨기기 -->
+          <form th:if="${cart != null && !cart.isEmpty()}" th:action="@{/cart/{bookId}/remove(bookId=${item.bookId})}" method="post">
+            <input type="hidden" name="bookId" th:value="${item.bookId}">
+            <input type="hidden" name="quantity" th:value="${item.quantity}">
             <button class="btn btn-danger btn-sm" type="submit">삭제</button>
           </form>
         </td>
@@ -148,15 +151,17 @@
     // 수량 변경 시 AJAX 요청
     $cartTable.on("input", ".quantity", function () {
       const $this = $(this);
-      const bookId = $this.data("book-id");
-      const quantity = parseInt($this.val()) || 1;
+      const bookId = $this.data("book-id");  // bookId를 전달
+      const quantity = parseInt($this.val()) || 1; // quantity가 제대로 전달되는지 확인
+
+      console.log("bookId: " + bookId + ", quantity: " + quantity);
 
       $.ajax({
-        url: "/cart/update-quantity",
+        url: "/cart/update",  // 여전히 /update URL로 요청
         method: "POST",
         data: {
-          bookId: bookId,
-          quantity: quantity
+          bookId: bookId,  // bookId를 전달
+          quantity: quantity // quantity 값을 전달
         },
         success: function (response) {
           console.log(response); // 디버깅용 메시지
@@ -173,5 +178,6 @@
     updateTotalPrice();
   });
 </script>
+
 </body>
 </html>
