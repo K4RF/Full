@@ -5,6 +5,7 @@ import com.book.manage.entity.Cart;
 import com.book.manage.entity.Member;
 import com.book.manage.service.book.BookService;
 import com.book.manage.service.order.OrderService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -86,7 +87,13 @@ public class CartController {
     }
 
     @GetMapping("/checkout")
-    public String viewCartCheck(HttpSession session, @SessionAttribute(value = "cart", required = false) List<Cart> cart, Model model) {
+    public String viewCartCheck(HttpSession session,
+                                @SessionAttribute(value = "cart", required = false) List<Cart> cart, Model model,
+                                @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
+        if (loginMember == null) {
+            String redirectUrl = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectUrl;
+        }
         if (cart == null) {
             cart = new ArrayList<>();
             session.setAttribute("cart", cart);

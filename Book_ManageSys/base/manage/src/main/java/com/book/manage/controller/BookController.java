@@ -472,7 +472,11 @@ public class BookController {
 
     // 바로 구매 처리
     @GetMapping("/{bookId}/checkout")
-    public String checkoutImmediately(@PathVariable Long bookId, HttpSession session, Model model) {
+    public String checkoutImmediately(@PathVariable Long bookId, HttpSession session, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
+        if (loginMember == null) {
+            String redirectUrl = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectUrl;
+        }
         // 장바구니에 해당 도서 추가
         Book book = bookService.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("도서를 찾을 수 없습니다."));
