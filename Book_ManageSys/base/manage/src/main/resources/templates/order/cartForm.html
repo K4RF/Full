@@ -97,12 +97,8 @@
         <td th:text="${item.price} + '원'" class="price-per-book"></td>
         <td th:text="${item.totalPrice} + '원'" class="price"></td>
         <td>
-          <!-- 장바구니가 비었을 때 삭제 버튼 숨기기 -->
-          <form th:if="${cart != null && !cart.isEmpty()}" th:action="@{/cart/{bookId}/remove(bookId=${item.bookId})}" method="post">
-            <input type="hidden" name="bookId" th:value="${item.bookId}">
-            <input type="hidden" name="quantity" th:value="${item.quantity}">
-            <button class="btn btn-danger btn-sm" type="submit">삭제</button>
-          </form>
+          <!-- 삭제 버튼 -->
+          <button class="btn btn-danger btn-sm delete-button" th:data-book-id="${item.bookId}">삭제</button>
         </td>
       </tr>
       </tbody>
@@ -147,6 +143,22 @@
 
       $totalPriceSpan.text(totalPrice.toLocaleString() + "원");
     }
+    $(document).on("click", ".delete-button", function () {
+      const bookId = $(this).data("book-id"); // 삭제하려는 도서 ID 가져오기
+
+      $.ajax({
+        url: `/cart/${bookId}/remove`, // 컨트롤러에 요청을 보냄
+        method: "POST", // POST 요청으로 삭제 처리
+        success: function (response) {
+          alert("삭제되었습니다."); // 성공 메시지
+          location.reload(); // 페이지 새로고침
+        },
+        error: function (xhr) {
+          alert("삭제에 실패했습니다."); // 실패 메시지
+          console.error(xhr.responseText);
+        }
+      });
+    });
 
     // 수량 변경 시 AJAX 요청
     $cartTable.on("input", ".quantity", function () {
