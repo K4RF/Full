@@ -2,6 +2,9 @@ package com.book.manage.controller;
 
 import com.book.manage.entity.Member;
 import com.book.manage.entity.Order;
+import com.book.manage.entity.Rental;
+import com.book.manage.entity.dto.OrderSearchDto;
+import com.book.manage.entity.dto.RentalSearchDto;
 import com.book.manage.login.session.SessionConst;
 import com.book.manage.service.order.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +25,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public String getOrderList(HttpServletRequest request, Model model) {
+    public String getOrderList(HttpServletRequest request, @ModelAttribute("orderSearch")OrderSearchDto searchDto, Model model) {
         // 세션에서 로그인 사용자 확인
         HttpSession session = request.getSession(false);
         if (session == null) {
@@ -34,8 +37,10 @@ public class OrderController {
             return "redirect:/login?redirectURL=/orderList";
         }
 
-        // 로그인된 사용자 ID로 주문 목록 조회
-        List<Order> orders = orderService.getOrdersByMember(loginMember.getMemberId());
+        /// 로그인한 사용자 ID로 검색 조건 설정
+        searchDto.setMemberId(loginMember.getMemberId());
+        // 검색 조건에 따른 대출 목록 조회
+        List<Order> orders = orderService.findOrders(searchDto);
         model.addAttribute("orders", orders);
 
         return "order/orderList"; // 주문 목록 페이지

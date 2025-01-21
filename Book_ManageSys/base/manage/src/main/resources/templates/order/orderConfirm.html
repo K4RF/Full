@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <link th:href="@{/css/bootstrap.min.css}" href="/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .footer {
+      background-color: #f8f9fa;
+      color: #333;
+      text-align: center;
+      padding: 20px 0;
+      margin-top: auto;
+      width: 100%;
+    }
+
+    .container {
+      padding-bottom: 60px;
+      max-width: 800px;
+      margin-top: 50px;
+      flex-grow: 1; /* Remaining space allocated to the container */
+    }
+
+    .form-control {
+      border-radius: 0.375rem;
+      padding: 10px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      font-size: 1.125rem;
+      padding: 12px;
+      border-radius: 0.375rem;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .price {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+
+    .total-price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .table > tbody > tr > td {
+      vertical-align: middle;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px; /* 간격 */
+      justify-content: center; /* 가운데 정렬 */
+    }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+  <div class="py-5 text-center">
+    <h2>구매 확인</h2>
+  </div>
+  <form th:action="@{/cart/checkout}" method="post">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>도서 제목</th>
+        <th>수량</th>
+        <th>가격 (1권)</th>
+        <th>합계</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item : ${cart}">
+        <td th:text="${item.title}"></td>
+        <td>
+          <input type="number" class="form-control"
+                 th:value="${item.quantity}"
+                 readonly>
+        </td>
+        <td th:text="${item.price} + '원'" class="price-per-book"></td>
+        <td th:text="${item.quantity * item.price} + '원'" class="price"></td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="mt-4 text-center">
+      <p><strong>총 합계:</strong> <span th:text="${totalPrice} + '원'" class="total-price">0원</span></p>
+      <div class="button-group">
+        <button class="btn btn-primary btn-lg" type="submit">구매 확정</button>
+        <button class="btn btn-secondary btn-lg" th:onclick="|location.href='@{/bookList}'|">목록으로</button>
+      </div>
+    </div>
+  </form>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

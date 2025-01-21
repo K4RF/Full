@@ -1,10 +1,11 @@
 package com.book.manage.repository.order;
 
 import com.book.manage.entity.Order;
+import com.book.manage.entity.dto.OrderSearchDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -82,5 +83,34 @@ public class OrderJpaRepository implements OrderRepository {
             return order.orderDate.loe(endDate);
         }
         return null; // 조건이 없으면 null 반환
+    }
+
+    @Override
+    public List<Order> findAll(OrderSearchDto searchParam) {
+        String title = searchParam.getTitle();
+        Long memberId = searchParam.getMemberId();  // memberId 추가
+
+        return query
+                .selectFrom(order)
+                .where(
+                        likeTitle(title)  // 제목 필터
+                                .and(likeMemberId(memberId))  // 회원 ID 필터
+                )
+                .fetch();
+    }
+
+    // 제목 필터링
+    private BooleanExpression likeTitle(String title) {
+        if (title != null && !title.trim().isEmpty()) {
+            return order.book.title.like("%" + title + "%");
+        }
+        return order.book.title.isNotNull(); // 제목이 없으면 모두 포함되도록 처리
+    }
+
+    // 회원 ID 필터링
+    private BooleanExpression likeMemberId(Long memberId) {
+        return memberId != null
+                ? order.member.memberId.eq(memberId)  // 회원 ID가 일치하는 대출 기록만 조회
+                : null;
     }
 }

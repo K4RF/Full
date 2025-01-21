@@ -9,6 +9,7 @@ import com.book.manage.service.order.OrderService;
 import com.book.manage.service.rental.RentalService;
 import com.book.manage.service.category.CategoryService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -469,22 +470,45 @@ public class BookController {
         return "redirect:/bookList/" + bookId;
     }
 
-    @PostMapping("/{bookId}/order")
-    public String createOrder(
-            @PathVariable Long bookId,
-            @SessionAttribute(value = "loginMember", required = false) Member loginMember,
-            Model model) {
+    // 바로 구매 처리
+    @GetMapping("/{bookId}/checkout")
+    public String checkoutImmediately(@PathVariable Long bookId, HttpSession session, Model model, @SessionAttribute(value = "loginMember", required = false) Member loginMember, HttpServletRequest request) {
         if (loginMember == null) {
-            return "redirect:/login?redirectURL=/bookList/" + bookId;
+            String redirectUrl = request.getRequestURI();
+            return "redirect:/login?redirectURL=" + redirectUrl;
+        }
+        // 장바구니에 해당 도서 추가
+        Book book = bookService.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("도서를 찾을 수 없습니다."));
+
+        // 세션에서 장바구니 가져오기
+        List<Cart> cart = (List<Cart>) session.getAttribute("cart");
+        if (cart == null) {
+            cart = new ArrayList<>();
+            session.setAttribute("cart", cart);
         }
 
-        try {
-            orderService.createOrder(loginMember.getMemberId(), bookId);
-            model.addAttribute("message", "도서 주문이 완료되었습니다!");
-        } catch (Exception e) {
-            model.addAttribute("error", "도서 주문에 실패했습니다: " + e.getMessage());
+        // 장바구니에 도서가 없는 경우 추가
+        Optional<Cart> existingItem = cart.stream()
+                .filter(item -> item.getBookId().equals(bookId))
+                .findFirst();
+
+        if (existingItem.isPresent()) {
+            existingItem.get().setQuantity(existingItem.get().getQuantity() + 1); // 기존 수량에 1 추가
+        } else {
+            Cart newItem = new Cart();
+            newItem.setBookId(bookId);
+            newItem.setTitle(book.getTitle());
+            newItem.setPrice(book.getPrice());
+            newItem.setQuantity(1);
+            cart.add(newItem);
         }
 
-        return "redirect:/bookList/" + bookId;
+        // 장바구니 정보 및 총 합계 전달
+        int totalPrice = cart.stream().mapToInt(item -> item.getPrice() * item.getQuantity()).sum();
+        model.addAttribute("cart", cart);
+        model.addAttribute("totalPrice", totalPrice);
+
+        return "order/orderConfirm"; // 장바구니 확인 페이지로 리다이렉트
     }
 }
