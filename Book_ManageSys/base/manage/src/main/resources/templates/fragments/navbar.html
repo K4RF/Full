@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        .nav-link img {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" th:fragment="navbar">
@@ -35,7 +43,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/cart}">
-                    <i class="fas fa-shopping-cart"></i>
+                    <img src="/image/cart.svg" alt="Cart" style="width: 24px; height: 24px;">
                     <span th:if="${session.cart != null and #lists.size(session.cart) > 0}"
                           th:text="${#lists.size(session.cart)}"
                           class="badge badge-pill badge-danger">0</span>
