@@ -1,6 +1,6 @@
 ---
-name: 예시) ✨ [FEAT] 이슈 제목
-about: Describe this issue template's purpose here.
+name: Issue Template
+about: 예시) ✨ [FEAT] 이슈 제목
 title: ''
 labels: ":sparkles: feature"
 assignees: ''
