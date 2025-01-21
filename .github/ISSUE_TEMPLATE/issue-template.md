@@ -2,7 +2,7 @@
 name: Issue Template
 about: Issue Template
 title: 예시) ✨ [FEAT] 이슈 제목
-labels: ":sparkles: feature"
+labels: ''
 assignees: ''
 
 ---
