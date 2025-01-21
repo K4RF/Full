@@ -216,6 +216,24 @@
                     </span>
                 </p>
 
+                <script>
+                    function toggleEditForm(commentId) {
+                        console.log("toggleEditForm called with commentId:", commentId); // 디버깅 로그
+                        var formElement = document.getElementById('edit-comment-form-' + commentId);
+                        if (!formElement) {
+                            console.error("Form element not found for commentId:", commentId);
+                            return;
+                        }
+                        if (formElement.style.display === 'none' || formElement.style.display === '') {
+                            console.log("Showing form for commentId:", commentId);
+                            formElement.style.display = 'block';
+                        } else {
+                            console.log("Hiding form for commentId:", commentId);
+                            formElement.style.display = 'none';
+                        }
+                    }
+                </script>
+
                 <!-- 삭제를 위한 폼 -->
                 <form th:id="|delete-comment-${comment.commentId}|"
                       th:action="@{'/bookList/' + ${book.bookId} + '/comments/' + ${comment.commentId} + '/delete'}"
