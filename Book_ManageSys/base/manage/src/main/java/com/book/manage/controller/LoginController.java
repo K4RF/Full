@@ -9,31 +9,39 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class LoginController {
+
     private final LoginService loginService;
 
+    @Value("${kakao.client_id}")
+    private String clientId;
+
+    @Value("${kakao.redirect_uri}")
+    private String redirectUri;
+
     @GetMapping("/login")
-    public String loginForm(
-            @ModelAttribute("loginForm") LoginForm form,
-            @RequestParam(required = false) String redirectURL,
-            HttpServletRequest request) {
-        // 로그인된 사용자인지 확인
+    public String kakaoLogin(@ModelAttribute("loginForm") LoginForm form,
+                             @RequestParam(required = false) String redirectURL,
+                             HttpServletRequest request, Model model) {
         HttpSession session = request.getSession(false);
         Member loginMember = (session != null) ? (Member) session.getAttribute(SessionConst.LOGIN_MEMBER) : null;
 
         if (loginMember != null) {
-            // 이미 로그인된 경우 비정상 접근 페이지로 이동
             return "returnHome";
         }
 
-        // redirectURL 설정 및 세션에 저장
+        String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + clientId + "&redirect_uri=" + redirectUri;
+        model.addAttribute("location", location);
+
         if (redirectURL == null || redirectURL.isBlank()) {
             redirectURL = request.getHeader("Referer");
         }
