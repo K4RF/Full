@@ -19,4 +19,5 @@ public interface MemberRepository {
     Optional<Member> findByName(String name);
 
     void deleteById(Long id);
+    Member findByKakaoId(Long kakaoId);
 }

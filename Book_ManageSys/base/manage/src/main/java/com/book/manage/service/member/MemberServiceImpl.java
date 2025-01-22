@@ -100,4 +100,27 @@ public class MemberServiceImpl implements MemberService{
         memberRepository.deleteById(member.getMemberId());
     }
 
+    @Override
+    public Member findOrCreateMember(Long kakaoId, String nickname) {
+        // kakaoId로 회원 검색
+        Member member = memberRepository.findByKakaoId(kakaoId);
+
+        // 기존 회원이 없으면 생성
+        if (member == null) {
+            member = new Member();
+            member.setKakaoId(kakaoId);
+            member.setNickname(nickname);
+            // loginId는 kakaoId를 기준으로 생성하며 최대 16자로 제한
+            String loginId = "kakao_" + kakaoId;
+            member.setLoginId(loginId.substring(0, Math.min(16, loginId.length())));
+            // default_password를 해시화하여 저장
+            String encodedPassword = passwordEncoder.encode("default_password");
+            member.setPassword(encodedPassword);
+
+            member.setRole(Role.USER); // 기본 역할 설정
+            memberRepository.save(member);
+        }
+
+        return member;
+    }
 }
