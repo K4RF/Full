@@ -32,6 +32,6 @@ public class HomeController {
             // 로그인된 경우, 회원 정보를 넘겨줍니다.
             model.addAttribute("loginMember", loginMember);
         }
-        return "book/bookList"; // home.html을 그대로 반환
+        return "redirect:/bookList"; // home.html을 그대로 반환
     }
 }
