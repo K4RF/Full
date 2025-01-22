@@ -1,13 +1,14 @@
 -- 기존 member 테이블 삭제
 DROP TABLE IF EXISTS member CASCADE;
 
--- member 테이블 생성 (Role 추가)
+-- member 테이블 생성 (kakaoId 필드 추가)
 CREATE TABLE member (
                         MEMBER_ID BIGINT AUTO_INCREMENT PRIMARY KEY,
                         LOGIN_ID VARCHAR(255) NOT NULL,
                         NICKNAME VARCHAR(255) NOT NULL,
                         PASSWORD VARCHAR(255) NOT NULL,
-                        ROLE VARCHAR(20) NOT NULL DEFAULT 'USER' -- 역할 필드 추가 (기본값: USER)
+                        ROLE VARCHAR(20) NOT NULL DEFAULT 'USER', -- 역할 필드 추가 (기본값: USER)
+                        KAKAO_ID BIGINT NULL -- 카카오 ID 필드 추가 (null 허용)
 );
 
 
