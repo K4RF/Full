@@ -6,11 +6,10 @@ import com.book.manage.login.session.SessionConst;
 import com.book.manage.service.login.KakaoLoginService;
 import com.book.manage.service.member.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +27,7 @@ public class KakaoLoginController {
     private final MemberService memberService;
 
     @GetMapping("/callback")
-    public ResponseEntity<?> callback(@RequestParam("code") String code, HttpServletRequest request) {
+    public void callback(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response) throws IOException, IOException {
         // 1. Access Token 가져오기
         String accessToken = kakaoLoginService.getAccessTokenFromKakao(code);
 
@@ -45,6 +44,7 @@ public class KakaoLoginController {
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, member);
 
-        return new ResponseEntity<>("로그인 성공", HttpStatus.OK);
+        // 5. "localhost:8080"으로 리다이렉트
+        response.sendRedirect("/");
     }
 }
