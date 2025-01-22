@@ -15,4 +15,6 @@ public interface MemberService {
     boolean isNameDuplicate(String nickname);
 
     void deleteMember(Long memberId);
+
+    Member findOrCreateMember(Long kakaoId, String nickname);
 }

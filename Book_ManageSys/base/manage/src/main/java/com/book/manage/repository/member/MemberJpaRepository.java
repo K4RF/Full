@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.book.manage.entity.QMember.member;
+
 @Slf4j
 @Repository
 public class MemberJpaRepository implements MemberRepository {
@@ -95,5 +97,12 @@ public class MemberJpaRepository implements MemberRepository {
         } else {
             log.warn("No member found with ID: {}", memberId);
         }
+    }
+
+    @Override
+    public Member findByKakaoId(Long kakaoId) {
+        return query.selectFrom(member)
+                .where(member.kakaoId.eq(kakaoId))
+                .fetchOne();
     }
 }

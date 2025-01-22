@@ -1,4 +1,4 @@
-package com.book.manage.service;
+package com.book.manage.service.login;
 
 import com.book.manage.entity.Member;
 import com.book.manage.repository.member.MemberRepository;
