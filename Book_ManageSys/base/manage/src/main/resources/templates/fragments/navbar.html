@@ -22,20 +22,28 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
+            <!-- 로그인되지 않은 사용자 -->
             <li class="nav-item" th:if="${loginMember == null}">
                 <a class="nav-link" th:href="@{/login(redirectURL=${redirectURL})}">로그인</a>
             </li>
+
+            <!-- 로그인된 사용자 -->
             <li class="nav-item" th:if="${loginMember != null}">
                 <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
                 <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
             </li>
+
             <!-- 관리자 탭 -->
-            <li class="nav-item" th:if="${loginMember != null and loginMember.role == 'ADMIN'}">
+            <li class="nav-item" th:if="${loginMember != null and loginMember.role.name() == 'ADMIN'}">
                 <a class="nav-link" th:href="@{/admin}">관리자</a>
             </li>
+
+            <!-- 회원 정보 -->
             <li class="nav-item" th:if="${loginMember != null}">
                 <a class="nav-link" th:href="@{/members/edit(redirectURL=${redirectURL})}">회원정보</a>
             </li>
+
+            <!-- 공용 메뉴 -->
             <li class="nav-item">
                 <a class="nav-link" href="/bookList">도서 목록</a>
             </li>
@@ -47,7 +55,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/cart}">
-                    <img src="/image/cart.svg" alt="Cart" style="width: 24px; height: 24px;">
+                    <img src="/image/cart.svg" alt="Cart">
                     <span th:if="${session.cart != null and #lists.size(session.cart) > 0}"
                           th:text="${#lists.size(session.cart)}"
                           class="badge badge-pill badge-danger">0</span>

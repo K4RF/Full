@@ -78,44 +78,83 @@ public class AdminController {
         // 성공 시 홈으로 리다이렉트
         return "redirect:/";
     }
+    // 관리자 홈
     @GetMapping
-    public String adminHome() {
-        return "redirect:admin/members";
+    public String adminHome(@SessionAttribute(value = "loginMember", required = false) Member loginMember) {
+        if (!isAdmin(loginMember)) {
+            return "redirect:/"; // 권한 없는 사용자는 홈으로 리디렉트
+        }
+        return "redirect:/admin/members";
     }
 
+    // 회원 관리 페이지
     @GetMapping("/members")
-    public String manageMembers(Model model) {
+    public String manageMembers(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model) {
+        if (!isAdmin(loginMember)) {
+            return "redirect:/"; // 권한 없는 사용자는 홈으로 리디렉트
+        }
+        model.addAttribute("selectedCategory", "members"); // 선택된 카테고리
+
         List<Member> members = memberService.findAllMembers(); // 전체 회원 조회
         model.addAttribute("members", members);
         return "admin/adminHome";
     }
+
+    // 회원 삭제
     @PostMapping("/members/{memberId}/delete")
-    public String deleteMember(@PathVariable Long memberId, RedirectAttributes redirectAttributes) {
+    public String deleteMember(@PathVariable Long memberId,
+                               @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                               RedirectAttributes redirectAttributes) {
+        if (!isAdmin(loginMember)) {
+            redirectAttributes.addFlashAttribute("error", "권한이 없습니다.");
+            return "redirect:/";
+        }
+
         try {
-            // 회원 삭제 시 관련 데이터도 함께 삭제
             memberService.deleteMember(memberId);
             redirectAttributes.addFlashAttribute("message", "회원 삭제가 성공적으로 완료되었습니다.");
-            return "redirect:/admin/members";
         } catch (Exception e) {
             log.error("Error deleting member", e);
             redirectAttributes.addFlashAttribute("error", "회원 삭제 중 오류가 발생했습니다.");
-            return "redirect:/admin/members";  // 에러 발생 시 관리자 회원 관리 페이지로 리디렉션
         }
+        return "redirect:/admin/members";
     }
 
-    // 추가: 도서 관리, 대출 관리, 구매 관리 매핑
+    // 도서 관리 페이지
     @GetMapping("/books")
-    public String manageBooks() {
+    public String manageBooks(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model
+    ) {
+        if (!isAdmin(loginMember)) {
+            return "redirect:/"; // 권한 없는 사용자는 홈으로 리디렉트
+        }
+        model.addAttribute("selectedCategory", "books"); // 선택된 카테고리
+
         return "admin/manageBooks";
     }
 
+    // 대출 관리 페이지
     @GetMapping("/rentals")
-    public String manageRentals() {
+    public String manageRentals(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model) {
+        if (!isAdmin(loginMember)) {
+            return "redirect:/"; // 권한 없는 사용자는 홈으로 리디렉트
+        }
+        model.addAttribute("selectedCategory", "rentals"); // 선택된 카테고리
+
         return "admin/manageRentals";
     }
 
+    // 구매 관리 페이지
     @GetMapping("/orders")
-    public String manageOrders() {
+    public String manageOrders(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model) {
+        if (!isAdmin(loginMember)) {
+            return "redirect:/"; // 권한 없는 사용자는 홈으로 리디렉트
+        }
+        model.addAttribute("selectedCategory", "orders"); // 선택된 카테고리
         return "admin/manageOrders";
+    }
+
+    // 권한 확인 메서드
+    private boolean isAdmin(Member loginMember) {
+        return loginMember != null && loginMember.getRole() == Role.ADMIN;
     }
 }

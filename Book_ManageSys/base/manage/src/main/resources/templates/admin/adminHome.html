@@ -60,6 +60,11 @@
     .btn-group .btn {
       margin: 0 5px;
     }
+    .btn-outline-primary.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
     table {
       margin-top: 20px;
       width: 100%;
@@ -86,19 +91,28 @@
     <h1>관리자 페이지</h1>
   </div>
 
+  <!-- 카테고리 선택 버튼 -->
   <div class="btn-group d-flex justify-content-center">
-    <a href="/admin/members" class="btn btn-primary">회원 관리</a>
-    <a href="/admin/books" class="btn btn-secondary">도서 관리</a>
-    <a href="/admin/rentals" class="btn btn-success">대출 관리</a>
-    <a href="/admin/orders" class="btn btn-danger">구매 관리</a>
+    <a class="btn btn-outline-primary"
+       th:classappend="${selectedCategory == 'members'} ? 'active' : ''"
+       th:href="@{/admin/members}">회원 관리</a>
+    <a class="btn btn-outline-primary"
+       th:classappend="${selectedCategory == 'books'} ? 'active' : ''"
+       th:href="@{/admin/books}">도서 관리</a>
+    <a class="btn btn-outline-primary"
+       th:classappend="${selectedCategory == 'rentals'} ? 'active' : ''"
+       th:href="@{/admin/rentals}">대출 관리</a>
+    <a class="btn btn-outline-primary"
+       th:classappend="${selectedCategory == 'orders'} ? 'active' : ''"
+       th:href="@{/admin/orders}">구매 관리</a>
   </div>
 
   <div class="container">
-
     <!-- 삭제 성공/실패 메시지 -->
     <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
+    <!-- 회원 목록 테이블 -->
     <table class="table table-striped">
       <thead>
       <tr>
