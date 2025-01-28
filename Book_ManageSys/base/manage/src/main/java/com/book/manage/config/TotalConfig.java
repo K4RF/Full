@@ -45,7 +45,7 @@ public class TotalConfig {
 
     @Bean(name = "memberService")
     public MemberService memberService() {
-        return new MemberServiceImpl(memberRepository(),rentalService(), passwordEncoder, commentService());
+        return new MemberServiceImpl(memberRepository(), passwordEncoder, commentService(), rentalRepository(), orderService());
     }
 
     @Bean

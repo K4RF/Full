@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -87,6 +88,19 @@ public class AdminController {
         List<Member> members = memberService.findAllMembers(); // 전체 회원 조회
         model.addAttribute("members", members);
         return "admin/adminHome";
+    }
+    @PostMapping("/members/{memberId}/delete")
+    public String deleteMember(@PathVariable Long memberId, RedirectAttributes redirectAttributes) {
+        try {
+            // 회원 삭제 시 관련 데이터도 함께 삭제
+            memberService.deleteMember(memberId);
+            redirectAttributes.addFlashAttribute("message", "회원 삭제가 성공적으로 완료되었습니다.");
+            return "redirect:/admin/members";
+        } catch (Exception e) {
+            log.error("Error deleting member", e);
+            redirectAttributes.addFlashAttribute("error", "회원 삭제 중 오류가 발생했습니다.");
+            return "redirect:/admin/members";  // 에러 발생 시 관리자 회원 관리 페이지로 리디렉션
+        }
     }
 
     // 추가: 도서 관리, 대출 관리, 구매 관리 매핑

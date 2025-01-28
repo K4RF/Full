@@ -71,4 +71,9 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll(searchParam);
     }
 
+    @Override
+    public void deleteOrdersByMemberId(Long memberId) {
+        orderRepository.deleteByMemberId(memberId);
+    }
+
 }

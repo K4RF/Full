@@ -12,7 +12,6 @@ public interface MemberService {
     Optional<Member> findMember(Long memberId);
     Member editMember(MemberEditDto editDto);
 
-
     boolean isNameDuplicate(String nickname);
 
     void deleteMember(Long memberId);

@@ -6,6 +6,7 @@ import com.book.manage.entity.dto.RentalSearchDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
@@ -144,6 +145,15 @@ public class RentalJpaRepository implements RentalRepository {
         return memberId != null
                 ? QRental.rental.member.memberId.eq(memberId)  // 회원 ID가 일치하는 대출 기록만 조회
                 : null;
+    }
+
+    @Override
+    @Transactional
+    public void deleteRentalsByMemberId(Long memberId) {
+
+        query.delete(rental)
+                .where(rental.member.memberId.eq(memberId))
+                .execute();
     }
 
 }
