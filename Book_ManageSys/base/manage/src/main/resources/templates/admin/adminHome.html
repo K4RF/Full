@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .field-error {
+      color: #dc3545;
+      font-size: 0.875rem;
+    }
+    .form-control.is-invalid {
+      border-color: #dc3545;
+    }
+    .btn {
+      font-size: 1.125rem;
+      padding: 10px 20px;
+    }
+    .btn-lg {
+      padding: 12px;
+    }
+    hr {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .footer {
+      background-color: #f8f9fa;
+      color: #333;
+      text-align: center;
+      padding: 20px 0;
+      width: 100%;
+    }
+    .btn-success {
+      background-color: #28a745;
+      border-color: #28a745;
+    }
+    .btn-success:hover {
+      background-color: #218838;
+      border-color: #1e7e34;
+    }
+
+    .container {
+      flex: 1;
+      max-width: 800px;
+      padding-bottom: 60px;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    .btn-group {
+      margin-top: 20px;
+    }
+    .btn-group .btn {
+      margin: 0 5px;
+    }
+    table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #f8f9fa;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+  <div class="py-5 text-center">
+    <h1>관리자 페이지</h1>
+  </div>
+
+  <div class="btn-group d-flex justify-content-center">
+    <a href="/admin/members" class="btn btn-primary">회원 관리</a>
+    <a href="/admin/books" class="btn btn-secondary">도서 관리</a>
+    <a href="/admin/rentals" class="btn btn-success">대출 관리</a>
+    <a href="/admin/orders" class="btn btn-danger">구매 관리</a>
+  </div>
+
+  <div class="mt-4">
+    <h2>회원 관리</h2>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>닉네임</th>
+        <th>역할</th>
+        <th>작업</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="member : ${members}">
+        <td th:text="${member.loginId}">loginId</td>
+        <td th:text="${member.nickname}">nickname</td>
+        <td th:text="${member.role}">role</td>
+        <td>
+          <form th:action="@{'/admin/members/' + ${member.memberId} + '/delete'}" method="post">
+            <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

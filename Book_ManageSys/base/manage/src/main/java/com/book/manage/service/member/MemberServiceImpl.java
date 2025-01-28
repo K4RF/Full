@@ -123,4 +123,8 @@ public class MemberServiceImpl implements MemberService{
 
         return member;
     }
+
+    public List<Member> findAllMembers() {
+        return memberRepository.findAll();
+    }
 }

@@ -29,6 +29,10 @@
                 <a class="nav-link" href="#" th:attr="onclick=|event.preventDefault(); document.getElementById('logout-form').submit();|">로그아웃</a>
                 <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
             </li>
+            <!-- 관리자 탭 -->
+            <li class="nav-item" th:if="${loginMember != null and loginMember.role == 'ADMIN'}">
+                <a class="nav-link" th:href="@{/admin}">관리자</a>
+            </li>
             <li class="nav-item" th:if="${loginMember != null}">
                 <a class="nav-link" th:href="@{/members/edit(redirectURL=${redirectURL})}">회원정보</a>
             </li>
