@@ -98,9 +98,12 @@
                 <td>
                     <form th:action="@{'/admin/rentals/' + ${rental.rentalId} + '/updateStatus'}" method="post">
                         <select name="rentalStatus" class="form-control">
-                            <option value="대출중" th:selected="${rental.rentalStatus == '대출중'}">대출중</option>
-                            <option value="반납 완료" th:selected="${rental.rentalStatus == '반납 완료'}">반납 완료</option>
-                            <option value="연체됨" th:selected="${rental.rentalStatus == '연체됨'}">연체됨</option>
+                            <option value="대출중"
+                                    th:selected="${rental.returnDate == null and rental.rentalStatus == '대출중'}">대출중</option>
+                            <option value="반납 완료"
+                                    th:selected="${rental.returnDate != null or rental.rentalStatus == '반납 완료'}">반납 완료</option>
+                            <option value="연체됨"
+                                    th:selected="${rental.returnDate == null and rental.rentalStatus == '연체됨'}">연체됨</option>
                         </select>
                         <button type="submit" class="btn btn-primary btn-sm mt-1">변경</button>
                     </form>

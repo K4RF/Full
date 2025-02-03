@@ -180,15 +180,29 @@ public class RentalServiceImpl implements RentalService {
         Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new IllegalArgumentException("대출 기록이 존재하지 않습니다."));
 
+        // 반납 완료 상태라면 반납일을 자동으로 설정
+        if ("반납 완료".equals(rentalStatus) && rental.getReturnDate() == null) {
+            rental.setReturnDate(java.time.LocalDate.now());
+        }
+
+        // 반납 완료 상태에서 다시 대출중으로 변경하면 반납일을 null로 설정
+        if ("대출중".equals(rentalStatus)) {
+            rental.setReturnDate(null);
+        }
+
         rental.setRentalStatus(rentalStatus);
         rentalRepository.save(rental);
     }
-
 
     @Override
     public void deleteRental(Long rentalId) {
         Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new IllegalArgumentException("대출 기록이 존재하지 않습니다."));
+
+        // 도서의 대출 가능 여부를 true로 변경
+        Book book = rental.getBook();
+        book.setRentalAbleBook(true);
+        bookRepository.save(book);
 
         rentalRepository.delete(rental);
     }
