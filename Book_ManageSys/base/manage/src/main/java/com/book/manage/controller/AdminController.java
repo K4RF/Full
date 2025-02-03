@@ -1,10 +1,10 @@
 package com.book.manage.controller;
 
-import com.book.manage.entity.Member;
-import com.book.manage.entity.Rental;
-import com.book.manage.entity.Role;
+import com.book.manage.entity.*;
 import com.book.manage.repository.member.MemberRepository;
+import com.book.manage.service.book.BookService;
 import com.book.manage.service.member.MemberService;
+import com.book.manage.service.order.OrderService;
 import com.book.manage.service.rental.RentalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +25,8 @@ public class AdminController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final RentalService rentalService;
+    private final OrderService orderService;
+    private final BookService bookService;
 
     // 관리자 회원가입
     @GetMapping("/add")
@@ -125,16 +127,38 @@ public class AdminController {
 
     // 도서 관리 페이지
     @GetMapping("/books")
-    public String manageBooks(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model
-    ) {
+    public String manageBooks(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model) {
         if (!isAdmin(loginMember)) {
             return "redirect:/"; // 권한 없는 사용자는 홈으로 리디렉트
         }
         model.addAttribute("selectedCategory", "books"); // 선택된 카테고리
 
+        // 도서 목록 조회
+        List<Book> books = bookService.findAllBooks();
+        model.addAttribute("books", books);
+
         return "admin/manageBooks";
     }
 
+    // 도서 삭제
+    @PostMapping("/books/{bookId}/delete")
+    public String deleteBook(@PathVariable Long bookId,
+                             @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                             RedirectAttributes redirectAttributes) {
+        if (!isAdmin(loginMember)) {
+            redirectAttributes.addFlashAttribute("error", "권한이 없습니다.");
+            return "redirect:/";
+        }
+
+        try {
+            bookService.deleteById(bookId);
+            redirectAttributes.addFlashAttribute("message", "도서가 삭제되었습니다.");
+        } catch (Exception e) {
+            log.error("Error deleting book", e);
+            redirectAttributes.addFlashAttribute("error", "도서 삭제 중 오류가 발생했습니다.");
+        }
+        return "redirect:/admin/books";
+    }
     @GetMapping("/rentals")
     public String manageRentals(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model) {
         if (!isAdmin(loginMember)) {
@@ -194,8 +218,34 @@ public class AdminController {
             return "redirect:/"; // 권한 없는 사용자는 홈으로 리디렉트
         }
         model.addAttribute("selectedCategory", "orders"); // 선택된 카테고리
+
+        // 주문 목록 조회
+        List<Order> orders = orderService.findAllOrders();
+        model.addAttribute("orders", orders);
+
         return "admin/manageOrders";
     }
+
+    // 주문 취소 (삭제)
+    @PostMapping("/orders/{orderId}/cancel")
+    public String cancelOrder(@PathVariable Long orderId,
+                              @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                              RedirectAttributes redirectAttributes) {
+        if (!isAdmin(loginMember)) {
+            redirectAttributes.addFlashAttribute("error", "권한이 없습니다.");
+            return "redirect:/";
+        }
+
+        try {
+            orderService.cancelOrder(orderId);
+            redirectAttributes.addFlashAttribute("message", "주문이 취소되었습니다.");
+        } catch (Exception e) {
+            log.error("Error cancelling order", e);
+            redirectAttributes.addFlashAttribute("error", "주문 취소 중 오류가 발생했습니다.");
+        }
+        return "redirect:/admin/orders";
+    }
+
 
     // 권한 확인 메서드
     private boolean isAdmin(Member loginMember) {

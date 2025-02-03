@@ -76,4 +76,10 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.deleteByMemberId(memberId);
     }
 
+
+    // 모든 주문 조회
+    @Override
+    public List<Order> findAllOrders() {
+        return orderRepository.findAll();
+    }
 }
