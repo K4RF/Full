@@ -28,7 +28,6 @@
       display: flex;
       flex-direction: column;
     }
-
     .footer {
       background-color: #f8f9fa;
       color: #333;
@@ -36,15 +35,6 @@
       padding: 20px 0;
       width: 100%;
     }
-    .btn-success {
-      background-color: #28a745;
-      border-color: #28a745;
-    }
-    .btn-success:hover {
-      background-color: #218838;
-      border-color: #1e7e34;
-    }
-
     .container {
       flex: 1;
       max-width: 800px;
@@ -80,6 +70,11 @@
     }
     tr:hover {
       background-color: #f1f1f1;
+    }
+    /* 삭제 버튼 크기 조정 */
+    .btn-delete {
+      font-size: 0.75rem; /* 폰트 크기 축소 */
+      padding: 4px 8px; /* 버튼 내부 패딩 축소 */
     }
   </style>
 </head>
@@ -133,7 +128,7 @@
         <td th:text="${member.kakaoId}">1234567890</td>
         <td>
           <form th:action="@{'/admin/members/' + ${member.memberId} + '/delete'}" method="post">
-            <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+            <button type="submit" class="btn btn-danger btn-sm btn-delete">삭제</button>
           </form>
         </td>
       </tr>
