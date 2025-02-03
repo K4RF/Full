@@ -6,7 +6,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         .nav-link img {
-            width: 24px;
+            width: 24px;  /* 아이콘 크기를 24px로 고정 */
             height: 24px;
             margin-right: 8px;
             vertical-align: middle;
@@ -55,7 +55,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/cart}">
-                    <img src="/image/cart.svg" alt="Cart">
+                    <img src="/image/cart.svg" alt="Cart" style="width: 24px; height: 24px;">
                     <span th:if="${session.cart != null and #lists.size(session.cart) > 0}"
                           th:text="${#lists.size(session.cart)}"
                           class="badge badge-pill badge-danger">0</span>
