@@ -174,4 +174,28 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow(() -> new IllegalArgumentException("대출 기록을 찾을 수 없습니다."));
         return rental.getExtensionCount(); // Rental 엔티티의 extensionCount 반환
     }
+
+    @Override
+    public void updateAdminRentalStatus(Long rentalId, String rentalStatus) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new IllegalArgumentException("대출 기록이 존재하지 않습니다."));
+
+        rental.setRentalStatus(rentalStatus);
+        rentalRepository.save(rental);
+    }
+
+
+    @Override
+    public void deleteRental(Long rentalId) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new IllegalArgumentException("대출 기록이 존재하지 않습니다."));
+
+        rentalRepository.delete(rental);
+    }
+
+    @Override
+    @Transactional
+    public List<Rental> findAllRentals() {
+        return rentalRepository.findAllRentals();
+    }
 }

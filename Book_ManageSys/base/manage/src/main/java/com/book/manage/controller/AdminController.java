@@ -1,9 +1,11 @@
 package com.book.manage.controller;
 
 import com.book.manage.entity.Member;
+import com.book.manage.entity.Rental;
 import com.book.manage.entity.Role;
 import com.book.manage.repository.member.MemberRepository;
 import com.book.manage.service.member.MemberService;
+import com.book.manage.service.rental.RentalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import java.util.List;
 public class AdminController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final RentalService rentalService;
 
     // 관리자 회원가입
     @GetMapping("/add")
@@ -132,15 +135,56 @@ public class AdminController {
         return "admin/manageBooks";
     }
 
-    // 대출 관리 페이지
     @GetMapping("/rentals")
     public String manageRentals(@SessionAttribute(value = "loginMember", required = false) Member loginMember, Model model) {
         if (!isAdmin(loginMember)) {
             return "redirect:/"; // 권한 없는 사용자는 홈으로 리디렉트
         }
         model.addAttribute("selectedCategory", "rentals"); // 선택된 카테고리
-
+        List<Rental> rentals = rentalService.findAllRentals();
+        model.addAttribute("rentals", rentals);
         return "admin/manageRentals";
+    }
+
+    // 대출 상태 변경
+    @PostMapping("/rentals/{rentalId}/updateStatus")
+    public String updateRentalStatus(@PathVariable Long rentalId,
+                                     @RequestParam String rentalStatus,
+                                     @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                                     RedirectAttributes redirectAttributes) {
+        if (!isAdmin(loginMember)) {
+            redirectAttributes.addFlashAttribute("error", "권한이 없습니다.");
+            return "redirect:/";
+        }
+
+        try {
+            rentalService.updateAdminRentalStatus(rentalId, rentalStatus);
+            redirectAttributes.addFlashAttribute("message", "대출 상태가 변경되었습니다.");
+        } catch (Exception e) {
+            log.error("Error updating rental status", e);
+            redirectAttributes.addFlashAttribute("error", "대출 상태 변경 중 오류가 발생했습니다.");
+        }
+        return "redirect:/admin/rentals";
+    }
+
+    // 대출 기록 삭제
+    @PostMapping("/rentals/{rentalId}/delete")
+    public String deleteRental(@PathVariable Long rentalId,
+                               @SessionAttribute(value = "loginMember", required = false) Member loginMember,
+                               RedirectAttributes redirectAttributes) {
+        if (!isAdmin(loginMember)) {
+            redirectAttributes.addFlashAttribute("error", "권한이 없습니다.");
+            return "redirect:/";
+        }
+
+        try {
+            rentalService.deleteRental(rentalId);
+            redirectAttributes.addFlashAttribute("message", "대출 기록이 삭제되었습니다.");
+        } catch (Exception e) {
+            log.error("Error deleting rental", e);
+            redirectAttributes.addFlashAttribute("error", "대출 기록 삭제 중 오류가 발생했습니다.");
+        }
+        return "redirect:/admin/rentals";
     }
 
     // 구매 관리 페이지

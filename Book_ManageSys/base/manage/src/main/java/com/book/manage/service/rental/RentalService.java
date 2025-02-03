@@ -20,4 +20,8 @@ public interface RentalService {
     void deleteRentalsByMemberId(Long memberId);
     boolean extendRental(Long bookId, Long rentalId);
     int getExtensionCount(Long rentalId);
+
+    void updateAdminRentalStatus(Long rentalId, String rentalStatus);
+    void deleteRental(Long rentalId);
+    List<Rental> findAllRentals();
 }

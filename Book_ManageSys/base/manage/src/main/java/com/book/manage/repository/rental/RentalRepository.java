@@ -24,5 +24,5 @@ public interface RentalRepository {
     List<Rental> findAll(RentalSearchDto searchParam);
 
     void deleteRentalsByMemberId(Long memberId);
-
+    List<Rental> findAllRentals();
 }

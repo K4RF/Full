@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.book.manage.entity.QBook.book;
+import static com.book.manage.entity.QMember.member;
 import static com.book.manage.entity.QRental.rental;
 
 @Slf4j
@@ -156,4 +158,13 @@ public class RentalJpaRepository implements RentalRepository {
                 .execute();
     }
 
+    @Override
+    public List<Rental> findAllRentals() {
+        return query
+                .selectFrom(rental)
+                .leftJoin(rental.book, book).fetchJoin()
+                .leftJoin(rental.member, member).fetchJoin()
+                .orderBy(rental.rentalDate.desc())
+                .fetch();
+    }
 }
