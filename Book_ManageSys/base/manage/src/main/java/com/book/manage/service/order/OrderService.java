@@ -15,4 +15,6 @@ public interface OrderService {
     void cancelOrder(Long orderId); // 주문 취소
     Order getOrderById(Long orderId);
     List<Order> findOrders(OrderSearchDto searchParam); // 주문 검색 로직
+    void deleteOrdersByMemberId(Long memberId); // 주문 삭제 (회원 탈퇴 시에 사용)
+    List<Order> findAllOrders();
 }

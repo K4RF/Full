@@ -131,4 +131,9 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAll(searchDto);
     }
 
+
+    // 모든 도서 조회
+    public List<Book> findAllBooks() {
+        return bookRepository.findAllBook();
+    }
 }

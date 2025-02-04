@@ -3,9 +3,11 @@ package com.book.manage.repository.order;
 import com.book.manage.entity.Order;
 import com.book.manage.entity.dto.OrderSearchDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -112,5 +114,14 @@ public class OrderJpaRepository implements OrderRepository {
         return memberId != null
                 ? order.member.memberId.eq(memberId)  // 회원 ID가 일치하는 대출 기록만 조회
                 : null;
+    }
+
+    @Override
+    @Transactional
+    public void deleteByMemberId(Long memberId) {
+        // QueryDSL을 사용하여 삭제 쿼리 실행
+        new JPADeleteClause(em, order)
+                .where(order.member.memberId.eq(memberId))
+                .execute();
     }
 }

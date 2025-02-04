@@ -5,7 +5,9 @@ import com.book.manage.entity.Member;
 import com.book.manage.entity.Role;
 import com.book.manage.entity.dto.MemberEditDto;
 import com.book.manage.repository.member.MemberRepository;
+import com.book.manage.repository.rental.RentalRepository;
 import com.book.manage.service.comment.CommentService;
+import com.book.manage.service.order.OrderService;
 import com.book.manage.service.rental.RentalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -23,16 +25,18 @@ import java.util.Optional;
 @Slf4j
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
-    private final RentalService rentalService;
     private final PasswordEncoder passwordEncoder;
 
     private final CommentService commentService;
+    private final RentalRepository rentalRepository;
+    private final OrderService orderService;
 
-    public MemberServiceImpl(MemberRepository memberRepository, RentalService rentalService, PasswordEncoder passwordEncoder, CommentService commentService) {
+    public MemberServiceImpl(MemberRepository memberRepository, PasswordEncoder passwordEncoder, CommentService commentService, RentalRepository rentalRepository, OrderService orderService) {
         this.memberRepository = memberRepository;
-        this.rentalService = rentalService;
         this.passwordEncoder = passwordEncoder;
         this.commentService = commentService;
+        this.rentalRepository = rentalRepository;
+        this.orderService = orderService;
     }
 
 
@@ -85,19 +89,23 @@ public class MemberServiceImpl implements MemberService{
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다"));
 
-        String nickname = member.getNickname(); // 댓글 삭제를 위해 회원의 닉네임 가져오기
+        String nickname = member.getNickname();
 
-        // 해당 회원의 대출 정보를 삭제
-        rentalService.deleteRentalsByMemberId(memberId);
+        // 1. 구매 목록 삭제
+        orderService.deleteOrdersByMemberId(memberId);
 
-        // 해당 회원이 작성한 댓글 삭제
+        // 2. 대출 정보 삭제
+        rentalRepository.deleteRentalsByMemberId(memberId);
+
+        // 3. 댓글 삭제
         List<Comment> comments = commentService.getCommentsByWriter(nickname);
         for (Comment comment : comments) {
             commentService.deleteComment(comment.getCommentId(), nickname);
         }
 
-        // 최종적으로 회원 삭제
-        memberRepository.deleteById(member.getMemberId());
+        // 4. 회원 삭제
+        memberRepository.deleteById(memberId);
+        log.info("Deleted member with ID: {}", memberId);
     }
 
     @Override
@@ -122,5 +130,9 @@ public class MemberServiceImpl implements MemberService{
         }
 
         return member;
+    }
+
+    public List<Member> findAllMembers() {
+        return memberRepository.findAll();
     }
 }

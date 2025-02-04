@@ -16,4 +16,5 @@ public interface BookService {
     void deleteById(Long bookId);
     void incrementViewCount(Long bookId);
     List<Book> findBooks(BookSearchDto searchParam);
+    List<Book> findAllBooks();  // 도서 관리 전체 도서 출력
 }

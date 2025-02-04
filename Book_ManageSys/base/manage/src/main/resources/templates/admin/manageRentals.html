@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            flex: 1;
+            max-width: 900px;
+            padding-bottom: 60px;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .btn-group {
+            margin-top: 20px;
+        }
+        .btn-group .btn {
+            margin: 0 5px;
+        }
+        .btn-outline-primary.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <div class="py-5 text-center">
+        <h1>대출 관리 페이지</h1>
+    </div>
+
+    <!-- 카테고리 선택 버튼 -->
+    <div class="btn-group d-flex justify-content-center">
+        <a class="btn btn-outline-primary" th:classappend="${selectedCategory == 'members'} ? 'active' : ''" th:href="@{/admin/members}">회원 관리</a>
+        <a class="btn btn-outline-primary" th:classappend="${selectedCategory == 'books'} ? 'active' : ''" th:href="@{/admin/books}">도서 관리</a>
+        <a class="btn btn-outline-primary active" th:href="@{/admin/rentals}">대출 관리</a>
+        <a class="btn btn-outline-primary" th:classappend="${selectedCategory == 'orders'} ? 'active' : ''" th:href="@{/admin/orders}">구매 관리</a>
+    </div>
+
+    <div class="container">
+        <!-- 메시지 출력 -->
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>대출 ID</th>
+                <th>도서 제목</th>
+                <th>회원 ID</th>
+                <th>닉네임</th>
+                <th>대출 상태</th>
+                <th>대출일</th>
+                <th>반납 마감일</th>
+                <th>반납일</th>
+                <th>수정</th> <!-- 수정 버튼 위치 -->
+                <th>삭제</th> <!-- 삭제 버튼 위치 -->
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="rental : ${rentals}">
+                <td th:text="${rental.rentalId}">1</td>
+                <td th:text="${rental.book.title}">도서 제목</td>
+                <td th:text="${rental.member.memberId}">회원 ID</td>
+                <td th:text="${rental.member.nickname}">닉네임</td>
+                <td>
+                    <form th:action="@{'/admin/rentals/' + ${rental.rentalId} + '/updateStatus'}" method="post">
+                        <select name="rentalStatus" class="form-control">
+                            <option value="대출중"
+                                    th:selected="${rental.returnDate == null and rental.dueDate >= T(java.time.LocalDate).now()}">
+                                대출중
+                            </option>
+                            <option value="반납 완료"
+                                    th:selected="${rental.returnDate != null}">
+                                반납 완료
+                            </option>
+                            <option value="연체됨"
+                                    th:selected="${rental.returnDate == null and rental.dueDate < T(java.time.LocalDate).now()}">
+                                연체됨
+                            </option>
+                        </select>
+                </td>
+                <td th:text="${rental.rentalDate}">2025-01-15</td>
+                <td th:text="${rental.dueDate}">2025-02-15</td>
+                <td th:text="${rental.returnDate != null ? rental.returnDate : '반납 안됨'}">반납 안됨</td>
+                <td>
+                    <button type="submit" class="btn btn-primary btn-sm">변경</button>
+                    </form>
+                </td>
+                <td>
+                    <form th:action="@{'/admin/rentals/' + ${rental.rentalId} + '/delete'}" method="post"
+                          onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                        <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

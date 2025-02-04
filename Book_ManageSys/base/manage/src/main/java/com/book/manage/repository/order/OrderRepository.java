@@ -16,4 +16,5 @@ public interface OrderRepository {
     List<Order> findAll(); // 전체 주문 조회
     void delete(Order order); // 주문 삭제
     List<Order> findAll(OrderSearchDto searchParam); // 주문 검색
+    void deleteByMemberId(Long memberId);
 }

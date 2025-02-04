@@ -6,6 +6,7 @@ import com.book.manage.entity.dto.RentalSearchDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.book.manage.entity.QBook.book;
+import static com.book.manage.entity.QMember.member;
 import static com.book.manage.entity.QRental.rental;
 
 @Slf4j
@@ -146,4 +149,22 @@ public class RentalJpaRepository implements RentalRepository {
                 : null;
     }
 
+    @Override
+    @Transactional
+    public void deleteRentalsByMemberId(Long memberId) {
+
+        query.delete(rental)
+                .where(rental.member.memberId.eq(memberId))
+                .execute();
+    }
+
+    @Override
+    public List<Rental> findAllRentals() {
+        return query
+                .selectFrom(rental)
+                .leftJoin(rental.book, book).fetchJoin()
+                .leftJoin(rental.member, member).fetchJoin()
+                .orderBy(rental.rentalDate.desc())
+                .fetch();
+    }
 }

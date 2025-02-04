@@ -1,6 +1,7 @@
 package com.book.manage.repository.book;
 
 import com.book.manage.entity.Book;
+import com.book.manage.entity.Order;
 import com.book.manage.entity.QBook;
 import com.book.manage.entity.dto.BookEditDto;
 import com.book.manage.entity.dto.BookSearchDto;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.book.manage.entity.QBook.book;
+import static com.book.manage.entity.QOrder.order;
 
 @Repository
 @Slf4j
@@ -92,5 +94,10 @@ public class BookJpaRepository implements BookRepository {
         return StringUtils.hasText(category) ? book.categories.any().cate.like("%" + category + "%") : null;
     }
 
-
+    
+    @Override
+    public List<Book> findAllBook() {
+        return query.selectFrom(book)
+                .fetch();
+    }
 }
