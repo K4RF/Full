@@ -61,7 +61,7 @@
 
     <h4 class="mb-3">회원 정보 입력</h4>
 
-    <form th:action="@{/members/add/admin}" th:object="${member}" method="post">
+    <form th:action="@{/admin/add}" th:object="${member}" method="post">
 
         <!-- 글로벌 오류 메시지 표시 -->
         <div th:if="${#fields.hasGlobalErrors()}">
