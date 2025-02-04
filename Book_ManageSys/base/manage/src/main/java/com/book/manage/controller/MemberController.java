@@ -96,7 +96,7 @@ public class MemberController {
         Long memberId = loginMember.getMemberId();
         MemberEditDto editDto = new MemberEditDto(memberId, loginMember.getNickname(), loginMember.getPassword());
         model.addAttribute("member", editDto);
-        return "/members/editMemberForm";
+        return "members/editMemberForm";
     }
 
     @PostMapping("/edit")
@@ -110,7 +110,7 @@ public class MemberController {
         }
 
         if (bindingResult.hasErrors()) {
-            return "/members/editMemberForm";
+            return "members/editMemberForm";
         }
 
         memberService.editMember(editDto);

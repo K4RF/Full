@@ -84,6 +84,6 @@ public class OrderController {
         }
 
         model.addAttribute("orders", orderService.getOrdersByDateRange(startDate, endDate));
-        return "/order/orderList"; // 주문 목록 페이지
+        return "order/orderList"; // 주문 목록 페이지
     }
 }

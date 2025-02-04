@@ -134,7 +134,7 @@ public class BookController {
         model.addAttribute("sortedCategories", sortedCategories);
         model.addAttribute("comments", comments);
 
-        return "/book/bookInfo";
+        return "book/bookInfo";
     }
 
 
@@ -145,7 +145,7 @@ public class BookController {
             return "redirect:/login?redirectURL=" + redirectUrl;
         }
         if (loginMember.getRole() != Role.ADMIN) {
-            return "/book/returnBook";
+            return "book/returnBook";
         }
 
         Book book = new Book();
@@ -215,7 +215,7 @@ public class BookController {
             return redirect;
         }
         if(loginMember.getRole() != Role.ADMIN) {
-            return "/book/returnBook";
+            return "book/returnBook";
         }
 
         Book book = bookService.findById(bookId).orElseThrow();
@@ -240,7 +240,7 @@ public class BookController {
         }
 
         if(loginMember.getRole() != Role.ADMIN) {
-            return "/book/returnBook";
+            return "book/returnBook";
         }
 
         if (bindingResult.hasErrors()) {
@@ -339,7 +339,7 @@ public class BookController {
 
         // 관리자 권한 체크
         if (loginMember.getRole() != Role.ADMIN) {
-            return "/book/returnBook";
+            return "book/returnBook";
         }
 
         // 도서 정보 가져오기
