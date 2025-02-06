@@ -5,30 +5,32 @@
   <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
   <style>
     html, body {
-      height: 100%; /* Make sure the page height is at least the viewport height */
-      margin: 0; /* Remove default margin */
-      position: relative; /* Needed for footer positioning */
+      height: 100%;
+      margin: 0;
     }
-
+    /* body를 flex 컨테이너로 설정 */
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    /* 메인 콘텐츠 영역이 남은 공간을 모두 차지하도록 설정 */
+    .content {
+      flex: 1;
+    }
+    /* footer 스타일 (일반 flow에 따라 하단에 위치) */
     .footer {
       background-color: #f8f9fa;
       color: #333;
       text-align: center;
       padding: 20px 0;
-      position: relative; /* Position it at the bottom */
-      bottom: 0; /* Anchor it to the bottom */
-      width: 100%; /* Full width */
-    }
-
-    .container {
-      padding-bottom: 60px; /* Give some space for the footer */
+      width: 100%;
     }
   </style>
 </head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container" style="max-width: 600px">
+<div class="content container" style="max-width: 600px">
   <div class="py-5 text-center">
     <h2>도서 목록</h2>
   </div>
