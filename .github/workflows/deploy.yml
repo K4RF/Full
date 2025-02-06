@@ -28,19 +28,15 @@ jobs:
           chmod +x ./gradlew
           ./gradlew clean bootJar
 
-      # 4. 원격 서버에 SSH로 접속하여 배포 스크립트 실행
+      # 4. 원격 서버에 SSH로 접속하여 코드 Pull & Gradle 빌드 수행
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          # port: ${{ secrets.SERVER_PORT }}  # 기본 포트 22를 사용한다면 이 항목은 생략 가능
           script: |
             cd ~/project/Full/Book_ManageSys/base/manage
             git pull origin main
             chmod +x ./gradlew
             ./gradlew clean bootJar
-            pkill -f "java -jar manage-0.0.1-SNAPSHOT.jar" || true
-            cd build/libs/
-            nohup java -jar manage-0.0.1-SNAPSHOT.jar > app.log 2>&1 & disown
